@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 
@@ -11,6 +10,9 @@ namespace DEEPFAKE.Controllers
     {
         private readonly HttpClient _httpClient;
 
+        // 🔥 Replace if ngrok URL changes
+        private const string BaseUrl = "https://sobersided-frank-restrainedly.ngrok-free.dev";
+
         public ImageController(IHttpClientFactory factory)
         {
             _httpClient = factory.CreateClient();
@@ -19,10 +21,88 @@ namespace DEEPFAKE.Controllers
         [HttpPost("generate")]
         public async Task<IActionResult> Generate([FromBody] PromptRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Prompt))
+            if (request == null || string.IsNullOrWhiteSpace(request.Prompt))
                 return BadRequest("Prompt required");
 
-            var workflow = new
+            try
+            {
+                var workflow = BuildWorkflow(request.Prompt);
+
+                var content = new StringContent(
+                    JsonSerializer.Serialize(workflow),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                // 🔥 STEP 1: Send prompt
+                var response = await _httpClient.PostAsync($"{BaseUrl}/prompt", content);
+                response.EnsureSuccessStatusCode();
+
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var doc = JsonDocument.Parse(responseBody);
+
+                string promptId = doc.RootElement.GetProperty("prompt_id").GetString();
+
+                // 🔥 STEP 2: Poll until ready (max 30 seconds)
+                string filename = await WaitForImage(promptId);
+
+                if (filename == null)
+                    return StatusCode(500, "Image generation timeout");
+
+                // 🔥 STEP 3: Build direct image URL
+                string imageUrl = $"{BaseUrl}/view?filename={filename}";
+
+                return Ok(new { imageUrl });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        // ====================================================
+        // 🧠 POLLING METHOD (PROFESSIONAL APPROACH)
+        // ====================================================
+        private async Task<string> WaitForImage(string promptId)
+        {
+            for (int i = 0; i < 15; i++) // ~15 attempts
+            {
+                await Task.Delay(2000); // wait 2 seconds
+
+                var historyResponse = await _httpClient.GetAsync($"{BaseUrl}/history/{promptId}");
+
+                if (!historyResponse.IsSuccessStatusCode)
+                    continue;
+
+                var historyJson = await historyResponse.Content.ReadAsStringAsync();
+                var historyDoc = JsonDocument.Parse(historyJson);
+
+                if (!historyDoc.RootElement.TryGetProperty(promptId, out var promptNode))
+                    continue;
+
+                if (!promptNode.TryGetProperty("outputs", out var outputs))
+                    continue;
+
+                if (!outputs.TryGetProperty("8", out var node8))
+                    continue;
+
+                var images = node8.GetProperty("images");
+
+                if (images.GetArrayLength() > 0)
+                {
+                    return images[0].GetProperty("filename").GetString();
+                }
+            }
+
+            return null;
+        }
+
+        // ====================================================
+        // 🔥 BUILD WORKFLOW
+        // ====================================================
+        private object BuildWorkflow(string prompt)
+        {
+            return new
             {
                 prompt = new Dictionary<string, object>
                 {
@@ -34,7 +114,7 @@ namespace DEEPFAKE.Controllers
                     ["3"] = new
                     {
                         class_type = "CLIPTextEncode",
-                        inputs = new { text = request.Prompt, clip = new object[] { "2", 1 } }
+                        inputs = new { text = prompt, clip = new object[] { "2", 1 } }
                     },
                     ["4"] = new
                     {
@@ -55,7 +135,7 @@ namespace DEEPFAKE.Controllers
                             positive = new object[] { "3", 0 },
                             negative = new object[] { "4", 0 },
                             latent_image = new object[] { "5", 0 },
-                            seed = 123456,
+                            seed = new Random().Next(),
                             steps = 20,
                             cfg = 8,
                             sampler_name = "euler",
@@ -83,21 +163,6 @@ namespace DEEPFAKE.Controllers
                     }
                 }
             };
-
-            var content = new StringContent(
-                JsonSerializer.Serialize(workflow),
-                Encoding.UTF8,
-                "application/json"
-            );
-
-            var response = await _httpClient.PostAsync(
-                "http://127.0.0.1:8188/prompt",
-                content
-            );
-
-            var result = await response.Content.ReadAsStringAsync();
-
-            return Ok(result);
         }
     }
 

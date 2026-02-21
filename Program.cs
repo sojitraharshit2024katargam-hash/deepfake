@@ -1,8 +1,9 @@
-﻿using DEEPFAKE.Services.EmailAnalysis;
+﻿using DEEPFAKE.Helpers;
+using DEEPFAKE.Services.EmailAnalysis;
+using DEEPFAKE.Services.ImageGeneration;
 using DEEPFAKE.Services.Implementations;
 using DEEPFAKE.Services.Interfaces;
 using DEEPFAKE.Services.UrlAnalysis;
-using DEEPFAKE.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,8 @@ builder.Services.AddScoped<EmailAnalysisRepository>();
 // URL Services
 builder.Services.AddScoped<IUrlAnalysisService, UrlAnalysisService>();
 builder.Services.AddScoped<UrlAnalysisRepository>();
+
+builder.Services.AddHttpClient<ImageGeneratorService>();
 
 builder.Services.AddHttpClient();
 
