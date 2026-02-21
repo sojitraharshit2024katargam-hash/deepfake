@@ -1,6 +1,6 @@
 ﻿using DEEPFAKE.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
+using Npgsql;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Cryptography;
@@ -34,7 +34,7 @@ namespace DEEPFAKE.Controllers
             user.OTPCode = otp;
             user.OTPGeneratedAt = DateTime.Now;
 
-            using SqlConnection con = new SqlConnection(connectionString);
+            using NpgsqlConnection con = new NpgsqlConnection(connectionString);
 
             string query = @"
                 INSERT INTO Users
@@ -43,7 +43,7 @@ namespace DEEPFAKE.Controllers
                 (@FullName, @Email, @PasswordHash, @CreatedAt, @IsEmailVerified, @OTPCode, @OTPGeneratedAt)
             ";
 
-            SqlCommand cmd = new SqlCommand(query, con);
+            NpgsqlCommand cmd = new NpgsqlCommand(query, con);
             cmd.Parameters.AddWithValue("@FullName", user.FullName);
             cmd.Parameters.AddWithValue("@Email", user.Email);
             cmd.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
@@ -70,11 +70,11 @@ namespace DEEPFAKE.Controllers
         [HttpPost]
         public IActionResult VerifyOtp(string email, string otp)
         {
-            using SqlConnection con = new SqlConnection(connectionString);
+            using NpgsqlConnection con = new NpgsqlConnection(connectionString);
 
             string query = @"SELECT OTPGeneratedAt FROM Users WHERE Email=@Email AND OTPCode=@OTP";
 
-            SqlCommand cmd = new SqlCommand(query, con);
+            NpgsqlCommand cmd = new NpgsqlCommand(query, con);
             cmd.Parameters.AddWithValue("@Email", email);
             cmd.Parameters.AddWithValue("@OTP", otp);
 
@@ -89,13 +89,13 @@ namespace DEEPFAKE.Controllers
                 {
                     string update = @"
                         UPDATE Users
-                        SET IsEmailVerified = 1,
+                        SET IsEmailVerified = TRUE,
                             OTPCode = NULL,
                             OTPGeneratedAt = NULL
                         WHERE Email = @Email
                     ";
 
-                    SqlCommand updateCmd = new SqlCommand(update, con);
+                    NpgsqlCommand updateCmd = new NpgsqlCommand(update, con);
                     updateCmd.Parameters.AddWithValue("@Email", email);
                     updateCmd.ExecuteNonQuery();
 
@@ -119,7 +119,7 @@ namespace DEEPFAKE.Controllers
         {
             string hash = HashPassword(password);
 
-            using SqlConnection con = new SqlConnection(connectionString);
+            using NpgsqlConnection con = new NpgsqlConnection(connectionString);
 
             string query = @"
                 SELECT UserId, FullName, IsEmailVerified
@@ -127,12 +127,12 @@ namespace DEEPFAKE.Controllers
                 WHERE Email=@Email AND PasswordHash=@PasswordHash
             ";
 
-            SqlCommand cmd = new SqlCommand(query, con);
+            NpgsqlCommand cmd = new NpgsqlCommand(query, con);
             cmd.Parameters.AddWithValue("@Email", email);
             cmd.Parameters.AddWithValue("@PasswordHash", hash);
 
             con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
+            NpgsqlDataReader reader = cmd.ExecuteReader();
 
             if (reader.Read())
             {
@@ -144,7 +144,6 @@ namespace DEEPFAKE.Controllers
                     return View();
                 }
 
-                // 🔥 THIS IS THE KEY LINE (DO NOT REMOVE)
                 HttpContext.Session.SetInt32("UserId", reader.GetInt32(0));
                 HttpContext.Session.SetString("UserName", reader.GetString(1));
 

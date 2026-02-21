@@ -1,5 +1,5 @@
 ﻿using DEEPFAKE.DTOs;
-using Microsoft.Data.SqlClient;
+using Npgsql;
 
 namespace DEEPFAKE.Services.UrlAnalysis
 {
@@ -15,9 +15,9 @@ namespace DEEPFAKE.Services.UrlAnalysis
         // SAVE
         public void Save(int userId, string url, int score, string risk, string reasons)
         {
-            using var con = new SqlConnection(_connection);
+            using var con = new NpgsqlConnection(_connection);
 
-            var cmd = new SqlCommand(@"
+            var cmd = new NpgsqlCommand(@"
                 INSERT INTO UrlAnalysisLogs
                 (UserId, Url, SecurityScore, RiskLevel, Reasons, CreatedAt)
                 VALUES
@@ -39,17 +39,18 @@ namespace DEEPFAKE.Services.UrlAnalysis
         {
             var list = new List<UrlHistoryDto>();
 
-            using var con = new SqlConnection(_connection);
+            using var con = new NpgsqlConnection(_connection);
 
-            var cmd = new SqlCommand(@"
-                SELECT TOP(@Limit)
+            var cmd = new NpgsqlCommand(@"
+                SELECT
                     Url,
                     SecurityScore,
                     RiskLevel,
                     CreatedAt
                 FROM UrlAnalysisLogs
                 WHERE UserId=@UserId
-                ORDER BY CreatedAt DESC", con);
+                ORDER BY CreatedAt DESC
+                LIMIT @Limit", con);
 
             cmd.Parameters.AddWithValue("@UserId", userId);
             cmd.Parameters.AddWithValue("@Limit", limit);
@@ -75,9 +76,9 @@ namespace DEEPFAKE.Services.UrlAnalysis
         // CLEAR
         public void Clear(int userId)
         {
-            using var con = new SqlConnection(_connection);
+            using var con = new NpgsqlConnection(_connection);
 
-            var cmd = new SqlCommand(
+            var cmd = new NpgsqlCommand(
                 "DELETE FROM UrlAnalysisLogs WHERE UserId=@UserId", con);
 
             cmd.Parameters.AddWithValue("@UserId", userId);

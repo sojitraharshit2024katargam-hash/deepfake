@@ -1,6 +1,6 @@
 ﻿using DEEPFAKE.DTOs;
 using DEEPFAKE.Models;
-using Microsoft.Data.SqlClient;
+using Npgsql;
 
 namespace DEEPFAKE.Services.EmailAnalysis
 {
@@ -15,8 +15,8 @@ namespace DEEPFAKE.Services.EmailAnalysis
 
         public void Save(EmailAnalysisLog log)
         {
-            using var con = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand(@"
+            using var con = new NpgsqlConnection(_connectionString);
+            using var cmd = new NpgsqlCommand(@"
                 INSERT INTO EmailAnalysisLogs
                 (UserId, EmailHash, SecurityScore, RiskLevel, FindingsCount, CreatedAt)
                 VALUES
@@ -37,17 +37,18 @@ namespace DEEPFAKE.Services.EmailAnalysis
         {
             var list = new List<EmailAnalysisHistoryDto>();
 
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand(@"
-        SELECT TOP (@Limit)
-            SecurityScore,
-            RiskLevel,
-            FindingsCount,
-            CreatedAt
-        FROM EmailAnalysisLogs
-        WHERE UserId = @UserId
-        ORDER BY CreatedAt DESC
-    ", conn);
+            using var conn = new NpgsqlConnection(_connectionString);
+            using var cmd = new NpgsqlCommand(@"
+                SELECT
+                    SecurityScore,
+                    RiskLevel,
+                    FindingsCount,
+                    CreatedAt
+                FROM EmailAnalysisLogs
+                WHERE UserId = @UserId
+                ORDER BY CreatedAt DESC
+                LIMIT @Limit
+            ", conn);
 
             cmd.Parameters.AddWithValue("@UserId", userId);
             cmd.Parameters.AddWithValue("@Limit", limit);
@@ -71,19 +72,13 @@ namespace DEEPFAKE.Services.EmailAnalysis
 
         public void ClearHistory(int userId)
         {
-            using var con = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand(
+            using var con = new NpgsqlConnection(_connectionString);
+            using var cmd = new NpgsqlCommand(
                 "DELETE FROM EmailAnalysisLogs WHERE UserId = @UserId", con);
 
             cmd.Parameters.AddWithValue("@UserId", userId);
             con.Open();
             cmd.ExecuteNonQuery();
         }
-
-
-
-
     }
-
-
 }

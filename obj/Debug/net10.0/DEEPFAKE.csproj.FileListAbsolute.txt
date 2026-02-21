@@ -272,3 +272,5 @@ C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\bin\Debug\net10.0\runtim
 C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\bin\Debug\net10.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\obj\Debug\net10.0\DEEPFAKE.csproj.AssemblyReference.cache
 C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\obj\Debug\net10.0\DEEPFAKE.csproj.Up2Date
+C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\bin\Debug\net10.0\Npgsql.dll
+C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\obj\Debug\net10.0\DEEPFAKE.sourcelink.json

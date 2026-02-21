@@ -2,6 +2,7 @@
 using DEEPFAKE.Services.Implementations;
 using DEEPFAKE.Services.Interfaces;
 using DEEPFAKE.Services.UrlAnalysis;
+using DEEPFAKE.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,9 @@ builder.Services.AddScoped<UrlAnalysisRepository>();
 builder.Services.AddHttpClient();
 
 var app = builder.Build();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+DatabaseInitializer.Initialize(connectionString);
 
 
 // ===================================
