@@ -1,0 +1,102 @@
+[
+  {
+    "ContainingType": "DEEPFAKE.Controllers.EmailAnalysisController",
+    "Method": "Analyze",
+    "RelativePath": "api/email/analyze",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "DEEPFAKE.DTOs.EmailAnalysisRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DEEPFAKE.Controllers.EmailAnalysisController",
+    "Method": "History",
+    "RelativePath": "api/email/history",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DEEPFAKE.Controllers.EmailAnalysisController",
+    "Method": "ClearHistory",
+    "RelativePath": "api/email/history",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DEEPFAKE.Controllers.ImageController",
+    "Method": "Generate",
+    "RelativePath": "api/image/generate",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "DEEPFAKE.Controllers.PromptRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DEEPFAKE.Controllers.UrlAnalysisController",
+    "Method": "Analyze",
+    "RelativePath": "api/url/analyze",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "DEEPFAKE.DTOs.UrlAnalysisRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DEEPFAKE.Controllers.UrlAnalysisController",
+    "Method": "History",
+    "RelativePath": "api/url/history",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DEEPFAKE.Controllers.UrlAnalysisController",
+    "Method": "Clear",
+    "RelativePath": "api/url/history",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]

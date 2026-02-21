@@ -1,0 +1,1112 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="cyberpunk-2077">
+<head>
+    <meta charset="utf-8" />
+    <title>DEEPFAKE NEXUS | AI Media Detection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+
+    <!-- DEPENDENCIES -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&family=Audiowide&family=Black+Ops+One&display=swap" rel="stylesheet">
+
+    <style>
+        /* === CYBERPUNK THEME === */
+        :root {
+            --cyber-void: #0b0f19;
+            --cyber-dark: #0f172a;
+            --cyber-darker: #090d1a;
+            --cyber-blue: #38bdf8;
+            --cyber-cyan: #00f3ff;
+            --cyber-purple: #9d00ff;
+            --cyber-pink: #ff00ff;
+            --cyber-green: #00ff9d;
+            --cyber-red: #ff003c;
+            --cyber-yellow: #fff700;
+            --cyber-orange: #ff7700;
+            --cyber-warning: #ff9900;
+        }
+
+        /* === BASE STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            background: var(--cyber-void);
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--cyber-void);
+            color: #e5e7eb;
+            overflow-x: hidden;
+            min-height: 100vh;
+            /* padding: 2rem; */
+            position: relative;
+        }
+
+        /* === BACKGROUND EFFECTS === */
+        .cyber-bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.05) 0%, transparent 50%), radial-gradient(circle at 90% 80%, rgba(157, 0, 255, 0.05) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(0, 243, 255, 0.03) 0%, transparent 70%);
+            z-index: -100;
+            pointer-events: none;
+        }
+
+        .cyber-grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px), linear-gradient(0deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: -99;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .cyber-scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyber-green), var(--cyber-cyan), var(--cyber-purple), transparent);
+            z-index: 999;
+            pointer-events: none;
+            animation: cyberScan 8s linear infinite;
+            box-shadow: 0 0 30px var(--cyber-green);
+        }
+
+        @@keyframes cyberScan {
+            0% {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+
+            10%, 90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* === MAIN CONTAINER === */
+        .cyber-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* === NAVIGATION === */
+        .cyber-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 12px;
+            color: var(--cyber-cyan);
+            text-decoration: none;
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .cyber-nav-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.3), transparent);
+                transition: 0.5s ease;
+            }
+
+            .cyber-nav-btn:hover::before {
+                left: 100%;
+            }
+
+            .cyber-nav-btn:hover {
+                background: rgba(56, 189, 248, 0.2);
+                border-color: var(--cyber-cyan);
+                color: white;
+                transform: translateX(-5px);
+                box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            }
+
+        /* === HEADER === */
+        .cyber-header {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .cyber-title {
+            font-family: 'Audiowide', cursive;
+            background: linear-gradient(135deg, var(--cyber-cyan), var(--cyber-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .cyber-subtitle {
+            color: rgba(229, 231, 235, 0.7);
+            font-size: 1.1rem;
+            max-width: 800px;
+        }
+
+        /* === UPLOAD CARD === */
+        .cyber-card {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 20px;
+            border: 2px solid rgba(56, 189, 248, 0.3);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 80px rgba(56, 189, 248, 0.2), inset 0 0 40px rgba(56, 189, 248, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 2rem;
+        }
+
+            .cyber-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 120px rgba(56, 189, 248, 0.3), inset 0 0 60px rgba(56, 189, 248, 0.15);
+            }
+
+            .cyber-card::before {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                background: linear-gradient(45deg, var(--cyber-blue), var(--cyber-purple), var(--cyber-pink), var(--cyber-blue));
+                background-size: 400% 400%;
+                border-radius: 22px;
+                z-index: -1;
+                opacity: 0;
+                transition: opacity 0.4s ease;
+                animation: gradientFlow 3s linear infinite;
+            }
+
+            .cyber-card:hover::before {
+                opacity: 1;
+            }
+
+        @@keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* === UPLOAD AREA === */
+        .cyber-upload-label {
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            color: var(--cyber-blue);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .cyber-upload-area {
+            background: rgba(15, 23, 42, 0.9);
+            border: 3px dashed rgba(56, 189, 248, 0.3);
+            border-radius: 15px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .cyber-upload-area:hover {
+                border-color: var(--cyber-cyan);
+                background: rgba(56, 189, 248, 0.05);
+                transform: scale(1.02);
+            }
+
+            .cyber-upload-area.dragover {
+                border-color: var(--cyber-green);
+                background: rgba(0, 255, 157, 0.05);
+                transform: scale(1.03);
+            }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--cyber-blue);
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.5));
+        }
+
+        .upload-text {
+            color: rgba(229, 231, 235, 0.8);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .upload-subtext {
+            color: rgba(229, 231, 235, 0.5);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-info {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+            .file-info.active {
+                display: block;
+                animation: fadeIn 0.3s ease;
+            }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .file-name {
+            color: var(--cyber-cyan);
+            font-family: 'Share Tech Mono', monospace;
+            word-break: break-all;
+        }
+
+        .file-size {
+            color: rgba(229, 231, 235, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* === ANALYZE BUTTON === */
+        .cyber-analyze-btn {
+            width: 100%;
+            padding: 1.2rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-purple));
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+            .cyber-analyze-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                transition: 0.8s ease;
+            }
+
+            .cyber-analyze-btn:hover::before {
+                left: 100%;
+            }
+
+            .cyber-analyze-btn:hover {
+                transform: translateY(-5px) scale(1.02);
+                box-shadow: 0 20px 60px rgba(56, 189, 248, 0.5), 0 0 100px rgba(56, 189, 248, 0.3);
+                letter-spacing: 3px;
+            }
+
+            .cyber-analyze-btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none !important;
+            }
+
+                .cyber-analyze-btn:disabled:hover::before {
+                    left: -100%;
+                }
+
+        /* === RESULT CARD === */
+        .result-card {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 20px;
+            border: 2px solid var(--cyber-warning);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 80px rgba(255, 153, 0, 0.2), inset 0 0 40px rgba(255, 153, 0, 0.1);
+            margin-top: 2rem;
+            display: none;
+        }
+
+            .result-card.active {
+                display: block;
+                animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+        @@keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyber-red), var(--cyber-yellow), var(--cyber-green));
+            opacity: 0.7;
+        }
+
+        .result-title {
+            font-family: 'Orbitron', monospace;
+            color: var(--cyber-warning);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .result-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .result-item {
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 3px solid;
+            font-family: 'Exo 2', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+
+            .result-item:hover {
+                background: rgba(255, 255, 255, 0.08);
+                transform: translateX(5px);
+            }
+
+            .result-item.warning {
+                border-left-color: var(--cyber-warning);
+                color: var(--cyber-yellow);
+            }
+
+            .result-item.info {
+                border-left-color: var(--cyber-blue);
+                color: var(--cyber-cyan);
+            }
+
+            .result-item.danger {
+                border-left-color: var(--cyber-red);
+                color: var(--cyber-red);
+            }
+
+            .result-item.success {
+                border-left-color: var(--cyber-green);
+                color: var(--cyber-green);
+            }
+
+        .result-icon {
+            font-size: 1.2rem;
+        }
+
+        /* === PROGRESS BAR === */
+        .cyber-progress {
+            height: 6px;
+            background: rgba(229, 231, 235, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+            display: none;
+        }
+
+            .cyber-progress.active {
+                display: block;
+                animation: fadeIn 0.3s ease;
+            }
+
+        .cyber-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyber-purple), var(--cyber-blue), var(--cyber-cyan));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .cyber-progress-bar::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                animation: shimmer 2s infinite;
+            }
+
+        @@keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* === TERMINAL OUTPUT === */
+        .cyber-terminal {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 15px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            color: rgba(56, 189, 248, 0.9);
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+            .cyber-terminal.active {
+                display: block;
+            }
+
+        .terminal-line {
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: typeIn 0.3s ease forwards;
+        }
+
+            .terminal-line.success {
+                color: var(--cyber-green);
+            }
+
+            .terminal-line.warning {
+                color: var(--cyber-yellow);
+            }
+
+            .terminal-line.error {
+                color: var(--cyber-red);
+            }
+
+            .terminal-line.info {
+                color: var(--cyber-cyan);
+            }
+
+        @@keyframes typeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        @@media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .cyber-title {
+                font-size: 2rem;
+            }
+
+            .cyber-card {
+                padding: 1.5rem;
+            }
+
+            .cyber-upload-area {
+                padding: 2rem 1rem;
+            }
+
+            .upload-icon {
+                font-size: 3rem;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .cyber-title {
+                font-size: 1.6rem;
+            }
+
+            .cyber-analyze-btn {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+
+            .result-item {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* === FILE TYPE ICONS === */
+        .file-type-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .file-type-image {
+            color: var(--cyber-green);
+        }
+
+        .file-type-video {
+            color: var(--cyber-blue);
+        }
+
+        .file-type-audio {
+            color: var(--cyber-purple);
+        }
+
+        .file-type-document {
+            color: var(--cyber-yellow);
+        }
+
+        /* === CONFIDENCE METER === */
+        .confidence-meter {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+            .confidence-meter.active {
+                display: block;
+            }
+
+        .confidence-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .confidence-value {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--cyber-cyan);
+        }
+
+        .confidence-bar {
+            height: 10px;
+            background: rgba(229, 231, 235, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 1s ease-out;
+        }
+
+        .confidence-low {
+            background: var(--cyber-red);
+        }
+
+        .confidence-medium {
+            background: var(--cyber-yellow);
+        }
+
+        .confidence-high {
+            background: var(--cyber-green);
+        }
+    </style>
+</head>
+<body>
+    <!-- BACKGROUND EFFECTS -->
+    <div class="cyber-bg-overlay"></div>
+    <div class="cyber-grid-lines"></div>
+    <div class="cyber-scan-line"></div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="cyber-container">
+        <!-- BACK NAVIGATION -->
+        <a href="/Home/Dashboard" class="cyber-nav-btn mb-4">
+            <i class="fas fa-arrow-left"></i>
+            BACK TO DASHBOARD
+        </a>
+
+        <!-- HEADER -->
+        <div class="cyber-header">
+            <h1 class="cyber-title">
+                <i class="fas fa-robot me-2"></i>
+                AI-GENERATED MEDIA DETECTION
+            </h1>
+            <p class="cyber-subtitle">
+                Upload an image, video, or audio file to analyze whether it contains AI-generated
+                or manipulated content. Our neural networks use advanced pattern recognition
+                to detect anomalies in digital media.
+            </p>
+        </div>
+
+        <!-- UPLOAD CARD -->
+        <div class="cyber-card">
+            <label class="cyber-upload-label">
+                <i class="fas fa-file-upload"></i>
+                UPLOAD MEDIA FILE
+            </label>
+
+            <!-- UPLOAD AREA -->
+            <div class="cyber-upload-area" id="uploadArea">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <p class="upload-text">
+                    Drag & drop your file here
+                </p>
+                <p class="upload-subtext">
+                    or click to browse (Max: 100MB)
+                </p>
+                <p class="upload-subtext">
+                    Supported: JPG, PNG, GIF, MP4, AVI, MOV, MP3, WAV
+                </p>
+                <input type="file"
+                       class="form-control d-none"
+                       id="fileInput"
+                       accept=".jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.mp3,.wav" />
+
+                <!-- FILE INFO -->
+                <div class="file-info" id="fileInfo">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-file me-2"></i>
+                            <span class="file-name" id="fileName">No file selected</span>
+                        </div>
+                        <span class="file-size" id="fileSize">0 MB</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROGRESS BAR -->
+            <div class="cyber-progress" id="progressBar">
+                <div class="cyber-progress-bar" id="progressFill"></div>
+            </div>
+
+            <!-- ANALYZE BUTTON -->
+            <button class="cyber-analyze-btn" id="analyzeButton" disabled>
+                <i class="fas fa-search"></i>
+                <span id="analyzeButtonText">ANALYZE MEDIA</span>
+            </button>
+
+            <!-- TERMINAL OUTPUT -->
+            <div class="cyber-terminal" id="terminalOutput"></div>
+        </div>
+
+        <!-- RESULT CARD -->
+        <div class="result-card" id="resultCard">
+            <h4 class="result-title">
+                <i class="fas fa-chart-bar"></i>
+                ANALYSIS RESULTS
+            </h4>
+
+            <!-- CONFIDENCE METER -->
+            <div class="confidence-meter" id="confidenceMeter">
+                <div class="confidence-label">
+                    <span>Detection Confidence:</span>
+                    <span class="confidence-value" id="confidenceValue">0%</span>
+                </div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" id="confidenceFill"></div>
+                </div>
+            </div>
+
+            <!-- RESULTS LIST -->
+            <ul class="result-list" id="resultsList">
+                <!-- Results will be populated here -->
+            </ul>
+        </div>
+
+        <!-- SAMPLE RESULT (Hidden by default, can be shown for demo) -->
+        <div class="result-card" id="sampleResult" style="display: none;">
+            <h4 class="result-title">
+                <i class="fas fa-eye"></i>
+                SAMPLE ANALYSIS (DEMO)
+            </h4>
+
+            <div class="confidence-meter active">
+                <div class="confidence-label">
+                    <span>Detection Confidence:</span>
+                    <span class="confidence-value" style="color: var(--cyber-warning)">72%</span>
+                </div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill confidence-medium" style="width: 72%"></div>
+                </div>
+            </div>
+
+            <ul class="result-list">
+                <li class="result-item warning">
+                    <i class="fas fa-exclamation-triangle result-icon"></i>
+                    <span>⚠ Metadata inconsistencies detected</span>
+                </li>
+                <li class="result-item warning">
+                    <i class="fas fa-robot result-icon"></i>
+                    <span>⚠ Possible AI-generation indicators found</span>
+                </li>
+                <li class="result-item info">
+                    <i class="fas fa-info-circle result-icon"></i>
+                    <span>ℹ Further verification recommended</span>
+                </li>
+                <li class="result-item info">
+                    <i class="fas fa-fingerprint result-icon"></i>
+                    <span>ℹ No digital watermark found</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const analyzeButton = document.getElementById('analyzeButton');
+            const analyzeButtonText = document.getElementById('analyzeButtonText');
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            const terminalOutput = document.getElementById('terminalOutput');
+            const resultCard = document.getElementById('resultCard');
+            const resultsList = document.getElementById('resultsList');
+            const confidenceMeter = document.getElementById('confidenceMeter');
+            const confidenceValue = document.getElementById('confidenceValue');
+            const confidenceFill = document.getElementById('confidenceFill');
+            const sampleResult = document.getElementById('sampleResult');
+
+            let selectedFile = null;
+            let isAnalyzing = false;
+
+            // Upload area click handler
+            uploadArea.addEventListener('click', () => fileInput.click());
+
+            // Drag and drop handlers
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => {
+                    uploadArea.classList.add('dragover');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => {
+                    uploadArea.classList.remove('dragover');
+                }, false);
+            });
+
+            uploadArea.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length) {
+                    handleFile(files[0]);
+                }
+            }
+
+            // File input change handler
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleFile(e.target.files[0]);
+                }
+            });
+
+            function handleFile(file) {
+                // Validate file size
+                if (file.size > 100 * 1024 * 1024) { // 100MB
+                    showTerminalMessage('File size exceeds 100MB limit', 'error');
+                    return;
+                }
+
+                // Validate file type
+                const validTypes = [
+                    'image/jpeg', 'image/png', 'image/gif',
+                    'video/mp4', 'video/avi', 'video/quicktime',
+                    'audio/mpeg', 'audio/wav'
+                ];
+
+                if (!validTypes.includes(file.type) && !file.name.match(/\.(jpg|jpeg|png|gif|mp4|avi|mov|mp3|wav)$/i)) {
+                    showTerminalMessage('Unsupported file type', 'error');
+                    return;
+                }
+
+                selectedFile = file;
+
+                // Update UI
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                fileInfo.classList.add('active');
+                analyzeButton.disabled = false;
+
+                // Show file type icon
+                showTerminalMessage(`File selected: ${file.name}`, 'success');
+                showTerminalMessage(`Type: ${file.type || 'Unknown'}`, 'info');
+                showTerminalMessage(`Size: ${formatFileSize(file.size)}`, 'info');
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            // Terminal message function
+            function showTerminalMessage(message, type = 'info') {
+                const line = document.createElement('div');
+                line.className = `terminal-line ${type}`;
+                line.innerHTML = `> ${message}`;
+                terminalOutput.appendChild(line);
+                terminalOutput.classList.add('active');
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+
+                // Animate typing
+                const text = line.textContent;
+                line.textContent = '';
+                let i = 0;
+                function typeWriter() {
+                    if (i < text.length) {
+                        line.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 20);
+                    }
+                }
+                typeWriter();
+            }
+
+            // Clear terminal
+            function clearTerminal() {
+                terminalOutput.innerHTML = '';
+            }
+
+            // Analyze button handler
+            analyzeButton.addEventListener('click', async () => {
+                if (!selectedFile || isAnalyzing) return;
+
+                isAnalyzing = true;
+                analyzeButton.disabled = true;
+                analyzeButtonText.textContent = 'ANALYZING...';
+                analyzeButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING...';
+
+                // Clear previous results
+                clearTerminal();
+                resultCard.classList.remove('active');
+                resultsList.innerHTML = '';
+                confidenceMeter.classList.remove('active');
+
+                // Show progress bar
+                progressBar.classList.add('active');
+                progressFill.style.width = '0%';
+
+                // Terminal messages
+                showTerminalMessage('Initializing AI detection protocol...', 'info');
+                showTerminalMessage(`Processing: ${selectedFile.name}`, 'info');
+
+                // Simulate analysis progress
+                const steps = [
+                    { percent: 10, message: 'Loading file into memory buffer...', delay: 500 },
+                    { percent: 25, message: 'Extracting metadata...', delay: 800 },
+                    { percent: 40, message: 'Analyzing pixel patterns...', delay: 1200 },
+                    { percent: 55, message: 'Checking for AI artifacts...', delay: 800 },
+                    { percent: 70, message: 'Comparing with training datasets...', delay: 1500 },
+                    { percent: 85, message: 'Running neural network analysis...', delay: 2000 },
+                    { percent: 95, message: 'Finalizing results...', delay: 1000 },
+                    { percent: 100, message: 'Analysis complete!', delay: 500 }
+                ];
+
+                for (const step of steps) {
+                    await new Promise(resolve => setTimeout(resolve, step.delay));
+                    progressFill.style.width = step.percent + '%';
+                    showTerminalMessage(step.message, 'info');
+                }
+
+                // Hide progress bar
+                setTimeout(() => {
+                    progressBar.classList.remove('active');
+                }, 500);
+
+                // Show results
+                showResults();
+            });
+
+            function showResults() {
+                // Simulate detection results
+                const confidence = Math.floor(Math.random() * 100);
+                confidenceValue.textContent = confidence + '%';
+
+                let confidenceClass = 'confidence-low';
+                if (confidence > 70) confidenceClass = 'confidence-high';
+                else if (confidence > 40) confidenceClass = 'confidence-medium';
+
+                confidenceFill.className = `confidence-fill ${confidenceClass}`;
+                confidenceFill.style.width = confidence + '%';
+                confidenceMeter.classList.add('active');
+
+                // Generate results based on confidence
+                const results = [];
+
+                if (confidence > 70) {
+                    results.push(
+                        { type: 'danger', icon: 'fa-exclamation-circle', text: 'High probability of AI generation detected' },
+                        { type: 'warning', icon: 'fa-robot', text: 'Multiple AI artifacts identified' },
+                        { type: 'info', icon: 'fa-microscope', text: 'Detailed analysis available on request' }
+                    );
+                } else if (confidence > 40) {
+                    results.push(
+                        { type: 'warning', icon: 'fa-exclamation-triangle', text: 'Possible AI-generation indicators found' },
+                        { type: 'warning', icon: 'fa-cogs', text: 'Metadata inconsistencies detected' },
+                        { type: 'info', icon: 'fa-info-circle', text: 'Further verification recommended' }
+                    );
+                } else {
+                    results.push(
+                        { type: 'success', icon: 'fa-check-circle', text: 'No significant AI indicators detected' },
+                        { type: 'info', icon: 'fa-shield-alt', text: 'File appears to be authentic' },
+                        { type: 'info', icon: 'fa-clipboard-check', text: 'Basic validation passed' }
+                    );
+                }
+
+                // Add some random additional findings
+                const additionalFindings = [
+                    { type: 'info', icon: 'fa-fingerprint', text: 'No digital watermark found' },
+                    { type: 'info', icon: 'fa-history', text: 'Creation timestamp verified' },
+                    { type: 'info', icon: 'fa-compress-alt', text: 'No compression anomalies' }
+                ];
+
+                results.push(additionalFindings[Math.floor(Math.random() * additionalFindings.length)]);
+
+                // Populate results list
+                resultsList.innerHTML = '';
+                results.forEach(result => {
+                    const li = document.createElement('li');
+                    li.className = `result-item ${result.type}`;
+                    li.innerHTML = `
+                        <i class="fas ${result.icon} result-icon"></i>
+                        <span>${result.text}</span>
+                    `;
+                    resultsList.appendChild(li);
+                });
+
+                // Show result card with animation
+                resultCard.classList.add('active');
+
+                // Reset button
+                isAnalyzing = false;
+                analyzeButton.disabled = false;
+                analyzeButtonText.textContent = 'ANALYZE ANOTHER FILE';
+                analyzeButton.innerHTML = '<i class="fas fa-redo"></i> ANALYZE ANOTHER FILE';
+
+                // Show terminal success message
+                showTerminalMessage('Analysis results ready', 'success');
+                showTerminalMessage(`Confidence level: ${confidence}%`, 'info');
+            }
+
+            // Demo button (optional - for quick testing)
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'd') {
+                    e.preventDefault();
+                    sampleResult.style.display = sampleResult.style.display === 'none' ? 'block' : 'none';
+                }
+            });
+
+            // Initial terminal message
+            setTimeout(() => {
+                showTerminalMessage('System ready for media analysis', 'success');
+                showTerminalMessage('Upload a file to begin detection sequence', 'info');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

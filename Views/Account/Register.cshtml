@@ -1,0 +1,705 @@
+﻿
+<!DOCTYPE html>
+<html lang="en" class="cyberpunk-2077">
+<head>
+    <meta charset="utf-8" />
+    <title>DEEPFAKE NEXUS | Create Account</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+
+    <!-- DEPENDENCIES -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&family=Audiowide&family=Black+Ops+One&display=swap" rel="stylesheet">
+
+    <!-- 🔹 YOUR ORIGINAL CSS (UNCHANGED) -->
+    <style>
+        /* === CYBERPUNK THEME === */
+        :root {
+            --cyber-void: #0b0f19;
+            --cyber-dark: #0f172a;
+            --cyber-darker: #090d1a;
+            --cyber-blue: #38bdf8;
+            --cyber-cyan: #00f3ff;
+            --cyber-purple: #9d00ff;
+            --cyber-pink: #ff00ff;
+            --cyber-green: #00ff9d;
+            --cyber-red: #ff003c;
+            --cyber-yellow: #fff700;
+            --cyber-orange: #ff7700;
+        }
+
+        /* === BASE STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            background: var(--cyber-void);
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--cyber-void);
+            color: #e5e7eb;
+            overflow-x: hidden;
+            min-height: 100vh;
+            /* display: flex; */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            /* padding: 2rem; */
+        }
+
+        /* === REGISTER BACKGROUND EFFECTS === */
+        .register-bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(157, 0, 255, 0.05) 0%, transparent 50%);
+            z-index: -100;
+            pointer-events: none;
+        }
+
+        .register-grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(90deg, rgba(56, 189, 248, 0.02) 1px, transparent 1px), linear-gradient(0deg, rgba(56, 189, 248, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -99;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .register-security-scan {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--cyber-green), var(--cyber-blue), var(--cyber-purple), transparent);
+            z-index: 999;
+            pointer-events: none;
+            animation: securityScan 3s ease-in-out infinite;
+            box-shadow: 0 0 30px var(--cyber-green);
+        }
+
+        @@keyframes securityScan {
+            0% {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+
+            10%, 90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* === REGISTER CONTAINER === */
+        .register-container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        /* === REGISTER FORM CARD === */
+        .register-form-card {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 25px;
+            border: 2px solid rgba(56, 189, 248, 0.3);
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 25px 75px rgba(0, 0, 0, 0.7), 0 0 100px rgba(56, 189, 248, 0.3), inset 0 0 50px rgba(56, 189, 248, 0.1);
+            transform: translateZ(0);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+            .register-form-card::before {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                background: linear-gradient(45deg, var(--cyber-blue), var(--cyber-purple), var(--cyber-pink), var(--cyber-blue));
+                background-size: 400% 400%;
+                border-radius: 27px;
+                z-index: -1;
+                opacity: 0;
+                transition: opacity 0.4s ease;
+                animation: gradientFlow 3s linear infinite;
+            }
+
+            .register-form-card:hover::before {
+                opacity: 1;
+            }
+
+            .register-form-card:hover {
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 35px 100px rgba(0, 0, 0, 0.8), 0 0 150px rgba(56, 189, 248, 0.5), inset 0 0 80px rgba(56, 189, 248, 0.2);
+            }
+
+        @@keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* === REGISTER HEADER === */
+        .register-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .register-title {
+            font-family: 'Audiowide', cursive;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--cyber-purple), var(--cyber-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .register-subtitle {
+            color: rgba(229, 231, 235, 0.7);
+            font-size: 1.1rem;
+        }
+
+        /* === WELCOME BADGE === */
+        .welcome-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(157, 0, 255, 0.1);
+            border: 1px solid rgba(157, 0, 255, 0.3);
+            border-radius: 30px;
+            margin: 1.5rem auto;
+            animation: welcomePulse 2s infinite ease-in-out;
+        }
+
+        @@keyframes welcomePulse {
+            0%, 100% {
+                box-shadow: 0 0 15px rgba(157, 0, 255, 0.3);
+                transform: scale(1);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(157, 0, 255, 0.5);
+                transform: scale(1.02);
+            }
+        }
+
+        .welcome-text {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--cyber-purple);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* === REGISTER FORM === */
+        .cyber-form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .cyber-form-label {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            color: var(--cyber-blue);
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .cyber-form-control {
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid rgba(56, 189, 248, 0.3);
+            border-radius: 15px;
+            color: #e5e7eb;
+            padding: 1.2rem 1.5rem;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+            .cyber-form-control:focus {
+                outline: none;
+                border-color: var(--cyber-blue);
+                background: rgba(15, 23, 42, 0.95);
+                box-shadow: 0 0 30px rgba(56, 189, 248, 0.4), inset 0 0 20px rgba(56, 189, 248, 0.1);
+                transform: translateY(-2px);
+            }
+
+            .cyber-form-control::placeholder {
+                color: rgba(229, 231, 235, 0.4);
+            }
+
+        /* === PASSWORD SECTION === */
+        .password-section {
+            position: relative;
+        }
+
+        .password-strength {
+            height: 4px;
+            background: rgba(229, 231, 235, 0.1);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .password-strength-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            background: linear-gradient(90deg, var(--cyber-red), var(--cyber-yellow), var(--cyber-green));
+        }
+
+        .password-requirements {
+            margin-top: 0.5rem;
+            padding: 0.8rem;
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 10px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .requirement-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.85rem;
+        }
+
+        .requirement-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.3rem;
+            color: rgba(229, 231, 235, 0.7);
+        }
+
+            .requirement-item.valid {
+                color: var(--cyber-green);
+            }
+
+            .requirement-item.invalid {
+                color: rgba(229, 231, 235, 0.5);
+            }
+
+        /* === TERMS CHECKBOX === */
+        .terms-group {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 15px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .cyber-checkbox-large {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--cyber-purple);
+            border-radius: 6px;
+            background: rgba(157, 0, 255, 0.1);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+            .cyber-checkbox-large.checked {
+                background: var(--cyber-purple);
+            }
+
+                .cyber-checkbox-large.checked::after {
+                    content: '✓';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    color: white;
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+
+        .terms-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            cursor: pointer;
+        }
+
+        .terms-text {
+            color: rgba(229, 231, 235, 0.8);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .terms-link {
+            color: var(--cyber-cyan);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+            .terms-link:hover {
+                color: white;
+                text-shadow: 0 0 10px var(--cyber-cyan);
+            }
+
+        /* === REGISTER BUTTON === */
+        .cyber-register-btn {
+            width: 100%;
+            padding: 1.2rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--cyber-purple), var(--cyber-pink));
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+            .cyber-register-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                transition: 0.8s ease;
+            }
+
+            .cyber-register-btn:hover::before {
+                left: 100%;
+            }
+
+            .cyber-register-btn:hover {
+                transform: translateY(-5px) scale(1.02);
+                box-shadow: 0 20px 60px rgba(157, 0, 255, 0.5), 0 0 100px rgba(157, 0, 255, 0.3);
+                letter-spacing: 3px;
+            }
+
+            .cyber-register-btn:active {
+                transform: translateY(-2px) scale(0.98);
+            }
+
+            .cyber-register-btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none !important;
+            }
+
+        /* === LOGIN LINK === */
+        .login-link {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .login-text {
+            color: rgba(229, 231, 235, 0.7);
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-cta {
+            color: var(--cyber-blue);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+            .login-cta:hover {
+                color: var(--cyber-cyan);
+                transform: translateX(5px);
+                text-shadow: 0 0 15px var(--cyber-blue);
+            }
+
+        /* === ACCOUNT BENEFITS === */
+        .benefits-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .benefits-title {
+            font-family: 'Orbitron', monospace;
+            color: var(--cyber-green);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .benefits-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            list-style: none;
+            padding: 0;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .benefit-icon {
+            color: var(--cyber-green);
+            font-size: 1.2rem;
+        }
+
+        .benefit-text {
+            color: rgba(229, 231, 235, 0.9);
+            font-size: 0.9rem;
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        @@media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .register-form-card {
+                padding: 2rem;
+            }
+
+            .register-title {
+                font-size: 2rem;
+            }
+
+            .cyber-register-btn {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+
+            .benefits-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .register-form-card {
+                padding: 1.5rem;
+            }
+
+            .register-title {
+                font-size: 1.6rem;
+            }
+
+            .cyber-form-control {
+                padding: 1rem;
+            }
+
+            .terms-content {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- BACKGROUND EFFECTS -->
+    <div class="register-bg-overlay"></div>
+    <div class="register-grid-lines"></div>
+    <div class="register-security-scan"></div>
+
+    <div class="container" style="display:flex;justify-content:center;">
+        <div class="register-container">
+            <div class="register-form-card">
+
+                <!-- HEADER -->
+                <div class="register-header">
+                    <h1 class="register-title">
+                        <i class="fas fa-user-plus me-2"></i>
+                        CREATE ACCOUNT
+                    </h1>
+                    <p class="register-subtitle">Join the quantum security revolution</p>
+
+                    <div class="welcome-badge">
+                        <i class="fas fa-rocket"></i>
+                        <span class="welcome-text">WELCOME TO THE FUTURE</span>
+                    </div>
+                </div>
+
+                <!-- 🔴 FORM (BACKEND ENABLED) -->
+                <form id="registerForm" method="post" action="/Account/Register">
+
+                    <!-- FULL NAME -->
+                    <div class="cyber-form-group">
+                        <label class="cyber-form-label">
+                            <i class="fas fa-user"></i> Full Name
+                        </label>
+                        <input type="text"
+                               name="FullName"
+                               class="cyber-form-control"
+                               placeholder="Enter your full name"
+                               required />
+                    </div>
+
+                    <!-- EMAIL -->
+                    <div class="cyber-form-group">
+                        <label class="cyber-form-label">
+                            <i class="fas fa-envelope"></i> Email Address
+                        </label>
+                        <input type="email"
+                               name="Email"
+                               class="cyber-form-control"
+                               placeholder="Enter your email"
+                               required />
+                    </div>
+
+                    <!-- PASSWORD -->
+                    <div class="cyber-form-group password-section">
+                        <label class="cyber-form-label">
+                            <i class="fas fa-key"></i> Password
+                        </label>
+                        <input type="password"
+                               name="password"
+                               id="passwordInput"
+                               class="cyber-form-control"
+                               placeholder="Create a secure password"
+                               required />
+                        <div class="password-strength">
+                            <div class="password-strength-fill" id="passwordStrength"></div>
+                        </div>
+                    </div>
+
+                    <!-- CONFIRM PASSWORD -->
+                    <div class="cyber-form-group">
+                        <label class="cyber-form-label">
+                            <i class="fas fa-key"></i> Confirm Password
+                        </label>
+                        <input type="password"
+                               id="confirmPassword"
+                               class="cyber-form-control"
+                               required />
+                        <div class="mt-2" id="passwordMatch"></div>
+                    </div>
+
+                    <!-- TERMS -->
+                    <div class="terms-group">
+                        <div class="terms-content" id="termsCheckbox">
+                            <div class="cyber-checkbox-large" id="termsCheckboxElement"></div>
+                            <div class="terms-text">
+                                I agree to the Terms & Privacy Policy
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUBMIT -->
+                    <button type="submit" class="cyber-register-btn" id="registerButton" disabled>
+                        <i class="fas fa-user-plus"></i>
+                        CREATE ACCOUNT
+                    </button>
+
+                    <div class="login-link">
+                        <p class="login-text">Already have an account?</p>
+                        <a href="/Account/Login" class="login-cta">
+                            <i class="fas fa-sign-in-alt"></i> LOGIN
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS (VALIDATION ONLY – NO preventDefault) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const passwordInput = document.getElementById('passwordInput');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const matchText = document.getElementById('passwordMatch');
+            const btn = document.getElementById('registerButton');
+            const checkbox = document.getElementById('termsCheckboxElement');
+
+            function validate() {
+                const ok =
+                    passwordInput.value &&
+                    confirmPassword.value &&
+                    passwordInput.value === confirmPassword.value &&
+                    checkbox.classList.contains('checked');
+
+                btn.disabled = !ok;
+                matchText.innerHTML = ok
+                    ? '<span style="color:#00ff9d">Passwords match</span>'
+                    : '<span style="color:#ff003c">Passwords do not match</span>';
+            }
+
+            passwordInput.addEventListener('input', validate);
+            confirmPassword.addEventListener('input', validate);
+            document.getElementById('termsCheckbox').onclick = () => {
+                checkbox.classList.toggle('checked');
+                validate();
+            };
+        });
+    </script>
+</body>
+</html>

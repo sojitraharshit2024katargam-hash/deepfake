@@ -1,0 +1,1783 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>DEEPFAKE NEXUS | Email Analysis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+
+    <!-- DEPENDENCIES -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&family=Audiowide&display=swap" rel="stylesheet">
+
+    <style>
+        /* === CYBERPUNK THEME ENHANCED === */
+        :root {
+            --cyber-void: #0b0f19;
+            --cyber-dark: #0f172a;
+            --cyber-darker: #090d1a;
+            --cyber-blue: #38bdf8;
+            --cyber-cyan: #00f3ff;
+            --cyber-purple: #9d00ff;
+            --cyber-green: #00ff9d;
+            --cyber-red: #ff003c;
+            --cyber-yellow: #fff700;
+            --cyber-pink: #ff00ff;
+            --cyber-orange: #ff6b00;
+        }
+
+        /* === BASE STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            background: var(--cyber-void);
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--cyber-void);
+            color: #e5e7eb;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* === ENHANCED BACKGROUND EFFECTS === */
+        .enhanced-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(157, 0, 255, 0.15) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(255, 0, 60, 0.08) 0%, transparent 50%);
+            z-index: -200;
+            pointer-events: none;
+        }
+
+        .matrix-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(90deg, rgba(0, 255, 157, 0.03) 1px, transparent 1px), linear-gradient(0deg, rgba(0, 255, 157, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+            z-index: -199;
+            pointer-events: none;
+            animation: gridPulse 8s ease-in-out infinite;
+        }
+
+        @@keyframes gridPulse {
+            0%, 100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .binary-fall {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -198;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* === FLOATING ORBS === */
+        .floating-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(40px);
+            z-index: -197;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--cyber-purple) 0%, transparent 70%);
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--cyber-blue) 0%, transparent 70%);
+            bottom: 10%;
+            right: 5%;
+            animation-delay: -5s;
+        }
+
+        .orb-3 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, var(--cyber-green) 0%, transparent 70%);
+            top: 50%;
+            left: 80%;
+            animation-delay: -10s;
+        }
+
+        @@keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(50px, -30px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-30px, 40px) scale(0.9);
+            }
+        }
+
+        /* === ENHANCED SCAN LINE === */
+        .enhanced-scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--cyber-green), var(--cyber-cyan), var(--cyber-pink), var(--cyber-blue), transparent);
+            z-index: 999;
+            pointer-events: none;
+            animation: enhancedScan 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            box-shadow: 0 0 30px var(--cyber-green), 0 0 60px var(--cyber-cyan);
+        }
+
+        @@keyframes enhancedScan {
+            0% {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* === MAIN CONTAINER === */
+        .analysis-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        @@media (max-width: 768px) {
+            .analysis-container {
+                padding: 1rem;
+            }
+        }
+
+        /* === ENHANCED BACK BUTTON === */
+        .cyber-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 2rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: white;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(157, 0, 255, 0.2));
+            border: 2px solid transparent;
+            border-image: linear-gradient(135deg, var(--cyber-blue), var(--cyber-purple)) 1;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .cyber-back-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+                transition: 0.6s;
+            }
+
+            .cyber-back-btn:hover::before {
+                left: 100%;
+            }
+
+            .cyber-back-btn:hover {
+                transform: translateX(-5px);
+                box-shadow: 0 15px 40px rgba(56, 189, 248, 0.4), 0 0 80px rgba(157, 0, 255, 0.3);
+                letter-spacing: 3px;
+            }
+
+        /* === ENHANCED HEADER === */
+        .analysis-header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 3.5rem;
+            margin-bottom: 4rem;
+            border: 2px solid rgba(56, 189, 248, 0.3);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 100px rgba(56, 189, 248, 0.15);
+        }
+
+            .analysis-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.15), transparent);
+                transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .analysis-header:hover::before {
+                left: 100%;
+            }
+
+        .analysis-title {
+            font-family: 'Audiowide', cursive;
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, var(--cyber-blue) 0%, var(--cyber-cyan) 25%, var(--cyber-pink) 50%, var(--cyber-purple) 75%, var(--cyber-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            line-height: 1.2;
+            text-shadow: 0 0 50px rgba(56, 189, 248, 0.3);
+        }
+
+        .analysis-subtitle {
+            font-size: 1.3rem;
+            color: rgba(229, 231, 235, 0.9);
+            line-height: 1.7;
+            max-width: 900px;
+        }
+
+        /* === ENHANCED STATS BAR === */
+        .stats-bar {
+            display: flex;
+            gap: 3rem;
+            margin: 2rem 0 4rem;
+            padding: 2rem;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            color: var(--cyber-green);
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .stat-label {
+            color: rgba(229, 231, 235, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        /* === ENHANCED ANALYSIS MODULE === */
+        .analysis-module {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            border: 2px solid rgba(56, 189, 248, 0.4);
+            padding: 3.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 100px rgba(0, 0, 0, 0.7), 0 0 120px rgba(56, 189, 248, 0.2), inset 0 0 60px rgba(56, 189, 248, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+            .analysis-module::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, var(--cyber-blue), var(--cyber-cyan), var(--cyber-green), transparent);
+                animation: borderScan 3s linear infinite;
+            }
+
+        @@keyframes borderScan {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .analysis-module:hover {
+            border-color: var(--cyber-cyan);
+            transform: translateY(-5px);
+            box-shadow: 0 40px 120px rgba(0, 0, 0, 0.8), 0 0 150px rgba(56, 189, 248, 0.3), inset 0 0 80px rgba(56, 189, 248, 0.15);
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .module-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-purple));
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: white;
+            box-shadow: 0 0 50px rgba(56, 189, 248, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .module-info {
+            flex: 1;
+        }
+
+        .module-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            color: white;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+        }
+
+        .module-subtitle {
+            color: rgba(229, 231, 235, 0.9);
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .cyber-error {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 0, 60, 0.6);
+            background: linear-gradient(135deg, rgba(255, 0, 60, 0.1), rgba(255, 77, 109, 0.05));
+            color: #ff4d6d;
+            font-family: 'Orbitron', monospace;
+            box-shadow: 0 0 40px rgba(255, 0, 60, 0.3), inset 0 0 20px rgba(255, 0, 60, 0.1);
+            animation: errorPulse 2s ease-in-out infinite;
+        }
+
+        @@keyframes errorPulse {
+            0%, 100% {
+                box-shadow: 0 0 30px rgba(255, 0, 60, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 60px rgba(255, 0, 60, 0.5);
+            }
+        }
+
+        .d-none {
+            display: none;
+        }
+
+        /* === ENHANCED TEXTAREA === */
+        .cyber-textarea-group {
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .cyber-textarea-label {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            color: var(--cyber-blue);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.3rem;
+        }
+
+        .cyber-textarea {
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid rgba(56, 189, 248, 0.4);
+            border-radius: 20px;
+            color: #e5e7eb;
+            padding: 2rem;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.1rem;
+            width: 100%;
+            min-height: 400px;
+            resize: vertical;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            line-height: 1.7;
+        }
+
+            .cyber-textarea:focus {
+                outline: none;
+                border-color: var(--cyber-cyan);
+                background: rgba(15, 23, 42, 0.98);
+                box-shadow: 0 0 60px rgba(56, 189, 248, 0.5), inset 0 0 40px rgba(56, 189, 248, 0.15);
+            }
+
+            .cyber-textarea::placeholder {
+                color: rgba(229, 231, 235, 0.4);
+                font-style: italic;
+                font-family: 'Exo 2', sans-serif;
+            }
+
+        .input-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.2rem;
+            padding: 0 1rem;
+            font-size: 1rem;
+        }
+
+        .char-count {
+            font-family: 'Orbitron', monospace;
+            color: var(--cyber-cyan);
+        }
+
+        .input-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--cyber-green);
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* === ENHANCED ANALYZE BUTTON === */
+        .cyber-analyze-btn {
+            width: 100%;
+            padding: 1.8rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-purple), var(--cyber-pink));
+            background-size: 200% 200%;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 3rem;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @@keyframes gradientShift {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .cyber-analyze-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.8s ease;
+        }
+
+        .cyber-analyze-btn:hover::before {
+            left: 100%;
+        }
+
+        .cyber-analyze-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 80px rgba(56, 189, 248, 0.6), 0 0 150px rgba(157, 0, 255, 0.4);
+            letter-spacing: 4px;
+        }
+
+        .cyber-analyze-btn:active {
+            transform: translateY(-2px);
+        }
+
+        .cyber-analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            animation: none;
+            transform: none !important;
+        }
+
+        /* === ENHANCED RESULTS SECTION === */
+        .results-container {
+            display: none;
+            margin-top: 4rem;
+        }
+
+            .results-container.show {
+                display: block;
+                animation: quantumReveal 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+        @@keyframes quantumReveal {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid rgba(0, 255, 157, 0.4);
+        }
+
+        .results-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            color: var(--cyber-green);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .results-score {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: conic-gradient( var(--cyber-green) 0%, var(--cyber-yellow) 50%, var(--cyber-red) 100% );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: scorePulse 2s ease-in-out infinite;
+        }
+
+            .score-circle::before {
+                content: '';
+                position: absolute;
+                width: 110px;
+                height: 110px;
+                background: var(--cyber-dark);
+                border-radius: 50%;
+            }
+
+        .score-value {
+            font-family: 'Audiowide', cursive;
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            z-index: 1;
+        }
+
+        @@keyframes scorePulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 50px rgba(0, 255, 157, 0.5);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 80px rgba(0, 255, 157, 0.8);
+            }
+        }
+
+        .score-label {
+            color: rgba(229, 231, 235, 0.8);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* === ENHANCED RESULTS GRID === */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .result-card {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 25px;
+            padding: 2.5rem;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+            .result-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 4px;
+            }
+
+            .result-card.safe::before {
+                background: linear-gradient(90deg, var(--cyber-green), var(--cyber-cyan));
+            }
+
+            .result-card.warning::before {
+                background: linear-gradient(90deg, var(--cyber-yellow), var(--cyber-orange));
+            }
+
+            .result-card.danger::before {
+                background: linear-gradient(90deg, var(--cyber-red), var(--cyber-pink));
+            }
+
+            .result-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .result-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .result-card.safe .result-icon {
+            color: var(--cyber-green);
+            box-shadow: 0 0 40px rgba(0, 255, 157, 0.4);
+        }
+
+        .result-card.warning .result-icon {
+            color: var(--cyber-yellow);
+            box-shadow: 0 0 40px rgba(255, 247, 0, 0.4);
+        }
+
+        .result-card.danger .result-icon {
+            color: var(--cyber-red);
+            box-shadow: 0 0 40px rgba(255, 0, 60, 0.4);
+        }
+
+        .result-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            color: white;
+            margin: 0;
+        }
+
+        .result-content {
+            color: rgba(229, 231, 235, 0.95);
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+
+        /* === ENHANCED ANALYSIS DETAILS === */
+        .analysis-details {
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 25px;
+            padding: 3rem;
+            border: 2px solid rgba(56, 189, 248, 0.4);
+            margin-bottom: 3rem;
+        }
+
+        .details-title {
+            font-family: 'Orbitron', monospace;
+            color: var(--cyber-blue);
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .details-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+            transition: all 0.3s ease;
+            border-radius: 12px;
+        }
+
+            .detail-item:last-child {
+                border-bottom: none;
+            }
+
+            .detail-item:hover {
+                background: rgba(56, 189, 248, 0.08);
+                transform: translateX(5px);
+            }
+
+        .detail-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .detail-item.safe .detail-icon {
+            background: rgba(0, 255, 157, 0.15);
+            color: var(--cyber-green);
+        }
+
+        .detail-item.warning .detail-icon {
+            background: rgba(255, 247, 0, 0.15);
+            color: var(--cyber-yellow);
+        }
+
+        .detail-item.danger .detail-icon {
+            background: rgba(255, 0, 60, 0.15);
+            color: var(--cyber-red);
+        }
+
+        .detail-text {
+            color: rgba(229, 231, 235, 0.95);
+            flex: 1;
+            font-size: 1.1rem;
+        }
+
+        /* === ENHANCED SCANNING ANIMATION === */
+        .scanning-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 15, 25, 0.98);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .scanning-overlay.show {
+                display: flex;
+                animation: overlayFade 0.4s ease-out;
+            }
+
+        @@keyframes overlayFade {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .scanning-content {
+            text-align: center;
+            max-width: 700px;
+            padding: 4rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 30px;
+            border: 2px solid var(--cyber-cyan);
+            box-shadow: 0 0 150px rgba(0, 243, 255, 0.5), inset 0 0 80px rgba(0, 243, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .scanning-content::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, var(--cyber-green), var(--cyber-cyan), var(--cyber-blue), transparent);
+                animation: borderScan 2s linear infinite;
+            }
+
+        .scanning-icon {
+            font-size: 5rem;
+            color: var(--cyber-cyan);
+            margin-bottom: 2.5rem;
+            animation: scanningPulse 2s ease-in-out infinite;
+        }
+
+        @@keyframes scanningPulse {
+            0%, 100% {
+                transform: scale(1);
+                text-shadow: 0 0 30px currentColor;
+            }
+
+            50% {
+                transform: scale(1.1);
+                text-shadow: 0 0 60px currentColor;
+            }
+        }
+
+        .scanning-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            color: var(--cyber-cyan);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .scanning-subtitle {
+            color: rgba(229, 231, 235, 0.9);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            line-height: 1.7;
+        }
+
+        .scanning-progress {
+            height: 6px;
+            background: rgba(229, 231, 235, 0.15);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .scanning-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyber-blue), var(--cyber-cyan), var(--cyber-green));
+            width: 0%;
+            animation: progressScan 2s ease-in-out infinite;
+        }
+
+        @@keyframes progressScan {
+            0%, 100% {
+                width: 0%;
+                transform: translateX(0);
+            }
+
+            50% {
+                width: 100%;
+                transform: translateX(0);
+            }
+        }
+
+        .scanning-stats {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--cyber-green);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        /* === ENHANCED HISTORY SECTION === */
+        .history-section {
+            margin-top: 4rem;
+            padding-top: 3rem;
+            border-top: 2px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            color: var(--cyber-blue);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .history-card {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 2px solid rgba(56, 189, 248, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+            .history-card:hover {
+                transform: translateY(-5px);
+                border-color: var(--cyber-blue);
+                box-shadow: 0 20px 50px rgba(56, 189, 248, 0.3), 0 0 80px rgba(56, 189, 248, 0.2);
+            }
+
+        .history-score {
+            font-family: 'Audiowide', cursive;
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+            .history-score.safe {
+                color: var(--cyber-green);
+                text-shadow: 0 0 20px currentColor;
+            }
+
+            .history-score.warning {
+                color: var(--cyber-yellow);
+                text-shadow: 0 0 20px currentColor;
+            }
+
+            .history-score.danger {
+                color: var(--cyber-red);
+                text-shadow: 0 0 20px currentColor;
+            }
+
+        .history-meta {
+            color: rgba(229, 231, 235, 0.8);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* === CLEAR HISTORY BUTTON === */
+        .cyber-clear-btn {
+            background: linear-gradient(135deg, #ff003c, #ff4d6d);
+            border: none;
+            color: white;
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 2px;
+            padding: 0.8rem 1.8rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 1rem;
+        }
+
+            .cyber-clear-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 15px 40px rgba(255, 0, 60, 0.5), 0 0 60px rgba(255, 0, 60, 0.3);
+            }
+
+        /* === RESPONSIVE DESIGN === */
+        @@media (max-width: 1200px) {
+            .analysis-title {
+                font-size: 2.8rem;
+            }
+
+            .results-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+
+        @@media (max-width: 992px) {
+            .analysis-title {
+                font-size: 2.3rem;
+            }
+
+            .module-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .results-header {
+                flex-direction: column;
+                gap: 2rem;
+                text-align: center;
+            }
+
+            .stats-bar {
+                gap: 2rem;
+            }
+
+            .stat-item {
+                min-width: 120px;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .analysis-title {
+                font-size: 1.8rem;
+            }
+
+            .analysis-module {
+                padding: 2rem;
+            }
+
+            .module-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 2.8rem;
+            }
+
+            .module-title {
+                font-size: 1.8rem;
+            }
+
+            .cyber-textarea {
+                min-height: 300px;
+                padding: 1.5rem;
+            }
+
+            .score-circle {
+                width: 100px;
+                height: 100px;
+            }
+
+                .score-circle::before {
+                    width: 80px;
+                    height: 80px;
+                }
+
+            .score-value {
+                font-size: 2.2rem;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .analysis-container {
+                padding: 1rem;
+            }
+
+            .analysis-header {
+                padding: 2rem;
+            }
+
+            .analysis-title {
+                font-size: 1.5rem;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .result-card {
+                padding: 1.8rem;
+            }
+        }
+
+        /* === UTILITY CLASSES === */
+        .glow-text {
+            text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* === CUSTOM SCROLLBAR === */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--cyber-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--cyber-blue), var(--cyber-purple));
+            border-radius: 6px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: linear-gradient(var(--cyber-green), var(--cyber-cyan));
+            }
+    </style>
+</head>
+<body>
+    <!-- ENHANCED BACKGROUND EFFECTS -->
+    <div class="enhanced-bg"></div>
+    <div class="matrix-grid"></div>
+    <div class="binary-fall" id="binaryFall"></div>
+    <div class="floating-orb orb-1"></div>
+    <div class="floating-orb orb-2"></div>
+    <div class="floating-orb orb-3"></div>
+    <div class="enhanced-scan-line"></div>
+
+    <!-- SCANNING OVERLAY (UNCHANGED LOGIC) -->
+    <div class="scanning-overlay" id="scanningOverlay">
+        <div class="scanning-content">
+            <div class="scanning-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h2 class="scanning-title">ANALYZING EMAIL</h2>
+            <p class="scanning-subtitle">
+                Scanning for spoofing indicators, phishing patterns, and malicious content...
+            </p>
+            <div class="scanning-progress">
+                <div class="scanning-progress-bar" id="scanningProgress"></div>
+            </div>
+            <div class="scanning-stats" id="scanningStats">Initializing neural networks...</div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="analysis-container">
+        <!-- BACK BUTTON -->
+        <a href="/Home/Dashboard" class="cyber-back-btn">
+            <i class="fas fa-arrow-left"></i>
+            BACK TO DASHBOARD
+        </a>
+
+        <!-- ENHANCED HEADER SECTION -->
+        <div class="analysis-header">
+            <h1 class="analysis-title">QUANTUM EMAIL FORENSICS</h1>
+            <p class="analysis-subtitle">
+                Advanced AI-powered analysis of email content, headers, and metadata
+                to detect spoofing, phishing, and malicious content in real-time.
+                Paste full email content for comprehensive security analysis.
+            </p>
+
+            <!-- STATS BAR -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-value">99.7%</div>
+                    <div class="stat-label">Detection Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">256+</div>
+                    <div class="stat-label">Threat Indicators</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">0.2s</div>
+                    <div class="stat-label">Analysis Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">AI</div>
+                    <div class="stat-label">Neural Network</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENHANCED ANALYSIS MODULE -->
+        <div class="analysis-module">
+            <div class="module-header">
+                <div class="module-icon">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+                <div class="module-info">
+                    <h2 class="module-title">QUANTUM ANALYSIS ENGINE</h2>
+                    <p class="module-subtitle">
+                        Our quantum neural network analyzes 256+ phishing indicators,
+                        SPF/DKIM/DMARC authentication, header forgery, and behavioral patterns
+                        to detect sophisticated email attacks.
+                    </p>
+                </div>
+            </div>
+
+            <!-- ERROR BOX (UNCHANGED) -->
+            <div id="errorBox" class="cyber-error d-none">
+                <i class="fas fa-triangle-exclamation me-2"></i>
+                <span id="errorText"></span>
+            </div>
+
+            <!-- TEXTAREA GROUP -->
+            <div class="cyber-textarea-group">
+                <label class="cyber-textarea-label">
+                    <i class="fas fa-paste"></i>
+                    PASTE SUSPICIOUS EMAIL CONTENT
+                </label>
+                <textarea class="cyber-textarea"
+                          id="emailInput"
+                          rows="12"
+                          placeholder="Paste email content here...
+
+Example:
+From: security@bank-example.com
+Subject: Urgent: Account Security Alert
+Date: Wed, 15 Mar 2024 10:30:00 +0000
+
+Dear Customer,
+We detected unusual activity on your account. Click here to verify:
+http://fake-bank-security.com/login
+
+Sincerely,
+Bank Security Team"></textarea>
+
+                <div class="input-stats">
+                    <span class="char-count">
+                        Characters: <span id="charCount">0</span> / 10000
+                    </span>
+                    <span class="input-status" id="inputStatus">
+                        <i class="fas fa-circle-notch fa-spin"></i>
+                        <span>Ready for analysis</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- ANALYZE BUTTON -->
+            <button class="cyber-analyze-btn" id="analyzeBtn">
+                <i class="fas fa-search"></i>
+                INITIATE QUANTUM SCAN
+            </button>
+        </div>
+
+        <!-- ENHANCED RESULTS SECTION -->
+        <div class="results-container" id="resultsContainer">
+            <div class="results-header">
+                <h2 class="results-title">SECURITY ANALYSIS REPORT</h2>
+                <div class="results-score">
+                    <div class="score-circle">
+                        <div class="score-value" id="securityScore">87%</div>
+                    </div>
+                    <div>
+                        <div class="score-label">SECURITY SCORE</div>
+                        <div class="score-label" style="color: var(--cyber-green);" id="riskLevel">LOW RISK</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULTS GRID -->
+            <div class="results-grid">
+                <div class="result-card danger" id="spoofingCard">
+                    <div class="result-header">
+                        <div class="result-icon">
+                            <i class="fas fa-user-secret"></i>
+                        </div>
+                        <h3 class="result-title">SPOOFING DETECTION</h3>
+                    </div>
+                    <div class="result-content" id="spoofingResult"></div>
+                </div>
+
+                <div class="result-card warning" id="phishingCard">
+                    <div class="result-header">
+                        <div class="result-icon">
+                            <i class="fas fa-fish"></i>
+                        </div>
+                        <h3 class="result-title">PHISHING ANALYSIS</h3>
+                    </div>
+                    <div class="result-content" id="phishingResult"></div>
+                </div>
+
+                <div class="result-card safe" id="maliciousCard">
+                    <div class="result-header">
+                        <div class="result-icon">
+                            <i class="fas fa-shield-virus"></i>
+                        </div>
+                        <h3 class="result-title">MALICIOUS CONTENT</h3>
+                    </div>
+                    <div class="result-content" id="maliciousResult"></div>
+                </div>
+            </div>
+
+            <!-- DETAILED ANALYSIS -->
+            <div class="analysis-details">
+                <h3 class="details-title">
+                    <i class="fas fa-list-alt"></i>
+                    DETAILED FINDINGS
+                </h3>
+                <ul class="details-list" id="detailsList">
+                    <!-- Will be populated by JavaScript -->
+                </ul>
+            </div>
+
+            <!-- SCORE BREAKDOWN -->
+            <div class="analysis-details">
+                <h3 class="details-title">
+                    <i class="fas fa-chart-bar"></i>
+                    SCORE BREAKDOWN
+                </h3>
+                <ul class="details-list" id="scoreBreakdownList">
+                    <!-- Will be populated by JavaScript -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- ENHANCED HISTORY SECTION -->
+        <div class="history-section">
+            <div class="section-title">
+                <i class="fas fa-history"></i>
+                ANALYSIS HISTORY
+                <button class="cyber-clear-btn" onclick="openClearHistoryModal()">
+                    <i class="fas fa-trash"></i> CLEAR
+                </button>
+            </div>
+            <div class="history-grid" id="historyContainer">
+                <!-- History cards will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CLEAR HISTORY MODAL (UNCHANGED LOGIC) -->
+    <div class="scanning-overlay" id="clearHistoryModal">
+        <div class="scanning-content">
+            <div class="scanning-icon" style="color: var(--cyber-red);">
+                <i class="fas fa-triangle-exclamation"></i>
+            </div>
+            <h2 class="scanning-title" style="color: var(--cyber-red);">CLEAR HISTORY</h2>
+            <p class="scanning-subtitle">
+                This will permanently delete all your email analysis history.
+                <br><strong>This action cannot be undone.</strong>
+            </p>
+            <div style="display: flex; gap: 2rem; justify-content: center; margin-top: 3rem;">
+                <button class="cyber-analyze-btn"
+                        onclick="closeClearHistoryModal()"
+                        style="background: linear-gradient(135deg, #444, #222); width: 180px;">
+                    CANCEL
+                </button>
+                <button class="cyber-analyze-btn"
+                        onclick="confirmClearHistory()"
+                        style="background: linear-gradient(135deg, #ff003c, #ff4d6d); width: 180px;">
+                    <i class="fas fa-trash"></i> DELETE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- YOUR ORIGINAL JAVASCRIPT (NO CHANGES TO BACKEND LOGIC) -->
+    <script>
+        /* ======================================================
+           DOM READY
+        ====================================================== */
+        document.addEventListener("DOMContentLoaded", () => {
+            // Create binary rain effect
+            createBinaryRain();
+
+            // Initialize input tracking
+            const emailInput = document.getElementById("emailInput");
+            const analyzeBtn = document.getElementById("analyzeBtn");
+            const charCount = document.getElementById("charCount");
+            const inputStatus = document.getElementById("inputStatus");
+
+            /* ===============================
+               INPUT VALIDATION UI
+            =============================== */
+            emailInput.addEventListener("input", () => {
+                const len = emailInput.value.length;
+                charCount.textContent = len;
+
+                if (len === 0) {
+                    inputStatus.innerHTML = '<i class="fas fa-clock"></i> Waiting for input';
+                    inputStatus.style.color = "#666";
+                    analyzeBtn.disabled = true;
+                } else if (len < 50) {
+                    inputStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Add more content';
+                    inputStatus.style.color = "var(--cyber-yellow)";
+                    analyzeBtn.disabled = true;
+                } else {
+                    inputStatus.innerHTML = '<i class="fas fa-check-circle"></i> Ready for analysis';
+                    inputStatus.style.color = "var(--cyber-green)";
+                    analyzeBtn.disabled = false;
+                }
+            });
+
+            /* ===============================
+               ERROR UI
+            =============================== */
+            window.showError = function (message) {
+                const box = document.getElementById("errorBox");
+                document.getElementById("errorText").innerText = message;
+                box.classList.remove("d-none");
+            };
+
+            window.clearError = function () {
+                document.getElementById("errorBox").classList.add("d-none");
+            };
+
+            /* ===============================
+               ANALYZE BUTTON
+            =============================== */
+            analyzeBtn.addEventListener("click", async () => {
+                const emailText = emailInput.value.trim();
+
+                if (emailText.length < 50 || isLikelyGarbage(emailText)) {
+                    showError("Input does not look like a real email. Please paste full email content.");
+                    return;
+                }
+
+                clearError();
+
+                const overlay = document.getElementById("scanningOverlay");
+                overlay.classList.add("show");
+
+                try {
+                    // YOUR ORIGINAL API CALL - NO CHANGES
+                    const res = await fetch("/api/email/analyze", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ emailContent: emailText })
+                    });
+
+                    const result = await res.json();
+
+                    setTimeout(() => {
+                        overlay.classList.remove("show");
+                        if (result.riskLevel !== "Invalid") {
+                            showResults(result);
+                            loadHistory();
+                        }
+                    }, 1200);
+
+                } catch (err) {
+                    overlay.classList.remove("show");
+                    console.error(err);
+                    showError("Analysis failed. Please try again.");
+                }
+            });
+
+            loadHistory();
+        });
+
+        /* ======================================================
+           BINARY RAIN EFFECT
+        ====================================================== */
+        function createBinaryRain() {
+            const container = document.getElementById('binaryFall');
+            if (!container) return;
+
+            // Clear existing
+            container.innerHTML = '';
+
+            // Create binary characters
+            for (let i = 0; i < 100; i++) {
+                const span = document.createElement('span');
+                span.textContent = Math.random() > 0.5 ? '0' : '1';
+                span.style.position = 'absolute';
+                span.style.left = Math.random() * 100 + '%';
+                span.style.top = Math.random() * 100 + '%';
+                span.style.color = Math.random() > 0.5 ? 'var(--cyber-green)' : 'var(--cyber-cyan)';
+                span.style.opacity = Math.random() * 0.2 + 0.05;
+                span.style.fontSize = (Math.random() * 12 + 8) + 'px';
+                span.style.fontFamily = 'monospace';
+                span.style.fontWeight = 'bold';
+                span.style.animation = `fall ${Math.random() * 5 + 3}s linear infinite`;
+                span.style.animationDelay = Math.random() * -5 + 's';
+                span.style.zIndex = '-198';
+                container.appendChild(span);
+            }
+
+            // Add animation keyframes
+            if (!document.getElementById('binaryRainStyle')) {
+                const style = document.createElement('style');
+                style.id = 'binaryRainStyle';
+                style.textContent = `
+                    @@keyframes fall {
+                        0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
+                        10% { opacity: 0.5; }
+                        90% { opacity: 0.5; }
+                        100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        /* ======================================================
+           RESULTS UI
+        ====================================================== */
+        function showResults(result) {
+            document.getElementById("resultsContainer").classList.add("show");
+            document.getElementById("securityScore").innerText = result.securityScore + "%";
+
+            // Update risk level text
+            const riskLevel = document.getElementById("riskLevel");
+            if (result.securityScore >= 80) {
+                riskLevel.textContent = "LOW RISK";
+                riskLevel.style.color = "var(--cyber-green)";
+            } else if (result.securityScore >= 50) {
+                riskLevel.textContent = "MEDIUM RISK";
+                riskLevel.style.color = "var(--cyber-yellow)";
+            } else {
+                riskLevel.textContent = "HIGH RISK";
+                riskLevel.style.color = "var(--cyber-red)";
+            }
+
+            updateResultCards(result.findings);
+
+            /* DETAILS */
+            const details = document.getElementById("detailsList");
+            details.innerHTML = "";
+
+            result.findings.forEach(f => {
+                details.innerHTML += `
+                    <li class="detail-item ${f.severity.toLowerCase()}">
+                        <div class="detail-icon">
+                            <i class="fas ${getIcon(f.severity)}"></i>
+                        </div>
+                        <div class="detail-text">${f.message}</div>
+                    </li>
+                `;
+            });
+
+            /* SCORE BREAKDOWN */
+            const scoreList = document.getElementById("scoreBreakdownList");
+            scoreList.innerHTML = "";
+
+            if (result.scoreBreakdown?.length) {
+                result.scoreBreakdown.forEach(item => {
+                    scoreList.innerHTML += `
+                        <li class="detail-item ${item.points < 0 ? "danger" : "safe"}">
+                            <div class="detail-icon">
+                                <i class="fas ${item.points < 0 ? "fa-minus-circle" : "fa-plus-circle"}"></i>
+                            </div>
+                            <div class="detail-text">
+                                ${item.reason}
+                                <strong style="float: right; color: ${item.points < 0 ? 'var(--cyber-red)' : 'var(--cyber-green)'}">
+                                    (${item.points > 0 ? "+" : ""}${item.points})
+                                </strong>
+                            </div>
+                        </li>
+                    `;
+                });
+            } else {
+                scoreList.innerHTML = `
+                    <li class="detail-item safe">
+                        <div class="detail-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="detail-text">No score deductions applied</div>
+                    </li>
+                `;
+            }
+        }
+
+        /* ======================================================
+           RESULT CARDS
+        ====================================================== */
+        function updateResultCards(findings) {
+            // Set default safe state
+            setCard("spoofingCard", "spoofingResult", "safe", "No spoofing detected");
+            setCard("phishingCard", "phishingResult", "safe", "No phishing detected");
+            setCard("maliciousCard", "maliciousResult", "safe", "No malicious content detected");
+
+            // Update based on findings
+            findings.forEach(f => {
+                if (f.type === "Spoofing")
+                    setCard("spoofingCard", "spoofingResult", mapSeverity(f.severity), f.message);
+                if (f.type === "Phishing")
+                    setCard("phishingCard", "phishingResult", mapSeverity(f.severity), f.message);
+                if (f.type === "Malware")
+                    setCard("maliciousCard", "maliciousResult", mapSeverity(f.severity), f.message);
+            });
+        }
+
+        function setCard(cardId, textId, status, text) {
+            document.getElementById(cardId).className = `result-card ${status}`;
+            document.getElementById(textId).innerText = text;
+        }
+
+        /* ======================================================
+           HELPERS
+        ====================================================== */
+        function isLikelyGarbage(text) {
+            if (!text.includes(" ")) return true;
+            if (new Set(text).size < 5) return true;
+            if (!/[.!?\n]/.test(text)) return true;
+            return false;
+        }
+
+        function mapSeverity(sev) {
+            return sev === "Danger" ? "danger" : sev === "Warning" ? "warning" : "safe";
+        }
+
+        function getIcon(sev) {
+            return sev === "Danger"
+                ? "fa-times-circle"
+                : sev === "Warning"
+                ? "fa-exclamation-triangle"
+                : "fa-check-circle";
+        }
+
+        /* ======================================================
+           HISTORY
+        ====================================================== */
+        async function loadHistory() {
+            try {
+                const res = await fetch("/api/email/history");
+
+                if (res.status === 401) {
+                    document.getElementById("historyContainer").innerHTML =
+                        `<div class="history-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                            <i class="fas fa-user-lock" style="font-size: 3rem; margin-bottom: 1rem; color: var(--cyber-yellow);"></i>
+                            <h3>Authentication Required</h3>
+                            <p style="opacity: 0.7;">Please log in to view history</p>
+                        </div>`;
+                    return;
+                }
+
+                const history = await res.json();
+                const container = document.getElementById("historyContainer");
+                container.innerHTML = "";
+
+                if (!history.length) {
+                    container.innerHTML = `
+                        <div class="history-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                            <i class="fas fa-history" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                            <h3>No History Yet</h3>
+                            <p style="opacity: 0.7;">Your analysis history will appear here</p>
+                        </div>`;
+                    return;
+                }
+
+                history.forEach(h => {
+                    let scoreClass = "safe";
+                    if (h.riskLevel === "High") scoreClass = "danger";
+                    else if (h.riskLevel === "Medium") scoreClass = "warning";
+
+                    container.innerHTML += `
+                        <div class="history-card" onclick="viewHistoryItem('${h.id || ''}')">
+                            <div class="history-score ${scoreClass}">${h.securityScore}%</div>
+                            <div class="history-meta">
+                                <p><strong>Risk:</strong> ${h.riskLevel}</p>
+                                <p><strong>Findings:</strong> ${h.findingsCount || 0}</p>
+                                <p><strong>Date:</strong> ${new Date(h.createdAt).toLocaleString()}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+
+            } catch (err) {
+                console.error("History UI error:", err);
+                document.getElementById("historyContainer").innerHTML = `
+                    <div class="history-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; color: var(--cyber-red);"></i>
+                        <h3>Error Loading History</h3>
+                        <p style="opacity: 0.7;">Please try again later</p>
+                    </div>`;
+            }
+        }
+
+        function viewHistoryItem(id) {
+            // Placeholder for viewing historical item
+            console.log("Viewing history item:", id);
+            alert("History item details would open here");
+        }
+
+        /* ======================================================
+           CLEAR HISTORY MODAL
+        ====================================================== */
+        function openClearHistoryModal() {
+            document.getElementById("clearHistoryModal").classList.add("show");
+        }
+
+        function closeClearHistoryModal() {
+            document.getElementById("clearHistoryModal").classList.remove("show");
+        }
+
+        async function confirmClearHistory() {
+            try {
+                const res = await fetch("/api/email/history", { method: "DELETE" });
+                if (res.ok) {
+                    closeClearHistoryModal();
+                    loadHistory();
+                }
+            } catch (err) {
+                console.error("Failed to clear history", err);
+                closeClearHistoryModal();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1441 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="cyberpunk-2077">
+<head>
+    <meta charset="utf-8" />
+    <title>DEEPFAKE NEXUS | Website Verification</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+
+    <!-- DEPENDENCIES -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&family=Audiowide&family=Black+Ops+One&display=swap" rel="stylesheet">
+
+    <style>
+        /* === CYBERPUNK THEME === */
+        :root {
+            --cyber-void: #0b0f19;
+            --cyber-dark: #0f172a;
+            --cyber-darker: #090d1a;
+            --cyber-blue: #38bdf8;
+            --cyber-cyan: #00f3ff;
+            --cyber-purple: #9d00ff;
+            --cyber-pink: #ff00ff;
+            --cyber-green: #00ff9d;
+            --cyber-red: #ff003c;
+            --cyber-yellow: #fff700;
+            --cyber-orange: #ff7700;
+            --cyber-warning: #ff9900;
+            --cyber-safe: #00ff9d;
+            --cyber-suspicious: #ff9900;
+            --cyber-malicious: #ff003c;
+        }
+
+        /* === BASE STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            background: var(--cyber-void);
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--cyber-void);
+            color: #e5e7eb;
+            overflow-x: hidden;
+            min-height: 100vh;
+            /* padding: 2rem; */
+            position: relative;
+        }
+
+        /* === BACKGROUND EFFECTS === */
+        .cyber-bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.05) 0%, transparent 50%), radial-gradient(circle at 90% 80%, rgba(0, 255, 157, 0.05) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(9, 0, 255, 0.03) 0%, transparent 70%);
+            z-index: -100;
+            pointer-events: none;
+        }
+
+        .cyber-grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px), linear-gradient(0deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: -99;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .cyber-scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyber-green), var(--cyber-cyan), var(--cyber-blue), transparent);
+            z-index: 999;
+            pointer-events: none;
+            animation: cyberScan 8s linear infinite;
+            box-shadow: 0 0 30px var(--cyber-green);
+        }
+
+        @@keyframes cyberScan {
+            0% {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+
+            10%, 90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* === MAIN CONTAINER === */
+        .cyber-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* === NAVIGATION === */
+        .cyber-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 12px;
+            color: var(--cyber-cyan);
+            text-decoration: none;
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .cyber-nav-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.3), transparent);
+                transition: 0.5s ease;
+            }
+
+            .cyber-nav-btn:hover::before {
+                left: 100%;
+            }
+
+            .cyber-nav-btn:hover {
+                background: rgba(56, 189, 248, 0.2);
+                border-color: var(--cyber-cyan);
+                color: white;
+                transform: translateX(-5px);
+                box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            }
+
+        /* === HEADER === */
+        .cyber-header {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .cyber-title {
+            font-family: 'Audiowide', cursive;
+            background: linear-gradient(135deg, var(--cyber-cyan), var(--cyber-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .cyber-subtitle {
+            color: rgba(229, 231, 235, 0.7);
+            font-size: 1.1rem;
+            max-width: 800px;
+        }
+
+        /* === SECURITY BADGES === */
+        .security-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+
+            .security-badge:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 20px rgba(56, 189, 248, 0.2);
+            }
+
+        .badge-icon {
+            font-size: 1.2rem;
+            color: var(--cyber-cyan);
+        }
+
+        .badge-text {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--cyber-blue);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* === VERIFICATION CARD === */
+        .cyber-card {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 20px;
+            border: 2px solid rgba(56, 189, 248, 0.3);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 80px rgba(56, 189, 248, 0.2), inset 0 0 40px rgba(56, 189, 248, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 2rem;
+        }
+
+            .cyber-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 120px rgba(56, 189, 248, 0.3), inset 0 0 60px rgba(56, 189, 248, 0.15);
+            }
+
+            .cyber-card::before {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                background: linear-gradient(45deg, var(--cyber-blue), var(--cyber-cyan), var(--cyber-green), var(--cyber-blue));
+                background-size: 400% 400%;
+                border-radius: 22px;
+                z-index: -1;
+                opacity: 0;
+                transition: opacity 0.4s ease;
+                animation: gradientFlow 3s linear infinite;
+            }
+
+            .cyber-card:hover::before {
+                opacity: 1;
+            }
+
+        @@keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* === URL INPUT === */
+        .url-input-group {
+            margin-bottom: 2rem;
+        }
+
+        .input-label {
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            color: var(--cyber-blue);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .cyber-url-input {
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid rgba(56, 189, 248, 0.3);
+            border-radius: 15px;
+            color: #e5e7eb;
+            padding: 1.2rem 1.5rem;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+            .cyber-url-input:focus {
+                outline: none;
+                border-color: var(--cyber-green);
+                background: rgba(15, 23, 42, 0.95);
+                box-shadow: 0 0 30px rgba(56, 189, 248, 0.4), inset 0 0 20px rgba(56, 189, 248, 0.1);
+                transform: translateY(-2px);
+            }
+
+            .cyber-url-input::placeholder {
+                color: rgba(229, 231, 235, 0.4);
+            }
+
+        .input-prefix {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(56, 189, 248, 0.1);
+            border-right: 2px solid rgba(56, 189, 248, 0.3);
+            color: var(--cyber-cyan);
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* === QUICK CHECKS === */
+        .quick-checks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .check-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .check-item:hover {
+                background: rgba(56, 189, 248, 0.1);
+                transform: translateY(-2px);
+            }
+
+            .check-item.active {
+                background: rgba(0, 255, 157, 0.1);
+                border-color: var(--cyber-green);
+            }
+
+        .check-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .check-text {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            color: var(--cyber-cyan);
+        }
+
+        /* === VERIFY BUTTON === */
+        .cyber-verify-btn {
+            width: 100%;
+            padding: 1.2rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--cyber-green), var(--cyber-cyan));
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+            .cyber-verify-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                transition: 0.8s ease;
+            }
+
+            .cyber-verify-btn:hover::before {
+                left: 100%;
+            }
+
+            .cyber-verify-btn:hover {
+                transform: translateY(-5px) scale(1.02);
+                box-shadow: 0 20px 60px rgba(0, 255, 157, 0.5), 0 0 100px rgba(0, 255, 157, 0.3);
+                letter-spacing: 3px;
+            }
+
+            .cyber-verify-btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none !important;
+            }
+
+                .cyber-verify-btn:disabled:hover::before {
+                    left: -100%;
+                }
+
+        /* === PROGRESS BAR === */
+        .cyber-progress {
+            height: 6px;
+            background: rgba(229, 231, 235, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+            display: none;
+        }
+
+            .cyber-progress.active {
+                display: block;
+                animation: fadeIn 0.3s ease;
+            }
+
+        .cyber-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyber-purple), var(--cyber-blue), var(--cyber-cyan));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .cyber-progress-bar::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                animation: shimmer 2s infinite;
+            }
+
+        @@keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* === VERIFICATION TERMINAL === */
+        .verification-terminal {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 15px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            color: rgba(56, 189, 248, 0.9);
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+            .verification-terminal.active {
+                display: block;
+            }
+
+        .terminal-line {
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: typeIn 0.3s ease forwards;
+        }
+
+            .terminal-line.success {
+                color: var(--cyber-green);
+                text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+            }
+
+            .terminal-line.warning {
+                color: var(--cyber-yellow);
+                text-shadow: 0 0 10px rgba(255, 247, 0, 0.5);
+            }
+
+            .terminal-line.danger {
+                color: var(--cyber-red);
+                text-shadow: 0 0 10px rgba(255, 0, 60, 0.5);
+            }
+
+            .terminal-line.info {
+                color: var(--cyber-cyan);
+                text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            }
+
+        @@keyframes typeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* === RESULT CARD === */
+        .result-card {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 20px;
+            border: 2px solid var(--cyber-danger);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 80px rgba(255, 0, 60, 0.2), inset 0 0 40px rgba(255, 0, 60, 0.1);
+            margin-top: 2rem;
+            display: none;
+        }
+
+            .result-card.safe {
+                border-color: var(--cyber-safe);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 80px rgba(0, 255, 157, 0.2), inset 0 0 40px rgba(0, 255, 157, 0.1);
+            }
+
+            .result-card.suspicious {
+                border-color: var(--cyber-suspicious);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 80px rgba(255, 153, 0, 0.2), inset 0 0 40px rgba(255, 153, 0, 0.1);
+            }
+
+            .result-card.malicious {
+                border-color: var(--cyber-malicious);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 80px rgba(255, 0, 60, 0.2), inset 0 0 40px rgba(255, 0, 60, 0.1);
+            }
+
+            .result-card.active {
+                display: block;
+                animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+        @@keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            opacity: 0.7;
+        }
+
+        .result-card.safe::before {
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-cyan));
+        }
+
+        .result-card.suspicious::before {
+            background: linear-gradient(90deg, var(--cyber-yellow), var(--cyber-orange));
+        }
+
+        .result-card.malicious::before {
+            background: linear-gradient(90deg, var(--cyber-red), var(--cyber-orange));
+        }
+
+        /* === VERIFICATION HEADER === */
+        .verification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .verification-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .verification-status {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-safe {
+            background: rgba(0, 255, 157, 0.2);
+            color: var(--cyber-green);
+            border: 1px solid var(--cyber-green);
+        }
+
+        .status-suspicious {
+            background: rgba(255, 153, 0, 0.2);
+            color: var(--cyber-yellow);
+            border: 1px solid var(--cyber-yellow);
+        }
+
+        .status-malicious {
+            background: rgba(255, 0, 60, 0.2);
+            color: var(--cyber-red);
+            border: 1px solid var(--cyber-red);
+        }
+
+        /* === DOMAIN INFO === */
+        .domain-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .info-label {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            color: var(--cyber-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            color: white;
+        }
+
+            .info-value.safe {
+                color: var(--cyber-green);
+            }
+
+            .info-value.warning {
+                color: var(--cyber-yellow);
+            }
+
+            .info-value.danger {
+                color: var(--cyber-red);
+            }
+
+        /* === SECURITY SCORE === */
+        .security-score {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+            .security-score.active {
+                display: block;
+            }
+
+        .score-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .score-label {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            color: var(--cyber-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-value {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 2rem;
+            letter-spacing: 2px;
+        }
+
+        .score-safe {
+            color: var(--cyber-green);
+        }
+
+        .score-medium {
+            color: var(--cyber-yellow);
+        }
+
+        .score-low {
+            color: var(--cyber-red);
+        }
+
+        .score-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 1s ease-out;
+        }
+
+        .score-fill-safe {
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-cyan));
+        }
+
+        .score-fill-medium {
+            background: linear-gradient(90deg, var(--cyber-yellow), var(--cyber-orange));
+        }
+
+        .score-fill-low {
+            background: linear-gradient(90deg, var(--cyber-red), var(--cyber-orange));
+        }
+
+        /* === FINDINGS LIST === */
+        .findings-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .finding-item {
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 3px solid;
+            font-family: 'Exo 2', sans-serif;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+
+            .finding-item:hover {
+                background: rgba(255, 255, 255, 0.08);
+                transform: translateX(5px);
+            }
+
+            .finding-item.critical {
+                border-left-color: var(--cyber-red);
+                background: rgba(255, 0, 60, 0.1);
+            }
+
+            .finding-item.warning {
+                border-left-color: var(--cyber-yellow);
+                background: rgba(255, 247, 0, 0.1);
+            }
+
+            .finding-item.info {
+                border-left-color: var(--cyber-blue);
+                background: rgba(56, 189, 248, 0.1);
+            }
+
+            .finding-item.safe {
+                border-left-color: var(--cyber-green);
+                background: rgba(0, 255, 157, 0.1);
+            }
+
+        .finding-icon {
+            font-size: 1.2rem;
+            margin-top: 0.2rem;
+        }
+
+        .finding-text {
+            flex: 1;
+        }
+
+        /* === ACTION BUTTONS === */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 1rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        .action-block {
+            background: linear-gradient(135deg, var(--cyber-red), var(--cyber-purple));
+            color: white;
+        }
+
+        .action-bookmark {
+            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-cyan));
+            color: white;
+        }
+
+        .action-ignore {
+            background: linear-gradient(135deg, #666, #999);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        @@media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .cyber-title {
+                font-size: 2rem;
+            }
+
+            .cyber-card {
+                padding: 1.5rem;
+            }
+
+            .quick-checks {
+                grid-template-columns: 1fr;
+            }
+
+            .domain-info {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .cyber-title {
+                font-size: 1.6rem;
+            }
+
+            .cyber-verify-btn {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+
+            .finding-item {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- BACKGROUND EFFECTS -->
+    <div class="cyber-bg-overlay"></div>
+    <div class="cyber-grid-lines"></div>
+    <div class="cyber-scan-line"></div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="cyber-container">
+        <!-- BACK NAVIGATION -->
+        <a href="/Home/Dashboard" class="cyber-nav-btn mb-4">
+            <i class="fas fa-arrow-left"></i>
+            BACK TO DASHBOARD
+        </a>
+
+        <!-- HEADER -->
+        <div class="cyber-header">
+            <h1 class="cyber-title">
+                <i class="fas fa-shield-alt me-2"></i>
+                WEBSITE LEGITIMACY VERIFICATION
+            </h1>
+            <p class="cyber-subtitle">
+                Enter a website URL to verify whether it is safe, legitimate, or potentially malicious.
+                Our system checks SSL certificates, domain age, reputation, and security headers.
+            </p>
+        </div>
+
+        <!-- SECURITY BADGES -->
+        <div class="security-badges">
+            <div class="security-badge">
+                <i class="fas fa-lock badge-icon"></i>
+                <span class="badge-text">SSL/TLS Verification</span>
+            </div>
+            <div class="security-badge">
+                <i class="fas fa-globe badge-icon"></i>
+                <span class="badge-text">Domain Analysis</span>
+            </div>
+            <div class="security-badge">
+                <i class="fas fa-database badge-icon"></i>
+                <span class="badge-text">Blacklist Check</span>
+            </div>
+            <div class="security-badge">
+                <i class="fas fa-user-shield badge-icon"></i>
+                <span class="badge-text">Reputation Score</span>
+            </div>
+        </div>
+
+        <!-- VERIFICATION CARD -->
+        <div class="cyber-card">
+            <!-- URL INPUT -->
+            <div class="url-input-group">
+                <label class="input-label">
+                    <i class="fas fa-link"></i>
+                    WEBSITE URL
+                </label>
+                <div class="input-group">
+                    <span class="input-prefix">
+                        <i class="fas fa-globe"></i>
+                        https://
+                    </span>
+                    <input type="text"
+                           class="cyber-url-input"
+                           id="urlInput"
+                           placeholder="example.com"
+                           autocomplete="off"
+                           spellcheck="false" />
+                </div>
+            </div>
+
+            <!-- QUICK CHECKS -->
+            <div class="quick-checks">
+                <div class="check-item" data-url="https://google.com">
+                    <i class="fas fa-search check-icon"></i>
+                    <div class="check-text">Google</div>
+                </div>
+                <div class="check-item" data-url="https://github.com">
+                    <i class="fab fa-github check-icon"></i>
+                    <div class="check-text">GitHub</div>
+                </div>
+                <div class="check-item" data-url="https://wikipedia.org">
+                    <i class="fab fa-wikipedia-w check-icon"></i>
+                    <div class="check-text">Wikipedia</div>
+                </div>
+                <div class="check-item" data-url="https://example.com">
+                    <i class="fas fa-code check-icon"></i>
+                    <div class="check-text">Example</div>
+                </div>
+            </div>
+
+            <!-- PROGRESS BAR -->
+            <div class="cyber-progress" id="progressBar">
+                <div class="cyber-progress-bar" id="progressFill"></div>
+            </div>
+
+            <!-- VERIFY BUTTON -->
+            <button class="cyber-verify-btn" id="verifyButton" disabled>
+                <i class="fas fa-search-shield"></i>
+                <span id="verifyButtonText">VERIFY WEBSITE</span>
+            </button>
+
+            <!-- VERIFICATION TERMINAL -->
+            <div class="verification-terminal" id="verificationTerminal"></div>
+        </div>
+
+        <!-- RESULT CARD -->
+        <div class="result-card" id="resultCard">
+            <!-- VERIFICATION HEADER -->
+            <div class="verification-header">
+                <h4 class="verification-title">
+                    <i class="fas fa-file-contract"></i>
+                    VERIFICATION RESULTS
+                </h4>
+                <div class="verification-status" id="verificationStatus">
+                    ANALYZING
+                </div>
+            </div>
+
+            <!-- DOMAIN INFO -->
+            <div class="domain-info" id="domainInfo">
+                <div class="info-item">
+                    <span class="info-label">Domain</span>
+                    <span class="info-value" id="domainName">Loading...</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Status</span>
+                    <span class="info-value" id="domainStatus">Checking...</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">SSL Certificate</span>
+                    <span class="info-value" id="sslStatus">Verifying...</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Domain Age</span>
+                    <span class="info-value" id="domainAge">Calculating...</span>
+                </div>
+            </div>
+
+            <!-- SECURITY SCORE -->
+            <div class="security-score" id="securityScore">
+                <div class="score-header">
+                    <span class="score-label">Security Score</span>
+                    <span class="score-value" id="scoreValue">0</span>
+                </div>
+                <div class="score-bar">
+                    <div class="score-fill" id="scoreFill"></div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <small class="text-muted">Low Security</small>
+                    <small class="text-muted">High Security</small>
+                </div>
+            </div>
+
+            <!-- FINDINGS LIST -->
+            <ul class="findings-list" id="findingsList">
+                <!-- Findings will be populated here -->
+            </ul>
+
+            <!-- ACTION BUTTONS -->
+            <div class="action-buttons">
+                <button class="action-btn action-block" id="blockButton">
+                    <i class="fas fa-ban"></i>
+                    BLOCK SITE
+                </button>
+                <button class="action-btn action-bookmark" id="bookmarkButton">
+                    <i class="fas fa-bookmark"></i>
+                    SAVE REPORT
+                </button>
+                <button class="action-btn action-ignore" id="ignoreButton">
+                    <i class="fas fa-times"></i>
+                    IGNORE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const urlInput = document.getElementById('urlInput');
+            const verifyButton = document.getElementById('verifyButton');
+            const verifyButtonText = document.getElementById('verifyButtonText');
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            const verificationTerminal = document.getElementById('verificationTerminal');
+            const resultCard = document.getElementById('resultCard');
+            const verificationStatus = document.getElementById('verificationStatus');
+            const domainInfo = document.getElementById('domainInfo');
+            const domainName = document.getElementById('domainName');
+            const domainStatus = document.getElementById('domainStatus');
+            const sslStatus = document.getElementById('sslStatus');
+            const domainAge = document.getElementById('domainAge');
+            const securityScore = document.getElementById('securityScore');
+            const scoreValue = document.getElementById('scoreValue');
+            const scoreFill = document.getElementById('scoreFill');
+            const findingsList = document.getElementById('findingsList');
+            const blockButton = document.getElementById('blockButton');
+            const bookmarkButton = document.getElementById('bookmarkButton');
+            const ignoreButton = document.getElementById('ignoreButton');
+            const quickCheckItems = document.querySelectorAll('.check-item');
+
+            let isVerifying = false;
+            let currentUrl = '';
+
+            // URL input validation
+            urlInput.addEventListener('input', function() {
+                const url = this.value.trim();
+                verifyButton.disabled = !isValidUrl(url);
+
+                if (url) {
+                    urlInput.parentElement.classList.add('has-value');
+                } else {
+                    urlInput.parentElement.classList.remove('has-value');
+                }
+            });
+
+            // Quick check items
+            quickCheckItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    quickCheckItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const url = this.getAttribute('data-url');
+                    const domain = url.replace('https://', '');
+                    urlInput.value = domain;
+                    verifyButton.disabled = false;
+
+                    showTerminalMessage(`Quick check selected: ${domain}`, 'info');
+                });
+            });
+
+            function isValidUrl(url) {
+                try {
+                    // Try to create a URL object
+                    const testUrl = url.startsWith('http') ? url : `https://${url}`;
+                    new URL(testUrl);
+                    return url.length > 0;
+                } catch {
+                    return false;
+                }
+            }
+
+            function extractDomain(url) {
+                try {
+                    const domain = url.startsWith('http') ? url : `https://${url}`;
+                    const urlObj = new URL(domain);
+                    return {
+                        full: urlObj.hostname,
+                        protocol: urlObj.protocol,
+                        hostname: urlObj.hostname,
+                        origin: urlObj.origin
+                    };
+                } catch {
+                    return null;
+                }
+            }
+
+            // Terminal message function
+            function showTerminalMessage(message, type = 'info') {
+                const line = document.createElement('div');
+                line.className = `terminal-line ${type}`;
+                line.innerHTML = `> ${message}`;
+                verificationTerminal.appendChild(line);
+                verificationTerminal.classList.add('active');
+                verificationTerminal.scrollTop = verificationTerminal.scrollHeight;
+
+                // Animate typing
+                const text = line.textContent;
+                line.textContent = '';
+                let i = 0;
+                function typeWriter() {
+                    if (i < text.length) {
+                        line.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 20);
+                    }
+                }
+                typeWriter();
+            }
+
+            // Clear terminal
+            function clearTerminal() {
+                verificationTerminal.innerHTML = '';
+            }
+
+            // Verify button handler
+            verifyButton.addEventListener('click', async () => {
+                if (isVerifying) return;
+
+                const url = urlInput.value.trim();
+                if (!url) return;
+
+                const domainInfo = extractDomain(url);
+                if (!domainInfo) {
+                    showTerminalMessage('Invalid URL format', 'danger');
+                    return;
+                }
+
+                isVerifying = true;
+                currentUrl = domainInfo.hostname;
+                verifyButton.disabled = true;
+                verifyButtonText.textContent = 'VERIFYING...';
+                verifyButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> VERIFYING...';
+
+                // Clear previous results
+                clearTerminal();
+                resultCard.classList.remove('active');
+                resultCard.className = 'result-card';
+                findingsList.innerHTML = '';
+                securityScore.classList.remove('active');
+                domainInfo.innerHTML = `
+                    <div class="info-item">
+                        <span class="info-label">Domain</span>
+                        <span class="info-value">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Status</span>
+                        <span class="info-value">Checking...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">SSL Certificate</span>
+                        <span class="info-value">Verifying...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Domain Age</span>
+                        <span class="info-value">Calculating...</span>
+                    </div>
+                `;
+
+                // Show progress bar
+                progressBar.classList.add('active');
+                progressFill.style.width = '0%';
+
+                // Terminal messages
+                showTerminalMessage(`Initiating website verification: ${currentUrl}`, 'info');
+                showTerminalMessage('Establishing secure connection...', 'info');
+
+                // Simulate verification steps
+                const steps = [
+                    { percent: 10, message: 'Resolving domain name...', delay: 800 },
+                    { percent: 25, message: 'Checking DNS records...', delay: 1000 },
+                    { percent: 40, message: 'Verifying SSL/TLS certificate...', delay: 1200 },
+                    { percent: 55, message: 'Analyzing security headers...', delay: 900 },
+                    { percent: 70, message: 'Checking domain reputation...', delay: 1100 },
+                    { percent: 85, message: 'Scanning for blacklist entries...', delay: 1300 },
+                    { percent: 95, message: 'Compiling security assessment...', delay: 800 },
+                    { percent: 100, message: 'Verification complete!', delay: 500 }
+                ];
+
+                for (const step of steps) {
+                    await new Promise(resolve => setTimeout(resolve, step.delay));
+                    progressFill.style.width = step.percent + '%';
+                    showTerminalMessage(step.message, 'info');
+                }
+
+                // Hide progress bar
+                setTimeout(() => {
+                    progressBar.classList.remove('active');
+                }, 500);
+
+                // Show results
+                showVerificationResults(domainInfo);
+            });
+
+            function showVerificationResults(domainInfo) {
+                // Simulate verification results
+                const securityScoreValue = Math.floor(Math.random() * 100);
+                let status = 'malicious';
+                let statusClass = 'status-malicious';
+                let resultClass = 'malicious';
+
+                if (securityScoreValue > 70) {
+                    status = 'SAFE';
+                    statusClass = 'status-safe';
+                    resultClass = 'safe';
+                } else if (securityScoreValue > 40) {
+                    status = 'SUSPICIOUS';
+                    statusClass = 'status-suspicious';
+                    resultClass = 'suspicious';
+                }
+
+                // Update status
+                verificationStatus.textContent = status;
+                verificationStatus.className = `verification-status ${statusClass}`;
+
+                // Update result card class
+                resultCard.classList.add(resultClass, 'active');
+
+                // Generate domain info
+                const domainAgeOptions = ['1 day', '2 weeks', '6 months', '2 years', '5 years', '10+ years'];
+                const sslOptions = ['Valid (256-bit encryption)', 'Invalid/Expired', 'Self-signed', 'No SSL'];
+                const statusOptions = ['Active', 'Blocked', 'Parked', 'For Sale'];
+
+                const randomDomainAge = domainAgeOptions[Math.floor(Math.random() * domainAgeOptions.length)];
+                const randomSSL = sslOptions[Math.floor(Math.random() * sslOptions.length)];
+                const randomStatus = statusOptions[Math.floor(Math.random() * statusOptions.length)];
+
+                // Update domain info
+                domainName.textContent = domainInfo.hostname;
+                domainName.className = 'info-value';
+
+                domainStatus.textContent = randomStatus;
+                domainStatus.className = 'info-value ' + (randomStatus === 'Active' ? 'safe' : 'warning');
+
+                sslStatus.textContent = randomSSL;
+                sslStatus.className = 'info-value ' + (randomSSL.includes('Valid') ? 'safe' : 'danger');
+
+                domainAge.textContent = randomDomainAge;
+                domainAge.className = 'info-value ' + (randomDomainAge.includes('years') ? 'safe' : 'warning');
+
+                // Update security score
+                scoreValue.textContent = securityScoreValue;
+                let scoreClass = 'score-low';
+                let fillClass = 'score-fill-low';
+
+                if (securityScoreValue > 70) {
+                    scoreClass = 'score-safe';
+                    fillClass = 'score-fill-safe';
+                } else if (securityScoreValue > 40) {
+                    scoreClass = 'score-medium';
+                    fillClass = 'score-fill-medium';
+                }
+
+                scoreValue.className = `score-value ${scoreClass}`;
+                scoreFill.className = `score-fill ${fillClass}`;
+                scoreFill.style.width = securityScoreValue + '%';
+                securityScore.classList.add('active');
+
+                // Generate findings based on score
+                const findings = [];
+
+                // Safe findings
+                const safeFindings = [
+                    { type: 'safe', icon: 'fa-check-circle', text: 'Valid SSL certificate detected' },
+                    { type: 'safe', icon: 'fa-shield-alt', text: 'Security headers properly configured' },
+                    { type: 'safe', icon: 'fa-history', text: 'Domain registered for over 2 years' },
+                    { type: 'safe', icon: 'fa-thumbs-up', text: 'No blacklist entries found' }
+                ];
+
+                // Warning findings
+                const warningFindings = [
+                    { type: 'warning', icon: 'fa-exclamation-triangle', text: 'Domain registered recently' },
+                    { type: 'warning', icon: 'fa-unlock-alt', text: 'Suspicious SSL configuration' },
+                    { type: 'warning', icon: 'fa-fish', text: 'Possible phishing indicators found' },
+                    { type: 'warning', icon: 'fa-exclamation-circle', text: 'Missing security headers' }
+                ];
+
+                // Critical findings
+                const criticalFindings = [
+                    { type: 'critical', icon: 'fa-times-circle', text: 'Domain is blacklisted' },
+                    { type: 'critical', icon: 'fa-skull-crossbones', text: 'Malware distribution detected' },
+                    { type: 'critical', icon: 'fa-user-secret', text: 'Confirmed phishing site' },
+                    { type: 'critical', icon: 'fa-bug', text: 'Multiple security vulnerabilities' }
+                ];
+
+                // Info findings
+                const infoFindings = [
+                    { type: 'info', icon: 'fa-info-circle', text: 'Recommendation: Use VPN for added security' },
+                    { type: 'info', icon: 'fa-clock', text: 'Last scanned: ' + new Date().toLocaleTimeString() },
+                    { type: 'info', icon: 'fa-database', text: 'Compared against 10+ threat databases' }
+                ];
+
+                // Add findings based on security score
+                if (securityScoreValue > 70) {
+                    findings.push(...safeFindings.slice(0, 3));
+                    findings.push(infoFindings[0]);
+                } else if (securityScoreValue > 40) {
+                    findings.push(...warningFindings.slice(0, 2));
+                    findings.push(...safeFindings.slice(0, 1));
+                    findings.push(infoFindings[1]);
+                } else {
+                    findings.push(...criticalFindings.slice(0, 2));
+                    findings.push(...warningFindings.slice(0, 1));
+                    findings.push(infoFindings[2]);
+                }
+
+                // Shuffle and add random findings
+                findings.sort(() => Math.random() - 0.5);
+
+                // Populate findings list
+                findingsList.innerHTML = '';
+                findings.forEach(finding => {
+                    const li = document.createElement('li');
+                    li.className = `finding-item ${finding.type}`;
+                    li.innerHTML = `
+                        <i class="fas ${finding.icon} finding-icon"></i>
+                        <div class="finding-text">${finding.text}</div>
+                    `;
+                    findingsList.appendChild(li);
+                });
+
+                // Reset button
+                isVerifying = false;
+                verifyButton.disabled = false;
+                verifyButtonText.textContent = 'VERIFY ANOTHER SITE';
+                verifyButton.innerHTML = '<i class="fas fa-redo"></i> VERIFY ANOTHER SITE';
+
+                // Show terminal success message
+                showTerminalMessage(`Verification complete for: ${domainInfo.hostname}`, 'success');
+                showTerminalMessage(`Security score: ${securityScoreValue}/100 (${status})`,
+                    securityScoreValue > 70 ? 'success' : securityScoreValue > 40 ? 'warning' : 'danger');
+
+                if (securityScoreValue < 40) {
+                    showTerminalMessage('WARNING: This site may be malicious! Proceed with caution.', 'danger');
+                }
+            }
+
+            // Action button handlers
+            blockButton.addEventListener('click', () => {
+                showTerminalMessage(`Site added to blocklist: ${currentUrl}`, 'warning');
+                showTerminalMessage('All future access attempts will be blocked', 'info');
+                alert(`Website ${currentUrl} has been blocked successfully.`);
+            });
+
+            bookmarkButton.addEventListener('click', () => {
+                showTerminalMessage('Report saved to your security dashboard', 'success');
+                showTerminalMessage('Accessible from Security History section', 'info');
+                alert('Verification report saved successfully.');
+            });
+
+            ignoreButton.addEventListener('click', () => {
+                showTerminalMessage('Warning: Proceeding to this site may be unsafe', 'warning');
+                showTerminalMessage('Consider using enhanced security measures', 'info');
+                resultCard.classList.remove('active');
+            });
+
+            // Initial terminal message
+            setTimeout(() => {
+                showTerminalMessage('Website verification system ready', 'success');
+                showTerminalMessage('Enter a URL or click a quick check to begin', 'info');
+            }, 1000);
+
+            // URL validation on page load
+            urlInput.addEventListener('blur', function() {
+                const url = this.value.trim();
+                if (url && !url.startsWith('http')) {
+                    this.value = `https://${url}`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

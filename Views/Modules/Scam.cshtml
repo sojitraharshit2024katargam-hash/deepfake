@@ -1,0 +1,1377 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="cyberpunk-2077">
+<head>
+    <meta charset="utf-8" />
+    <title>DEEPFAKE NEXUS | Scam Detection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+
+    <!-- DEPENDENCIES -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&family=Audiowide&family=Black+Ops+One&display=swap" rel="stylesheet">
+
+    <style>
+        /* === CYBERPUNK THEME === */
+        :root {
+            --cyber-void: #0b0f19;
+            --cyber-dark: #0f172a;
+            --cyber-darker: #090d1a;
+            --cyber-blue: #38bdf8;
+            --cyber-cyan: #00f3ff;
+            --cyber-purple: #9d00ff;
+            --cyber-pink: #ff00ff;
+            --cyber-green: #00ff9d;
+            --cyber-red: #ff003c;
+            --cyber-yellow: #fff700;
+            --cyber-orange: #ff7700;
+            --cyber-warning: #ff9900;
+            --cyber-danger: #ff003c;
+        }
+
+        /* === BASE STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            background: var(--cyber-void);
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--cyber-void);
+            color: #e5e7eb;
+            overflow-x: hidden;
+            min-height: 100vh;
+            /* padding: 2rem; */
+            position: relative;
+        }
+
+        /* === BACKGROUND EFFECTS === */
+        .cyber-bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(255, 0, 60, 0.05) 0%, transparent 50%), radial-gradient(circle at 90% 80%, rgba(157, 0, 255, 0.05) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.03) 0%, transparent 70%);
+            z-index: -100;
+            pointer-events: none;
+        }
+
+        .cyber-grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(90deg, rgba(255, 0, 60, 0.03) 1px, transparent 1px), linear-gradient(0deg, rgba(255, 0, 60, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: -99;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .cyber-scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyber-red), var(--cyber-orange), var(--cyber-yellow), transparent);
+            z-index: 999;
+            pointer-events: none;
+            animation: cyberScan 8s linear infinite;
+            box-shadow: 0 0 30px var(--cyber-red);
+        }
+
+        @@keyframes cyberScan {
+            0% {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+
+            10%, 90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* === WARNING PULSE === */
+        .warning-pulse {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200vw;
+            height: 200vh;
+            background: radial-gradient(circle, rgba(255, 0, 60, 0.1) 0%, transparent 70%);
+            z-index: -98;
+            pointer-events: none;
+            animation: warningPulse 4s ease-in-out infinite;
+        }
+
+        @@keyframes warningPulse {
+            0%, 100% {
+                opacity: 0.3;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        /* === MAIN CONTAINER === */
+        .cyber-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* === NAVIGATION === */
+        .cyber-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 0, 60, 0.1);
+            border: 1px solid rgba(255, 0, 60, 0.3);
+            border-radius: 12px;
+            color: var(--cyber-red);
+            text-decoration: none;
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .cyber-nav-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 0, 60, 0.3), transparent);
+                transition: 0.5s ease;
+            }
+
+            .cyber-nav-btn:hover::before {
+                left: 100%;
+            }
+
+            .cyber-nav-btn:hover {
+                background: rgba(255, 0, 60, 0.2);
+                border-color: var(--cyber-orange);
+                color: white;
+                transform: translateX(-5px);
+                box-shadow: 0 0 20px rgba(255, 0, 60, 0.4);
+            }
+
+        /* === HEADER === */
+        .cyber-header {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 0, 60, 0.2);
+        }
+
+        .cyber-title {
+            font-family: 'Audiowide', cursive;
+            background: linear-gradient(135deg, var(--cyber-red), var(--cyber-orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .cyber-subtitle {
+            color: rgba(229, 231, 235, 0.7);
+            font-size: 1.1rem;
+            max-width: 800px;
+        }
+
+        /* === ALERT BANNER === */
+        .cyber-alert {
+            background: rgba(255, 0, 60, 0.1);
+            border: 2px solid rgba(255, 0, 60, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            animation: alertPulse 2s ease-in-out infinite;
+        }
+
+        @@keyframes alertPulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(255, 0, 60, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(255, 0, 60, 0.4);
+            }
+        }
+
+        .alert-icon {
+            font-size: 2rem;
+            color: var(--cyber-red);
+            margin-bottom: 1rem;
+        }
+
+        .alert-title {
+            font-family: 'Orbitron', monospace;
+            color: var(--cyber-red);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .alert-text {
+            color: rgba(229, 231, 235, 0.8);
+            font-size: 0.95rem;
+        }
+
+        /* === ANALYSIS CARD === */
+        .cyber-card {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 0, 60, 0.3);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 80px rgba(255, 0, 60, 0.2), inset 0 0 40px rgba(255, 0, 60, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 2rem;
+        }
+
+            .cyber-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 120px rgba(255, 0, 60, 0.3), inset 0 0 60px rgba(255, 0, 60, 0.15);
+            }
+
+            .cyber-card::before {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                background: linear-gradient(45deg, var(--cyber-red), var(--cyber-orange), var(--cyber-yellow), var(--cyber-red));
+                background-size: 400% 400%;
+                border-radius: 22px;
+                z-index: -1;
+                opacity: 0;
+                transition: opacity 0.4s ease;
+                animation: gradientFlow 3s linear infinite;
+            }
+
+            .cyber-card:hover::before {
+                opacity: 1;
+            }
+
+        @@keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* === ANALYSIS SECTIONS === */
+        .analysis-section {
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 0, 60, 0.2);
+        }
+
+        .section-label {
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            color: var(--cyber-red);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        /* === MESSAGE TEXTAREA === */
+        .cyber-textarea {
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid rgba(255, 0, 60, 0.3);
+            border-radius: 15px;
+            color: #e5e7eb;
+            padding: 1.2rem 1.5rem;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            resize: vertical;
+            min-height: 150px;
+        }
+
+            .cyber-textarea:focus {
+                outline: none;
+                border-color: var(--cyber-red);
+                background: rgba(15, 23, 42, 0.95);
+                box-shadow: 0 0 30px rgba(255, 0, 60, 0.4), inset 0 0 20px rgba(255, 0, 60, 0.1);
+                transform: translateY(-2px);
+            }
+
+            .cyber-textarea::placeholder {
+                color: rgba(229, 231, 235, 0.4);
+            }
+
+        /* === UPLOAD AREA === */
+        .cyber-upload-area {
+            background: rgba(15, 23, 42, 0.9);
+            border: 3px dashed rgba(255, 0, 60, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .cyber-upload-area:hover {
+                border-color: var(--cyber-orange);
+                background: rgba(255, 0, 60, 0.05);
+                transform: scale(1.02);
+            }
+
+            .cyber-upload-area.dragover {
+                border-color: var(--cyber-yellow);
+                background: rgba(255, 247, 0, 0.05);
+                transform: scale(1.03);
+            }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--cyber-red);
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 60, 0.5));
+        }
+
+        .upload-text {
+            color: rgba(229, 231, 235, 0.8);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .upload-subtext {
+            color: rgba(229, 231, 235, 0.5);
+            font-size: 0.9rem;
+        }
+
+        .file-info {
+            background: rgba(255, 0, 60, 0.1);
+            border: 1px solid rgba(255, 0, 60, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+            .file-info.active {
+                display: block;
+                animation: fadeIn 0.3s ease;
+            }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .file-name {
+            color: var(--cyber-orange);
+            font-family: 'Share Tech Mono', monospace;
+            word-break: break-all;
+        }
+
+        .file-size {
+            color: rgba(229, 231, 235, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* === ANALYZE BUTTON === */
+        .cyber-analyze-btn {
+            width: 100%;
+            padding: 1.2rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--cyber-red), var(--cyber-orange));
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+            .cyber-analyze-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                transition: 0.8s ease;
+            }
+
+            .cyber-analyze-btn:hover::before {
+                left: 100%;
+            }
+
+            .cyber-analyze-btn:hover {
+                transform: translateY(-5px) scale(1.02);
+                box-shadow: 0 20px 60px rgba(255, 0, 60, 0.5), 0 0 100px rgba(255, 0, 60, 0.3);
+                letter-spacing: 3px;
+            }
+
+            .cyber-analyze-btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none !important;
+            }
+
+                .cyber-analyze-btn:disabled:hover::before {
+                    left: -100%;
+                }
+
+        /* === PROGRESS BAR === */
+        .cyber-progress {
+            height: 6px;
+            background: rgba(229, 231, 235, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+            display: none;
+        }
+
+            .cyber-progress.active {
+                display: block;
+                animation: fadeIn 0.3s ease;
+            }
+
+        .cyber-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyber-red), var(--cyber-orange), var(--cyber-yellow));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .cyber-progress-bar::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                animation: shimmer 2s infinite;
+            }
+
+        @@keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* === THREAT TERMINAL === */
+        .threat-terminal {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 0, 60, 0.3);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            color: rgba(255, 0, 60, 0.9);
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+            .threat-terminal.active {
+                display: block;
+            }
+
+        .terminal-line {
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: typeIn 0.3s ease forwards;
+        }
+
+            .terminal-line.danger {
+                color: var(--cyber-red);
+                text-shadow: 0 0 10px rgba(255, 0, 60, 0.5);
+            }
+
+            .terminal-line.warning {
+                color: var(--cyber-yellow);
+                text-shadow: 0 0 10px rgba(255, 247, 0, 0.5);
+            }
+
+            .terminal-line.alert {
+                color: var(--cyber-orange);
+                text-shadow: 0 0 10px rgba(255, 119, 0, 0.5);
+            }
+
+            .terminal-line.info {
+                color: var(--cyber-cyan);
+                text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            }
+
+            .terminal-line.success {
+                color: var(--cyber-green);
+                text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+            }
+
+        @@keyframes typeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* === RESULT CARD === */
+        .result-card {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 20px;
+            border: 2px solid var(--cyber-red);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 80px rgba(255, 0, 60, 0.2), inset 0 0 40px rgba(255, 0, 60, 0.1);
+            margin-top: 2rem;
+            display: none;
+        }
+
+            .result-card.active {
+                display: block;
+                animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+        @@keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyber-red), var(--cyber-orange), var(--cyber-yellow));
+            opacity: 0.7;
+        }
+
+        .result-title {
+            font-family: 'Orbitron', monospace;
+            color: var(--cyber-red);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* === THREAT METER === */
+        .threat-meter {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+            .threat-meter.active {
+                display: block;
+            }
+
+        .threat-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .threat-level {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+        }
+
+        .threat-low {
+            color: var(--cyber-green);
+        }
+
+        .threat-medium {
+            color: var(--cyber-yellow);
+        }
+
+        .threat-high {
+            color: var(--cyber-orange);
+        }
+
+        .threat-critical {
+            color: var(--cyber-red);
+        }
+
+        .threat-bar {
+            height: 10px;
+            background: rgba(229, 231, 235, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .threat-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 1s ease-out;
+        }
+
+        .threat-fill-low {
+            background: var(--cyber-green);
+        }
+
+        .threat-fill-medium {
+            background: var(--cyber-yellow);
+        }
+
+        .threat-fill-high {
+            background: var(--cyber-orange);
+        }
+
+        .threat-fill-critical {
+            background: var(--cyber-red);
+        }
+
+        /* === RESULTS LIST === */
+        .results-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .result-item {
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 3px solid;
+            font-family: 'Exo 2', sans-serif;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+
+            .result-item:hover {
+                background: rgba(255, 255, 255, 0.08);
+                transform: translateX(5px);
+            }
+
+            .result-item.critical {
+                border-left-color: var(--cyber-red);
+                background: rgba(255, 0, 60, 0.1);
+            }
+
+            .result-item.high {
+                border-left-color: var(--cyber-orange);
+                background: rgba(255, 119, 0, 0.1);
+            }
+
+            .result-item.medium {
+                border-left-color: var(--cyber-yellow);
+                background: rgba(255, 247, 0, 0.1);
+            }
+
+            .result-item.low {
+                border-left-color: var(--cyber-blue);
+                background: rgba(56, 189, 248, 0.1);
+            }
+
+            .result-item.info {
+                border-left-color: var(--cyber-cyan);
+                background: rgba(0, 243, 255, 0.1);
+            }
+
+        .result-icon {
+            font-size: 1.2rem;
+            margin-top: 0.2rem;
+        }
+
+        .result-text {
+            flex: 1;
+        }
+
+        /* === ACTION BUTTONS === */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 0, 60, 0.2);
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 1rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        .action-report {
+            background: linear-gradient(135deg, var(--cyber-red), var(--cyber-purple));
+            color: white;
+        }
+
+        .action-save {
+            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-cyan));
+            color: white;
+        }
+
+        .action-ignore {
+            background: linear-gradient(135deg, #666, #999);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        @@media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .cyber-title {
+                font-size: 2rem;
+            }
+
+            .cyber-card {
+                padding: 1.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .cyber-title {
+                font-size: 1.6rem;
+            }
+
+            .cyber-analyze-btn {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+
+            .result-item {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- BACKGROUND EFFECTS -->
+    <div class="cyber-bg-overlay"></div>
+    <div class="cyber-grid-lines"></div>
+    <div class="cyber-scan-line"></div>
+    <div class="warning-pulse"></div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="cyber-container">
+        <!-- BACK NAVIGATION -->
+        <a href="/Home/Dashboard" class="cyber-nav-btn mb-4">
+            <i class="fas fa-arrow-left"></i>
+            BACK TO DASHBOARD
+        </a>
+
+        <!-- HEADER -->
+        <div class="cyber-header">
+            <h1 class="cyber-title">
+                <i class="fas fa-user-secret me-2"></i>
+                SCAM & IMPERSONATION DETECTION
+            </h1>
+            <p class="cyber-subtitle">
+                Upload suspicious voice, video, or paste messages to detect scam,
+                impersonation, or deepfake-based fraud attempts. Our AI analyzes
+                linguistic patterns, voice anomalies, and behavioral indicators.
+            </p>
+        </div>
+
+        <!-- ALERT BANNER -->
+        <div class="cyber-alert">
+            <div class="alert-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h5 class="alert-title">
+                WARNING: HIGH-RISK SCAM DETECTION
+            </h5>
+            <p class="alert-text">
+                This system detects sophisticated fraud attempts including voice cloning,
+                video deepfakes, and psychological manipulation. Always verify suspicious
+                communications through secondary channels.
+            </p>
+        </div>
+
+        <!-- ANALYSIS CARD -->
+        <div class="cyber-card">
+            <!-- MESSAGE ANALYSIS -->
+            <div class="analysis-section">
+                <label class="section-label">
+                    <i class="fas fa-comment-alt"></i>
+                    SUSPICIOUS MESSAGE ANALYSIS
+                </label>
+                <textarea class="cyber-textarea"
+                          id="messageInput"
+                          rows="4"
+                          placeholder="Paste suspicious message here...&#10;&#10;Common scam indicators:&#10;• Urgent requests for money or personal info&#10;• 'Official' messages from unknown sources&#10;• Grammar/spelling errors in 'professional' communications&#10;• Requests to bypass normal procedures"></textarea>
+                <div class="mt-2 text-end">
+                    <small class="text-muted" id="messageLength">0 characters</small>
+                </div>
+            </div>
+
+            <!-- MEDIA UPLOAD -->
+            <div class="analysis-section">
+                <label class="section-label">
+                    <i class="fas fa-file-upload"></i>
+                    VOICE / VIDEO UPLOAD
+                </label>
+
+                <div class="cyber-upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-microphone-alt"></i>
+                    </div>
+                    <p class="upload-text">
+                        Drag & drop voice or video file here
+                    </p>
+                    <p class="upload-subtext">
+                        or click to browse (Max: 50MB)
+                    </p>
+                    <p class="upload-subtext">
+                        Supported: MP3, WAV, MP4, AVI, MOV
+                    </p>
+                    <input type="file"
+                           class="form-control d-none"
+                           id="fileInput"
+                           accept=".mp3,.wav,.mp4,.avi,.mov,.ogg,.m4a" />
+
+                    <!-- FILE INFO -->
+                    <div class="file-info" id="fileInfo">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-file-audio me-2"></i>
+                                <span class="file-name" id="fileName">No file selected</span>
+                            </div>
+                            <span class="file-size" id="fileSize">0 MB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROGRESS BAR -->
+            <div class="cyber-progress" id="progressBar">
+                <div class="cyber-progress-bar" id="progressFill"></div>
+            </div>
+
+            <!-- ANALYZE BUTTON -->
+            <button class="cyber-analyze-btn" id="analyzeButton" disabled>
+                <i class="fas fa-search"></i>
+                <span id="analyzeButtonText">ANALYZE SCAM RISK</span>
+            </button>
+
+            <!-- THREAT TERMINAL -->
+            <div class="threat-terminal" id="threatTerminal"></div>
+        </div>
+
+        <!-- RESULT CARD -->
+        <div class="result-card" id="resultCard">
+            <h4 class="result-title">
+                <i class="fas fa-shield-alt"></i>
+                SCAM ANALYSIS RESULTS
+            </h4>
+
+            <!-- THREAT METER -->
+            <div class="threat-meter" id="threatMeter">
+                <div class="threat-label">
+                    <span>Threat Level:</span>
+                    <span class="threat-level" id="threatLevel">ANALYZING</span>
+                </div>
+                <div class="threat-bar">
+                    <div class="threat-fill" id="threatFill"></div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <small class="text-muted">Low Risk</small>
+                    <small class="text-muted">Critical Risk</small>
+                </div>
+            </div>
+
+            <!-- RESULTS LIST -->
+            <ul class="results-list" id="resultsList">
+                <!-- Results will be populated here -->
+            </ul>
+
+            <!-- ACTION BUTTONS -->
+            <div class="action-buttons">
+                <button class="action-btn action-report" id="reportButton">
+                    <i class="fas fa-flag"></i>
+                    REPORT SCAM
+                </button>
+                <button class="action-btn action-save" id="saveButton">
+                    <i class="fas fa-save"></i>
+                    SAVE REPORT
+                </button>
+                <button class="action-btn action-ignore" id="ignoreButton">
+                    <i class="fas fa-times"></i>
+                    IGNORE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const messageInput = document.getElementById('messageInput');
+            const messageLength = document.getElementById('messageLength');
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const analyzeButton = document.getElementById('analyzeButton');
+            const analyzeButtonText = document.getElementById('analyzeButtonText');
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            const threatTerminal = document.getElementById('threatTerminal');
+            const resultCard = document.getElementById('resultCard');
+            const threatMeter = document.getElementById('threatMeter');
+            const threatLevel = document.getElementById('threatLevel');
+            const threatFill = document.getElementById('threatFill');
+            const resultsList = document.getElementById('resultsList');
+            const reportButton = document.getElementById('reportButton');
+            const saveButton = document.getElementById('saveButton');
+            const ignoreButton = document.getElementById('ignoreButton');
+
+            let selectedFile = null;
+            let isAnalyzing = false;
+
+            // Message input handler
+            messageInput.addEventListener('input', function() {
+                const length = this.value.length;
+                messageLength.textContent = `${length} characters`;
+                updateAnalyzeButton();
+            });
+
+            // Update analyze button state
+            function updateAnalyzeButton() {
+                const hasMessage = messageInput.value.trim().length > 0;
+                const hasFile = selectedFile !== null;
+                analyzeButton.disabled = !(hasMessage || hasFile);
+            }
+
+            // Upload area click handler
+            uploadArea.addEventListener('click', () => fileInput.click());
+
+            // Drag and drop handlers
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => {
+                    uploadArea.classList.add('dragover');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => {
+                    uploadArea.classList.remove('dragover');
+                }, false);
+            });
+
+            uploadArea.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length) {
+                    handleFile(files[0]);
+                }
+            }
+
+            // File input change handler
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleFile(e.target.files[0]);
+                }
+            });
+
+            function handleFile(file) {
+                // Validate file size
+                if (file.size > 50 * 1024 * 1024) { // 50MB
+                    showTerminalMessage('File size exceeds 50MB limit', 'danger');
+                    return;
+                }
+
+                // Validate file type
+                const validTypes = [
+                    'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/m4a',
+                    'video/mp4', 'video/avi', 'video/quicktime'
+                ];
+
+                if (!validTypes.includes(file.type) && !file.name.match(/\.(mp3|wav|ogg|m4a|mp4|avi|mov)$/i)) {
+                    showTerminalMessage('Unsupported file type. Please upload audio or video.', 'danger');
+                    return;
+                }
+
+                selectedFile = file;
+
+                // Update UI
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                fileInfo.classList.add('active');
+
+                // Show file type icon
+                if (file.type.includes('audio')) {
+                    fileName.innerHTML = '<i class="fas fa-file-audio me-2"></i>' + file.name;
+                } else if (file.type.includes('video')) {
+                    fileName.innerHTML = '<i class="fas fa-file-video me-2"></i>' + file.name;
+                }
+
+                showTerminalMessage(`File loaded: ${file.name}`, 'info');
+                showTerminalMessage(`Type: ${file.type || 'Unknown'}`, 'info');
+                showTerminalMessage(`Size: ${formatFileSize(file.size)}`, 'info');
+
+                updateAnalyzeButton();
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            // Terminal message function
+            function showTerminalMessage(message, type = 'info') {
+                const line = document.createElement('div');
+                line.className = `terminal-line ${type}`;
+                line.innerHTML = `> ${message}`;
+                threatTerminal.appendChild(line);
+                threatTerminal.classList.add('active');
+                threatTerminal.scrollTop = threatTerminal.scrollHeight;
+
+                // Animate typing
+                const text = line.textContent;
+                line.textContent = '';
+                let i = 0;
+                function typeWriter() {
+                    if (i < text.length) {
+                        line.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 20);
+                    }
+                }
+                typeWriter();
+            }
+
+            // Clear terminal
+            function clearTerminal() {
+                threatTerminal.innerHTML = '';
+            }
+
+            // Analyze button handler
+            analyzeButton.addEventListener('click', async () => {
+                if (isAnalyzing) return;
+
+                isAnalyzing = true;
+                analyzeButton.disabled = true;
+                analyzeButtonText.textContent = 'ANALYZING...';
+                analyzeButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING...';
+
+                // Clear previous results
+                clearTerminal();
+                resultCard.classList.remove('active');
+                resultsList.innerHTML = '';
+                threatMeter.classList.remove('active');
+
+                // Show progress bar
+                progressBar.classList.add('active');
+                progressFill.style.width = '0%';
+
+                // Terminal messages
+                showTerminalMessage('Initializing threat assessment protocol...', 'alert');
+
+                if (messageInput.value.trim().length > 0) {
+                    showTerminalMessage('Analyzing message content...', 'info');
+                }
+
+                if (selectedFile) {
+                    showTerminalMessage('Processing media file...', 'info');
+                }
+
+                // Simulate analysis progress
+                const steps = [
+                    { percent: 10, message: 'Loading content into memory...', delay: 600 },
+                    { percent: 20, message: 'Extracting linguistic patterns...', delay: 800 },
+                    { percent: 35, message: 'Checking for scam keywords...', delay: 1000 },
+                    { percent: 50, message: 'Analyzing urgency indicators...', delay: 900 },
+                    { percent: 65, message: 'Validating sender impersonation...', delay: 1200 },
+                    { percent: 80, message: 'Running voice pattern analysis...', delay: 1500 },
+                    { percent: 90, message: 'Cross-referencing with scam databases...', delay: 1100 },
+                    { percent: 100, message: 'Compiling threat assessment...', delay: 800 }
+                ];
+
+                for (const step of steps) {
+                    await new Promise(resolve => setTimeout(resolve, step.delay));
+                    progressFill.style.width = step.percent + '%';
+                    showTerminalMessage(step.message, 'info');
+                }
+
+                // Hide progress bar
+                setTimeout(() => {
+                    progressBar.classList.remove('active');
+                }, 500);
+
+                // Show results
+                showResults();
+            });
+
+            function showResults() {
+                // Simulate threat level
+                const threatScore = Math.floor(Math.random() * 100);
+                let threatCategory = 'low';
+                let threatClass = 'threat-low';
+                let fillClass = 'threat-fill-low';
+
+                if (threatScore > 80) {
+                    threatCategory = 'CRITICAL';
+                    threatClass = 'threat-critical';
+                    fillClass = 'threat-fill-critical';
+                } else if (threatScore > 60) {
+                    threatCategory = 'HIGH';
+                    threatClass = 'threat-high';
+                    fillClass = 'threat-fill-high';
+                } else if (threatScore > 40) {
+                    threatCategory = 'MEDIUM';
+                    threatClass = 'threat-medium';
+                    fillClass = 'threat-fill-medium';
+                } else {
+                    threatCategory = 'LOW';
+                    threatClass = 'threat-low';
+                    fillClass = 'threat-fill-low';
+                }
+
+                // Update threat meter
+                threatLevel.textContent = threatCategory;
+                threatLevel.className = `threat-level ${threatClass}`;
+                threatFill.className = `threat-fill ${fillClass}`;
+                threatFill.style.width = threatScore + '%';
+                threatMeter.classList.add('active');
+
+                // Generate results based on threat score
+                const results = [];
+
+                // Always add some findings
+                const criticalFindings = [
+                    { type: 'critical', icon: 'fa-skull-crossbones', text: 'Impersonation patterns detected' },
+                    { type: 'critical', icon: 'fa-money-bill-wave', text: 'Financial scam indicators identified' },
+                    { type: 'critical', icon: 'fa-user-secret', text: 'Possible identity theft attempt' }
+                ];
+
+                const highFindings = [
+                    { type: 'high', icon: 'fa-exclamation-triangle', text: 'High-pressure scam language found' },
+                    { type: 'high', icon: 'fa-robot', text: 'Possible AI-generated voice indicators' },
+                    { type: 'high', icon: 'fa-clock', text: 'Urgency manipulation tactics detected' }
+                ];
+
+                const mediumFindings = [
+                    { type: 'medium', icon: 'fa-exclamation-circle', text: 'Suspicious grammatical patterns' },
+                    { type: 'medium', icon: 'fa-envelope', text: 'Unverified sender information' },
+                    { type: 'medium', icon: 'fa-link', text: 'Suspicious link patterns' }
+                ];
+
+                const lowFindings = [
+                    { type: 'low', icon: 'fa-info-circle', text: 'Minor inconsistencies detected' },
+                    { type: 'low', icon: 'fa-shield-alt', text: 'Basic security check passed' },
+                    { type: 'low', icon: 'fa-check', text: 'No immediate threats identified' }
+                ];
+
+                const infoFindings = [
+                    { type: 'info', icon: 'fa-lightbulb', text: 'Recommendation: Verify through official channels' },
+                    { type: 'info', icon: 'fa-history', text: 'Analysis timestamp: ' + new Date().toLocaleTimeString() },
+                    { type: 'info', icon: 'fa-database', text: 'Checked against global scam database' }
+                ];
+
+                // Add findings based on threat level
+                if (threatScore > 80) {
+                    results.push(...criticalFindings.slice(0, 2));
+                    results.push(...highFindings.slice(0, 2));
+                } else if (threatScore > 60) {
+                    results.push(...highFindings.slice(0, 2));
+                    results.push(...mediumFindings.slice(0, 1));
+                } else if (threatScore > 40) {
+                    results.push(...mediumFindings.slice(0, 2));
+                    results.push(...lowFindings.slice(0, 1));
+                } else {
+                    results.push(...lowFindings.slice(0, 2));
+                }
+
+                // Always add some info findings
+                results.push(infoFindings[Math.floor(Math.random() * infoFindings.length)]);
+                results.push(infoFindings[Math.floor(Math.random() * infoFindings.length)]);
+
+                // Shuffle results for variety
+                results.sort(() => Math.random() - 0.5);
+
+                // Populate results list
+                resultsList.innerHTML = '';
+                results.forEach(result => {
+                    const li = document.createElement('li');
+                    li.className = `result-item ${result.type}`;
+                    li.innerHTML = `
+                        <i class="fas ${result.icon} result-icon"></i>
+                        <div class="result-text">${result.text}</div>
+                    `;
+                    resultsList.appendChild(li);
+                });
+
+                // Show result card with animation
+                resultCard.classList.add('active');
+
+                // Reset button
+                isAnalyzing = false;
+                analyzeButton.disabled = false;
+                analyzeButtonText.textContent = 'ANALYZE AGAIN';
+                analyzeButton.innerHTML = '<i class="fas fa-redo"></i> ANALYZE AGAIN';
+
+                // Show terminal success message
+                showTerminalMessage('Threat assessment complete', 'success');
+                showTerminalMessage(`Threat score: ${threatScore}% (${threatCategory})`, 'warning');
+
+                if (threatScore > 60) {
+                    showTerminalMessage('WARNING: High risk detected! Exercise extreme caution.', 'danger');
+                }
+            }
+
+            // Action button handlers
+            reportButton.addEventListener('click', () => {
+                showTerminalMessage('Report submitted to security authorities', 'alert');
+                showTerminalMessage('Case ID: SCAM-' + Date.now(), 'info');
+                alert('Scam report submitted successfully. Authorities have been notified.');
+            });
+
+            saveButton.addEventListener('click', () => {
+                showTerminalMessage('Report saved to secure database', 'success');
+                showTerminalMessage('Accessible from your dashboard history', 'info');
+                alert('Report saved successfully. You can access it from your dashboard.');
+            });
+
+            ignoreButton.addEventListener('click', () => {
+                showTerminalMessage('Warning: This report has been marked as ignored', 'warning');
+                showTerminalMessage('Please remain vigilant for similar threats', 'info');
+                resultCard.classList.remove('active');
+            });
+
+            // Initial terminal message
+            setTimeout(() => {
+                showTerminalMessage('Threat detection system ready', 'success');
+                showTerminalMessage('Enter suspicious content or upload media to begin analysis', 'info');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

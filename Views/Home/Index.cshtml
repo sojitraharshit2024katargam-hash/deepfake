@@ -1,0 +1,618 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="cyberpunk-2077">
+<head>
+    <meta charset="utf-8" />
+    <title>DEEPFAKE NEXUS | Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+
+    <!-- OPTIMIZED DEPENDENCIES -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&family=Audiowide&family=Black+Ops+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+
+    <style>
+        /* === CYBERPUNK THEME SYSTEM === */
+        :root {
+            /* Cyber Color Spectrum */
+            --cyber-void: #0b0f19;
+            --cyber-dark: #0f172a;
+            --cyber-darker: #090d1a;
+            /* Neon Colors */
+            --cyber-blue: #38bdf8;
+            --cyber-cyan: #00f3ff;
+            --cyber-purple: #9d00ff;
+            --cyber-pink: #ff00ff;
+            --cyber-green: #00ff9d;
+            --cyber-red: #ff003c;
+            --cyber-yellow: #fff700;
+            /* Glow Intensities */
+            --glow-soft: 0 0 15px;
+            --glow-medium: 0 0 30px;
+            --glow-strong: 0 0 50px;
+            /* Animation Speeds */
+            --speed-fast: 0.2s;
+            --speed-medium: 0.3s;
+            --speed-slow: 0.5s;
+        }
+
+        /* === BASE STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            background: var(--cyber-void);
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--cyber-void);
+            color: #e5e7eb;
+            overflow-x: hidden;
+            min-height: 100vh;
+            line-height: 1.6;
+            letter-spacing: 0.3px;
+        }
+
+        /* === CYBER BACKGROUND EFFECTS === */
+        .cyber-bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(157, 0, 255, 0.05) 0%, transparent 50%);
+            z-index: -100;
+            pointer-events: none;
+        }
+
+        .cyber-grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px), linear-gradient(0deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+            background-size: 80px 80px;
+            z-index: -99;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* === HERO SECTION === */
+        .cyber-hero {
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 6rem 0;
+        }
+
+        .hero-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 400;
+            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-cyan), var(--cyber-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            position: relative;
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @@keyframes titleGlow {
+            0%, 100% {
+                text-shadow: 0 0 30px rgba(56, 189, 248, 0.5), 0 0 60px rgba(56, 189, 248, 0.3);
+            }
+
+            50% {
+                text-shadow: 0 0 40px rgba(56, 189, 248, 0.7), 0 0 80px rgba(56, 189, 248, 0.5), 0 0 120px rgba(56, 189, 248, 0.3);
+            }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: rgba(229, 231, 235, 0.85);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        /* === FEATURE CARDS === */
+        .feature-card {
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 20px;
+            border: 2px solid rgba(56, 189, 248, 0.2);
+            padding: 2.5rem 1.5rem;
+            height: 100%;
+            transition: all var(--speed-medium) ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transform: translateZ(0);
+        }
+
+            .feature-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.1), transparent);
+                transition: left 0.7s ease;
+            }
+
+            .feature-card:hover::before {
+                left: 100%;
+            }
+
+            .feature-card:hover {
+                transform: translateY(-15px) scale(1.03);
+                border-color: var(--cyber-blue);
+                box-shadow: 0 20px 50px rgba(56, 189, 248, 0.3), 0 0 100px rgba(56, 189, 248, 0.1);
+            }
+
+        .feature-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.2) rotate(5deg);
+            filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.5));
+        }
+
+        .feature-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            color: var(--cyber-blue);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .feature-description {
+            color: rgba(229, 231, 235, 0.8);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* === STATS SECTION === */
+        .stats-section {
+            background: rgba(9, 13, 26, 0.8);
+            border-radius: 30px;
+            padding: 4rem 2rem;
+            margin: 5rem 0;
+            border: 2px solid rgba(56, 189, 248, 0.1);
+            backdrop-filter: blur(20px);
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            animation: pulseNumber 2s infinite ease-in-out;
+        }
+
+        @@keyframes pulseNumber {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .stat-label {
+            color: rgba(229, 231, 235, 0.7);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* === CTA SECTION === */
+        .cta-section {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(157, 0, 255, 0.05));
+            border-radius: 30px;
+            padding: 5rem 2rem;
+            margin: 4rem 0;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(56, 189, 248, 0.2);
+        }
+
+            .cta-section::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(45deg, transparent 30%, rgba(56, 189, 248, 0.1) 50%, transparent 70%);
+                animation: ctaShimmer 3s infinite linear;
+            }
+
+        @@keyframes ctaShimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* === CYBER BUTTONS === */
+        .cyber-btn {
+            position: relative;
+            padding: 1rem 2.5rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            overflow: hidden;
+            font-size: 1.1rem;
+        }
+
+        .cyber-btn-primary {
+            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-purple));
+            color: white;
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+        }
+
+        .cyber-btn-secondary {
+            background: transparent;
+            color: var(--cyber-cyan);
+            border: 3px solid var(--cyber-cyan);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+        }
+
+        .cyber-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(56, 189, 248, 0.5), 0 0 100px rgba(56, 189, 248, 0.2);
+            letter-spacing: 3px;
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        @@media (max-width: 768px) {
+            .cyber-hero {
+                padding: 4rem 0;
+                min-height: 70vh;
+            }
+
+            .feature-card {
+                padding: 2rem 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .feature-icon {
+                font-size: 2.5rem;
+            }
+
+            .stats-section {
+                padding: 3rem 1rem;
+                margin: 3rem 0;
+            }
+
+            .cyber-btn {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        /* === NAVIGATION (Will be included in layout) === */
+        /* ... existing nav styles ... */
+
+        /* === FOOTER (Will be included in layout) === */
+        /* ... existing footer styles ... */
+    </style>
+</head>
+<body>
+    <!-- CYBER BACKGROUND EFFECTS -->
+    <div class="cyber-bg-overlay"></div>
+    <div class="cyber-grid-overlay"></div>
+
+    <!-- HERO SECTION -->
+    <section class="cyber-hero">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 text-center" data-aos="fade-up">
+                    <h1 class="hero-title">
+                        DEEPFAKE NEXUS
+                    </h1>
+
+                    <p class="hero-subtitle">
+                        A multipurpose cybersecurity platform to detect spoofing, phishing,
+                        deepfake media, and online scams with quantum-level accuracy.
+                    </p>
+
+                    <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+                        <a href="/Account/Register" class="cyber-btn cyber-btn-primary">
+                            <i class="fas fa-rocket me-2"></i>
+                            START FREE TRIAL
+                        </a>
+                        <a href="#features" class="cyber-btn cyber-btn-secondary">
+                            <i class="fas fa-eye me-2"></i>
+                            EXPLORE FEATURES
+                        </a>
+                    </div>
+
+                    <div class="mt-5">
+                        <div class="stats-section">
+                            <div class="row text-center">
+                                <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="100">
+                                    <div class="stat-number">99.7%</div>
+                                    <div class="stat-label">Detection Accuracy</div>
+                                </div>
+                                <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="200">
+                                    <div class="stat-number">2.4M+</div>
+                                    <div class="stat-label">Threat Database</div>
+                                </div>
+                                <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="300">
+                                    <div class="stat-number">50ms</div>
+                                    <div class="stat-label">Average Scan Time</div>
+                                </div>
+                                <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="400">
+                                    <div class="stat-number">24/7</div>
+                                    <div class="stat-label">Real-time Monitoring</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-8 text-center">
+                    <h2 class="mb-4" style="font-family: 'Audiowide', cursive; color: white; font-size: 2.5rem;">
+                        QUANTUM DETECTION MODULES
+                    </h2>
+                    <p class="text-white-50">
+                        Powered by neural networks and blockchain verification for unprecedented accuracy
+                    </p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Email Analysis -->
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-envelope-open-text"></i>
+                        </div>
+                        <h3 class="feature-title">Email Analysis</h3>
+                        <p class="feature-description">
+                            Advanced forensic analysis to detect email spoofing,
+                            phishing attempts, and embedded malware threats.
+                        </p>
+                        <div class="mt-4">
+                            <span class="badge bg-cyber-blue me-2">SPF/DKIM/DMARC</span>
+                            <span class="badge bg-cyber-purple">Header Analysis</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Detection -->
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h3 class="feature-title">Media Detection</h3>
+                        <p class="feature-description">
+                            Identify AI-generated images, videos, and audio deepfakes
+                            using neural network analysis and metadata forensics.
+                        </p>
+                        <div class="mt-4">
+                            <span class="badge bg-cyber-green me-2">Deepfake AI</span>
+                            <span class="badge bg-cyber-pink">GAN Detection</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Website Check -->
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                        <h3 class="feature-title">Website Check</h3>
+                        <p class="feature-description">
+                            Verify legitimacy of websites with SSL certificate analysis,
+                            domain reputation checks, and phishing pattern detection.
+                        </p>
+                        <div class="mt-4">
+                            <span class="badge bg-cyber-cyan me-2">SSL/TLS</span>
+                            <span class="badge bg-cyber-yellow">Phishing Detection</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scam Detection -->
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3 class="feature-title">Scam Detection</h3>
+                        <p class="feature-description">
+                            Detect voice, message, and video scams using behavioral
+                            analysis and social engineering pattern recognition.
+                        </p>
+                        <div class="mt-4">
+                            <span class="badge bg-cyber-red me-2">Voice Clone</span>
+                            <span class="badge bg-cyber-blue">Behavioral AI</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="py-5">
+        <div class="container">
+            <div class="cta-section text-center">
+                <h2 class="mb-4" style="font-family: 'Black Ops One', cursive; color: white; font-size: 2.5rem;">
+                    READY TO SECURE YOUR DIGITAL REALITY?
+                </h2>
+                <p class="text-white-75 mb-5" style="max-width: 700px; margin: 0 auto; font-size: 1.1rem;">
+                    Join thousands of security professionals, enterprises, and government agencies
+                    in the fight against digital deception. Get started with our free tier today.
+                </p>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a href="/Account/Register" class="cyber-btn cyber-btn-primary">
+                        <i class="fas fa-user-plus me-2"></i>
+                        CREATE FREE ACCOUNT
+                    </a>
+                    <a href="/Home/Demo" class="cyber-btn" style="background: transparent; border: 3px solid var(--cyber-green); color: var(--cyber-green);">
+                        <i class="fas fa-play-circle me-2"></i>
+                        LIVE DEMO
+                    </a>
+                    <a href="/Home/Contact" class="cyber-btn" style="background: transparent; border: 3px solid var(--cyber-purple); color: var(--cyber-purple);">
+                        <i class="fas fa-headset me-2"></i>
+                        ENTERPRISE SALES
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+    <script>
+        // Initialize AOS animations
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof AOS !== 'undefined') {
+                AOS.init({
+                    duration: 800,
+                    once: true,
+                    offset: 100,
+                    easing: 'ease-out-cubic'
+                });
+            }
+
+            // Add hover effect to feature cards
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.zIndex = '10';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.zIndex = '1';
+                });
+            });
+
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Animate stats on scroll
+            const observerOptions = {
+                threshold: 0.5
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const numbers = entry.target.querySelectorAll('.stat-number');
+                        numbers.forEach((number, index) => {
+                            const finalValue = number.textContent;
+                            let currentValue = 0;
+                            const increment = finalValue.includes('%')
+                                ? parseFloat(finalValue) / 50
+                                : finalValue.includes('+')
+                                    ? parseInt(finalValue) / 50
+                                    : finalValue.includes('/')
+                                        ? 0
+                                        : parseFloat(finalValue) / 50;
+
+                            if (finalValue.includes('/')) {
+                                number.textContent = finalValue;
+                                return;
+                            }
+
+                            const timer = setInterval(() => {
+                                currentValue += increment;
+                                if (currentValue >= parseFloat(finalValue)) {
+                                    number.textContent = finalValue;
+                                    clearInterval(timer);
+                                } else {
+                                    number.textContent = Math.floor(currentValue) +
+                                        (finalValue.includes('%') ? '%' :
+                                         finalValue.includes('+') ? '+' : '');
+                                }
+                            }, 30);
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const statsSection = document.querySelector('.stats-section');
+            if (statsSection) {
+                observer.observe(statsSection);
+            }
+        });
+    </script>
+</body>
+</html>
