@@ -1,0 +1,10 @@
+C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\obj\Debug\net8.0\DEEPFAKE.csproj.AssemblyReference.cache
+C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\obj\Debug\net8.0\DEEPFAKE.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\obj\Debug\net8.0\DEEPFAKE.AssemblyInfoInputs.cache
+C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\obj\Debug\net8.0\DEEPFAKE.AssemblyInfo.cs
+C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\obj\Debug\net8.0\DEEPFAKE.csproj.CoreCompileInputs.cache
+C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\obj\Debug\net8.0\DEEPFAKE.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\obj\Debug\net8.0\DEEPFAKE.RazorAssemblyInfo.cache
+C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\obj\Debug\net8.0\DEEPFAKE.RazorAssemblyInfo.cs
+C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\obj\Debug\net8.0\DEEPFAKE.sourcelink.json
