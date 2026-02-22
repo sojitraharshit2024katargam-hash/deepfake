@@ -10,7 +10,7 @@ namespace DEEPFAKE.Controllers
     {
         private readonly HttpClient _httpClient;
 
-        // 🔥 Replace if ngrok URL changes
+        // 🔥 Change this if ngrok URL changes
         private const string BaseUrl = "https://sobersided-frank-restrainedly.ngrok-free.dev";
 
         public ImageController(IHttpClientFactory factory)
@@ -24,6 +24,11 @@ namespace DEEPFAKE.Controllers
             if (request == null || string.IsNullOrWhiteSpace(request.Prompt))
                 return BadRequest("Prompt required");
 
+            // 🔐 Session Protection
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return Unauthorized("Please login first.");
+
             try
             {
                 var workflow = BuildWorkflow(request.Prompt);
@@ -34,40 +39,44 @@ namespace DEEPFAKE.Controllers
                     "application/json"
                 );
 
-                // 🔥 STEP 1: Send prompt
+                // 🔥 STEP 1: Send prompt to ComfyUI
                 var response = await _httpClient.PostAsync($"{BaseUrl}/prompt", content);
                 response.EnsureSuccessStatusCode();
 
                 var responseBody = await response.Content.ReadAsStringAsync();
                 var doc = JsonDocument.Parse(responseBody);
 
-                string promptId = doc.RootElement.GetProperty("prompt_id").GetString();
+                if (!doc.RootElement.TryGetProperty("prompt_id", out var idElement))
+                    return StatusCode(500, "Invalid response from ComfyUI");
 
-                // 🔥 STEP 2: Poll until ready (max 30 seconds)
+                string promptId = idElement.GetString();
+
+                // 🔥 STEP 2: Wait for image generation
                 string filename = await WaitForImage(promptId);
 
                 if (filename == null)
                     return StatusCode(500, "Image generation timeout");
 
-                // 🔥 STEP 3: Build direct image URL
+                // 🔥 STEP 3: Build image URL
                 string imageUrl = $"{BaseUrl}/view?filename={filename}";
 
                 return Ok(new { imageUrl });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                Console.WriteLine("Image Generation Error: " + ex.Message);
+                return StatusCode(500, "Image generation failed.");
             }
         }
 
         // ====================================================
-        // 🧠 POLLING METHOD (PROFESSIONAL APPROACH)
+        // 🧠 POLLING METHOD
         // ====================================================
-        private async Task<string> WaitForImage(string promptId)
+        private async Task<string?> WaitForImage(string promptId)
         {
-            for (int i = 0; i < 15; i++) // ~15 attempts
+            for (int i = 0; i < 15; i++) // 15 attempts (~30 sec max)
             {
-                await Task.Delay(2000); // wait 2 seconds
+                await Task.Delay(2000);
 
                 var historyResponse = await _httpClient.GetAsync($"{BaseUrl}/history/{promptId}");
 
@@ -86,7 +95,8 @@ namespace DEEPFAKE.Controllers
                 if (!outputs.TryGetProperty("8", out var node8))
                     continue;
 
-                var images = node8.GetProperty("images");
+                if (!node8.TryGetProperty("images", out var images))
+                    continue;
 
                 if (images.GetArrayLength() > 0)
                 {
@@ -98,7 +108,7 @@ namespace DEEPFAKE.Controllers
         }
 
         // ====================================================
-        // 🔥 BUILD WORKFLOW
+        // 🔥 WORKFLOW BUILDER
         // ====================================================
         private object BuildWorkflow(string prompt)
         {
@@ -168,6 +178,6 @@ namespace DEEPFAKE.Controllers
 
     public class PromptRequest
     {
-        public string Prompt { get; set; }
+        public string Prompt { get; set; } = string.Empty;
     }
 }
