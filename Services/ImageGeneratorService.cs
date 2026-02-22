@@ -41,7 +41,7 @@ namespace DEEPFAKE.Services.ImageGeneration
                     {
                         "5", new {
                             class_type = "EmptyLatentImage",
-                            inputs = new { width = 512, height = 512, batch_size = 1 }
+                            inputs = new { width = 1024, height = 1024, batch_size = 1 }
                         }
                     },
                     {

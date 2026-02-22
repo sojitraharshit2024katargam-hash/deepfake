@@ -28,13 +28,7 @@ namespace DEEPFAKE.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult ImageGenerator()
-        {
-            if (HttpContext.Session.GetInt32("UserId") == null)
-                return RedirectToAction("Login", "Account");
-
-            return View();
-        }
+      
 
     }
 }

@@ -1,0 +1,369 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Generator - DEEPFAKE</title>
+
+    <!-- Bootstrap & Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&family=Audiowide&display=swap" rel="stylesheet" />
+
+    <style>
+        /* CYBERPUNK THEME */
+        :root {
+            --cyber-void: #0b0f19;
+            --cyber-dark: #0f172a;
+            --cyber-darker: #090d1a;
+            --cyber-blue: #38bdf8;
+            --cyber-cyan: #00f3ff;
+            --cyber-purple: #9d00ff;
+            --cyber-pink: #ff00ff;
+            --cyber-green: #00ff9d;
+            --cyber-red: #ff003c;
+            --cyber-yellow: #fff700;
+            --cyber-orange: #ff7700;
+            --cyber-warning: #ff9900;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--cyber-void);
+            color: #e5e7eb;
+            min-height: 100vh;
+            padding: 2rem;
+            margin: 0;
+        }
+
+        .cyber-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .cyber-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 12px;
+            color: var(--cyber-cyan);
+            text-decoration: none;
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+            .cyber-nav-btn:hover {
+                background: rgba(56, 189, 248, 0.2);
+                border-color: var(--cyber-cyan);
+                color: white;
+                transform: translateX(-5px);
+                box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            }
+
+        .cyber-header {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .cyber-title {
+            font-family: 'Audiowide', cursive;
+            background: linear-gradient(135deg, var(--cyber-cyan), var(--cyber-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .cyber-subtitle {
+            color: rgba(229, 231, 235, 0.7);
+            font-size: 1.1rem;
+        }
+
+        .cyber-card {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 20px;
+            border: 2px solid rgba(56, 189, 248, 0.3);
+            padding: 2.5rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            margin-bottom: 2rem;
+        }
+
+        .section-label {
+            font-family: 'Orbitron', monospace;
+            color: var(--cyber-blue);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .cyber-textarea {
+            width: 100%;
+            min-height: 150px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid rgba(56, 189, 248, 0.3);
+            border-radius: 15px;
+            padding: 1.2rem;
+            color: #e5e7eb;
+            font-family: 'Share Tech Mono', monospace;
+            margin-bottom: 2rem;
+        }
+
+            .cyber-textarea:focus {
+                outline: none;
+                border-color: var(--cyber-cyan);
+                box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+            }
+
+        .cyber-analyze-btn {
+            width: 100%;
+            padding: 1.2rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-purple));
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+            .cyber-analyze-btn:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 60px rgba(56, 189, 248, 0.5);
+            }
+
+        .cyber-progress {
+            height: 6px;
+            background: rgba(229, 231, 235, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+            display: none;
+        }
+
+            .cyber-progress.active {
+                display: block;
+            }
+
+        .cyber-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyber-purple), var(--cyber-blue), var(--cyber-cyan));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .result-card {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 20px;
+            border: 2px solid var(--cyber-green);
+            padding: 2.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+
+            .result-card.active {
+                display: block;
+                animation: slideUp 0.5s ease;
+            }
+
+        .result-title {
+            font-family: 'Orbitron', monospace;
+            color: var(--cyber-green);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .generated-image-container {
+            text-align: center;
+            margin: 1.5rem 0;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid rgba(0, 255, 157, 0.3);
+        }
+
+        #generatedImage {
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(0, 255, 157, 0.4);
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg, var(--cyber-green), var(--cyber-blue));
+            border-radius: 15px;
+            color: white;
+            font-family: 'Orbitron', monospace;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: all 0.4s ease;
+        }
+
+            .download-btn:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 40px rgba(0, 255, 157, 0.5);
+                color: white;
+            }
+
+        @@keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-container">
+        <!-- BACK NAVIGATION -->
+        <a href="/Home/Dashboard" class="cyber-nav-btn mb-4">
+            <i class="fas fa-arrow-left"></i>
+            BACK TO DASHBOARD
+        </a>
+
+        <!-- HEADER -->
+        <div class="cyber-header">
+            <h1 class="cyber-title">
+                <i class="fas fa-image me-2"></i>
+                IMAGE GENERATOR
+            </h1>
+            <p class="cyber-subtitle">
+                AI-powered creative image synthesis engine. Describe the image you want to generate,
+                and our neural network will create it for you.
+            </p>
+        </div>
+
+        <!-- GENERATOR CARD -->
+        <div class="cyber-card">
+            <div class="section-label">
+                <i class="fas fa-terminal"></i>
+                ENTER PROMPT
+            </div>
+
+            <textarea id="prompt"
+                      class="cyber-textarea"
+                      placeholder="Describe the image you want to generate..."></textarea>
+
+            <button class="cyber-analyze-btn" onclick="generateImage()">
+                <i class="fas fa-bolt"></i>
+                GENERATE IMAGE
+            </button>
+
+            <!-- PROGRESS BAR -->
+            <div class="cyber-progress" id="progressBar">
+                <div class="cyber-progress-bar" id="progressFill"></div>
+            </div>
+
+            <!-- RESULT CARD -->
+            <div class="result-card" id="resultCard">
+                <h3 class="result-title">
+                    <i class="fas fa-check-circle"></i>
+                    GENERATED IMAGE
+                </h3>
+
+                <div class="generated-image-container">
+                    <img id="generatedImage" alt="Generated image" style="width:100%;max-width:900px;" />
+                </div>
+
+                <div class="text-center mt-4">
+                    <a id="downloadBtn" class="download-btn" download>
+                        <i class="fas fa-download me-2"></i>
+                        DOWNLOAD IMAGE
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function generateImage() {
+            const prompt = document.getElementById("prompt").value;
+            const resultCard = document.getElementById("resultCard");
+            const generatedImage = document.getElementById("generatedImage");
+            const downloadBtn = document.getElementById("downloadBtn");
+            const progressBar = document.getElementById("progressBar");
+            const progressFill = document.getElementById("progressFill");
+
+            if (!prompt.trim()) {
+                alert("Please enter a prompt first");
+                return;
+            }
+
+            resultCard.classList.remove("active");
+            progressBar.classList.add("active");
+            progressFill.style.width = '0%';
+
+            try {
+                // Simulate progress
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 10;
+                    progressFill.style.width = progress + '%';
+                    if (progress >= 100) clearInterval(interval);
+                }, 300);
+
+                // API call
+                const response = await fetch("/api/image/generate", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                clearInterval(interval);
+
+                if (!response.ok) throw new Error('API call failed');
+
+                const data = await response.json();
+
+                if (data.imageUrl) {
+                    generatedImage.src = data.imageUrl;
+                    downloadBtn.href = data.imageUrl;
+                    resultCard.classList.add("active");
+                } else {
+                    // Demo mode - remove in production
+                    generatedImage.src = "https://via.placeholder.com/800x600/0f172a/00ff9d?text=Generated+Image";
+                    downloadBtn.href = generatedImage.src;
+                    resultCard.classList.add("active");
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Server error. Using demo mode.");
+
+                // Demo mode
+                generatedImage.src = "https://via.placeholder.com/800x600/0f172a/00ff9d?text=Generated+Image";
+                downloadBtn.href = generatedImage.src;
+                resultCard.classList.add("active");
+            }
+
+            setTimeout(() => {
+                progressBar.classList.remove("active");
+                progressFill.style.width = '0%';
+            }, 500);
+        }
+    </script>
+</body>
+</html>
