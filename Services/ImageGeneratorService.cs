@@ -23,7 +23,7 @@ namespace DEEPFAKE.Services.ImageGeneration
                     {
                         "2", new {
                             class_type = "CheckpointLoaderSimple",
-                            inputs = new { ckpt_name = "v1-5-pruned-emaonly.safetensors" }
+                            inputs = new { ckpt_name = "sd_xl_base_1.0.safetensors" }
                         }
                     },
                     {

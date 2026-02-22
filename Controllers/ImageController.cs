@@ -10,7 +10,6 @@ namespace DEEPFAKE.Controllers
     {
         private readonly HttpClient _httpClient;
 
-        // 🔥 Change this if ngrok URL changes
         private const string BaseUrl = "https://sobersided-frank-restrainedly.ngrok-free.dev";
 
         public ImageController(IHttpClientFactory factory)
@@ -24,7 +23,6 @@ namespace DEEPFAKE.Controllers
             if (request == null || string.IsNullOrWhiteSpace(request.Prompt))
                 return BadRequest("Prompt required");
 
-            // 🔐 Session Protection
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
                 return Unauthorized("Please login first.");
@@ -39,7 +37,6 @@ namespace DEEPFAKE.Controllers
                     "application/json"
                 );
 
-                // 🔥 STEP 1: Send prompt to ComfyUI
                 var response = await _httpClient.PostAsync($"{BaseUrl}/prompt", content);
                 response.EnsureSuccessStatusCode();
 
@@ -49,15 +46,13 @@ namespace DEEPFAKE.Controllers
                 if (!doc.RootElement.TryGetProperty("prompt_id", out var idElement))
                     return StatusCode(500, "Invalid response from ComfyUI");
 
-                string promptId = idElement.GetString();
+                string promptId = idElement.GetString()!;
 
-                // 🔥 STEP 2: Wait for image generation
                 string filename = await WaitForImage(promptId);
 
                 if (filename == null)
                     return StatusCode(500, "Image generation timeout");
 
-                // 🔥 STEP 3: Build image URL
                 string imageUrl = $"{BaseUrl}/view?filename={filename}";
 
                 return Ok(new { imageUrl });
@@ -69,17 +64,16 @@ namespace DEEPFAKE.Controllers
             }
         }
 
-        // ====================================================
-        // 🧠 POLLING METHOD
-        // ====================================================
+        // ==============================================
+        // POLLING
+        // ==============================================
         private async Task<string?> WaitForImage(string promptId)
         {
-            for (int i = 0; i < 15; i++) // 15 attempts (~30 sec max)
+            for (int i = 0; i < 25; i++) // ~50 seconds max
             {
                 await Task.Delay(2000);
 
                 var historyResponse = await _httpClient.GetAsync($"{BaseUrl}/history/{promptId}");
-
                 if (!historyResponse.IsSuccessStatusCode)
                     continue;
 
@@ -107,9 +101,9 @@ namespace DEEPFAKE.Controllers
             return null;
         }
 
-        // ====================================================
-        // 🔥 WORKFLOW BUILDER
-        // ====================================================
+        // ==============================================
+        // MAX QUALITY WORKFLOW (12GB OPTIMIZED)
+        // ==============================================
         private object BuildWorkflow(string prompt)
         {
             return new
@@ -119,23 +113,40 @@ namespace DEEPFAKE.Controllers
                     ["2"] = new
                     {
                         class_type = "CheckpointLoaderSimple",
-                        inputs = new { ckpt_name = "v1-5-pruned-emaonly.safetensors" }
+                        inputs = new { ckpt_name = "sd_xl_base_1.0.safetensors" }
                     },
+
                     ["3"] = new
                     {
                         class_type = "CLIPTextEncode",
-                        inputs = new { text = prompt, clip = new object[] { "2", 1 } }
+                        inputs = new
+                        {
+                            text = prompt + ", ultra detailed, realistic, sharp focus, cinematic lighting, 85mm lens, depth of field, high resolution, highly detailed",
+                            clip = new object[] { "2", 1 }
+                        }
                     },
+
                     ["4"] = new
                     {
                         class_type = "CLIPTextEncode",
-                        inputs = new { text = "", clip = new object[] { "2", 1 } }
+                        inputs = new
+                        {
+                            text = "bad anatomy, bad hands, extra fingers, extra limbs, deformed face, ugly, mutated, low quality, blurry, distorted eyes, poorly drawn face, bad proportions, cross eyes, weird mouth",
+                            clip = new object[] { "2", 1 }
+                        }
                     },
+
                     ["5"] = new
                     {
                         class_type = "EmptyLatentImage",
-                        inputs = new { width = 512, height = 512, batch_size = 1 }
+                        inputs = new
+                        {
+                            width = 1024,
+                            height = 1024,
+                            batch_size = 1
+                        }
                     },
+
                     ["6"] = new
                     {
                         class_type = "KSampler",
@@ -146,13 +157,14 @@ namespace DEEPFAKE.Controllers
                             negative = new object[] { "4", 0 },
                             latent_image = new object[] { "5", 0 },
                             seed = new Random().Next(),
-                            steps = 20,
-                            cfg = 8,
-                            sampler_name = "euler",
-                            scheduler = "simple",
+                            steps = 35,
+                            cfg = 8.5,
+                            sampler_name = "dpmpp_2m_sde",
+                            scheduler = "karras",
                             denoise = 1
                         }
                     },
+
                     ["7"] = new
                     {
                         class_type = "VAEDecode",
@@ -162,6 +174,7 @@ namespace DEEPFAKE.Controllers
                             vae = new object[] { "2", 2 }
                         }
                     },
+
                     ["8"] = new
                     {
                         class_type = "SaveImage",
