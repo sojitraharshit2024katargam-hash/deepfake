@@ -26,36 +26,61 @@ namespace DEEPFAKE.Controllers
         [HttpPost]
         public IActionResult Register(User user, string password)
         {
-            string otp = GenerateOtp();
+            if (!ModelState.IsValid)
+                return View(user);
 
-            user.PasswordHash = HashPassword(password);
-            user.CreatedAt = DateTime.Now;
-            user.IsEmailVerified = false;
-            user.OTPCode = otp;
-            user.OTPGeneratedAt = DateTime.Now;
+            try
+            {
+                string otp = GenerateOtp();
 
-            using NpgsqlConnection con = new NpgsqlConnection(connectionString);
+                user.PasswordHash = HashPassword(password);
+                user.CreatedAt = DateTime.Now;
+                user.IsEmailVerified = false;
+                user.OTPCode = otp;
+                user.OTPGeneratedAt = DateTime.Now;
 
-            string query = @"
-                INSERT INTO Users
-                (FullName, Email, PasswordHash, CreatedAt, IsEmailVerified, OTPCode, OTPGeneratedAt)
-                VALUES
-                (@FullName, @Email, @PasswordHash, @CreatedAt, @IsEmailVerified, @OTPCode, @OTPGeneratedAt)
-            ";
+                using NpgsqlConnection con = new NpgsqlConnection(connectionString);
 
-            NpgsqlCommand cmd = new NpgsqlCommand(query, con);
-            cmd.Parameters.AddWithValue("@FullName", user.FullName);
-            cmd.Parameters.AddWithValue("@Email", user.Email);
-            cmd.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
-            cmd.Parameters.AddWithValue("@CreatedAt", user.CreatedAt);
-            cmd.Parameters.AddWithValue("@IsEmailVerified", user.IsEmailVerified);
-            cmd.Parameters.AddWithValue("@OTPCode", user.OTPCode);
-            cmd.Parameters.AddWithValue("@OTPGeneratedAt", user.OTPGeneratedAt);
+                string query = @"
+            INSERT INTO Users
+            (FullName, Email, PasswordHash, CreatedAt, IsEmailVerified, OTPCode, OTPGeneratedAt)
+            VALUES
+            (@FullName, @Email, @PasswordHash, @CreatedAt, @IsEmailVerified, @OTPCode, @OTPGeneratedAt)
+        ";
 
-            con.Open();
-            cmd.ExecuteNonQuery();
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@FullName", user.FullName ?? "");
+                cmd.Parameters.AddWithValue("@Email", user.Email ?? "");
+                cmd.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
+                cmd.Parameters.AddWithValue("@CreatedAt", user.CreatedAt);
+                cmd.Parameters.AddWithValue("@IsEmailVerified", user.IsEmailVerified);
+                cmd.Parameters.AddWithValue("@OTPCode", user.OTPCode);
+                cmd.Parameters.AddWithValue("@OTPGeneratedAt", user.OTPGeneratedAt);
 
-            SendOtpEmail(user.Email, otp);
+                con.Open();
+                cmd.ExecuteNonQuery();
+            }
+            catch (PostgresException ex) when (ex.SqlState == "23505")
+            {
+                ModelState.AddModelError("", "Email already registered. Please login instead.");
+                return View(user);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Register Error: " + ex.Message);
+                ModelState.AddModelError("", "Something went wrong. Please try again.");
+                return View(user);
+            }
+
+            // Send OTP separately (so email failure doesn't break registration)
+            try
+            {
+                SendOtpEmail(user.Email, user.OTPCode);
+            }
+            catch (Exception emailEx)
+            {
+                Console.WriteLine("Email sending failed: " + emailEx.Message);
+            }
 
             TempData["Email"] = user.Email;
             return RedirectToAction("VerifyOtp");
