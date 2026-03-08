@@ -1,618 +1,2262 @@
-﻿<!DOCTYPE html>
-<html lang="en" class="cyberpunk-2077">
+﻿@* <%@@ Page Language="C#" AutoEventWireup="true" %> *@
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>DEEPFAKE NEXUS | Home</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-
-    <!-- OPTIMIZED DEPENDENCIES -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&family=Audiowide&family=Black+Ops+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
-
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Deepfake Nexus — Cybersecurity Detection Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* === CYBERPUNK THEME SYSTEM === */
-        :root {
-            /* Cyber Color Spectrum */
-            --cyber-void: #0b0f19;
-            --cyber-dark: #0f172a;
-            --cyber-darker: #090d1a;
-            /* Neon Colors */
-            --cyber-blue: #38bdf8;
-            --cyber-cyan: #00f3ff;
-            --cyber-purple: #9d00ff;
-            --cyber-pink: #ff00ff;
-            --cyber-green: #00ff9d;
-            --cyber-red: #ff003c;
-            --cyber-yellow: #fff700;
-            /* Glow Intensities */
-            --glow-soft: 0 0 15px;
-            --glow-medium: 0 0 30px;
-            --glow-strong: 0 0 50px;
-            /* Animation Speeds */
-            --speed-fast: 0.2s;
-            --speed-medium: 0.3s;
-            --speed-slow: 0.5s;
-        }
-
-        /* === BASE STYLES === */
-        * {
-            margin: 0;
-            padding: 0;
+        *, *::before, *::after {
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            margin: 0;
+            padding: 0
         }
 
         html {
             scroll-behavior: smooth;
-            overflow-x: hidden;
-            background: var(--cyber-void);
+            overflow-x: hidden
         }
 
         body {
-            font-family: 'Exo 2', sans-serif;
-            background: var(--cyber-void);
-            color: #e5e7eb;
+            background: #04040a;
+            color: #ede9e0;
+            font-family: 'Syne',sans-serif;
             overflow-x: hidden;
-            min-height: 100vh;
-            line-height: 1.6;
-            letter-spacing: 0.3px;
+            cursor: none
         }
 
-        /* === CYBER BACKGROUND EFFECTS === */
-        .cyber-bg-overlay {
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        :root {
+            --g: #c9a96e;
+            --g2: rgba(201,169,110,.4);
+            --g3: rgba(201,169,110,.1);
+            --g4: rgba(201,169,110,.06);
+            --c: #ede9e0;
+            --c2: rgba(237,233,224,.6);
+            --c3: rgba(237,233,224,.32);
+            --c4: rgba(237,233,224,.1);
+            --ink: #04040a;
+            --stroke: rgba(237,233,224,.07);
+            --teal: #4ecdc4;
+            --purple: #8b5cf6;
+            --ease: cubic-bezier(.16,1,.3,1);
+        }
+
+        #cur {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(157, 0, 255, 0.05) 0%, transparent 50%);
-            z-index: -100;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--g);
             pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%,-50%);
+            mix-blend-mode: difference
         }
 
-        .cyber-grid-overlay {
+        #cur-r {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px), linear-gradient(0deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
-            background-size: 80px 80px;
-            z-index: -99;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1px solid var(--g2);
             pointer-events: none;
-            opacity: 0.3;
+            z-index: 9998;
+            transform: translate(-50%,-50%);
+            transition: width .5s var(--ease),height .5s var(--ease),border-color .5s
         }
 
-        /* === HERO SECTION === */
-        .cyber-hero {
-            min-height: 85vh;
+        #bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none
+        }
+
+        .noise-over {
+            position: fixed;
+            inset: -200px;
+            z-index: 3;
+            pointer-events: none;
+            opacity: .03;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 200px;
+            animation: nn 8s steps(4) infinite
+        }
+
+        @@keyframes nn {
+            to {
+                transform: translate(-3%,2%)
+            }
+        }
+
+        .vig {
+            position: fixed;
+            inset: 0;
+            z-index: 4;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center,transparent 35%,rgba(4,4,10,.7) 100%)
+        }
+
+        .grid-over {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            background-image: linear-gradient(rgba(201,169,110,.011) 1px,transparent 1px),linear-gradient(90deg,rgba(201,169,110,.011) 1px,transparent 1px);
+            background-size: 80px 80px
+        }
+
+        #hud-side {
+            position: fixed;
+            right: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 20;
             display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none
+        }
+
+        .hud-pip {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: transparent;
+            border: 1px solid var(--g2);
+            transition: all .5s var(--ease)
+        }
+
+            .hud-pip.a {
+                background: var(--g);
+                box-shadow: 0 0 8px var(--g2)
+            }
+
+        #loader {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: #04040a;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            position: relative;
-            overflow: hidden;
-            padding: 6rem 0;
+            justify-content: center;
+            gap: 20px;
+            transition: opacity .9s var(--ease),transform .9s var(--ease)
         }
 
-        .hero-title {
-            font-family: 'Black Ops One', cursive;
-            font-size: clamp(3rem, 8vw, 5rem);
-            font-weight: 400;
-            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-cyan), var(--cyber-purple));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            position: relative;
-            animation: titleGlow 3s ease-in-out infinite;
-        }
-
-        @@keyframes titleGlow {
-            0%, 100% {
-                text-shadow: 0 0 30px rgba(56, 189, 248, 0.5), 0 0 60px rgba(56, 189, 248, 0.3);
+            #loader.out {
+                opacity: 0;
+                pointer-events: none;
+                transform: scale(1.05)
             }
 
-            50% {
-                text-shadow: 0 0 40px rgba(56, 189, 248, 0.7), 0 0 80px rgba(56, 189, 248, 0.5), 0 0 120px rgba(56, 189, 248, 0.3);
-            }
-        }
-
-        .hero-subtitle {
-            font-size: clamp(1.1rem, 2vw, 1.4rem);
-            color: rgba(229, 231, 235, 0.85);
-            max-width: 700px;
-            margin: 0 auto 3rem;
-            line-height: 1.7;
-            font-weight: 300;
-        }
-
-        /* === FEATURE CARDS === */
-        .feature-card {
-            background: rgba(15, 23, 42, 0.7);
-            border-radius: 20px;
-            border: 2px solid rgba(56, 189, 248, 0.2);
-            padding: 2.5rem 1.5rem;
-            height: 100%;
-            transition: all var(--speed-medium) ease;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            transform: translateZ(0);
-        }
-
-            .feature-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.1), transparent);
-                transition: left 0.7s ease;
-            }
-
-            .feature-card:hover::before {
-                left: 100%;
-            }
-
-            .feature-card:hover {
-                transform: translateY(-15px) scale(1.03);
-                border-color: var(--cyber-blue);
-                box-shadow: 0 20px 50px rgba(56, 189, 248, 0.3), 0 0 100px rgba(56, 189, 248, 0.1);
-            }
-
-        .feature-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-cyan));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover .feature-icon {
-            transform: scale(1.2) rotate(5deg);
-            filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.5));
-        }
-
-        .feature-title {
-            font-family: 'Orbitron', monospace;
-            font-weight: 700;
-            color: var(--cyber-blue);
-            font-size: 1.4rem;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .feature-description {
-            color: rgba(229, 231, 235, 0.8);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        /* === STATS SECTION === */
-        .stats-section {
-            background: rgba(9, 13, 26, 0.8);
-            border-radius: 30px;
-            padding: 4rem 2rem;
-            margin: 5rem 0;
-            border: 2px solid rgba(56, 189, 248, 0.1);
-            backdrop-filter: blur(20px);
-        }
-
-        .stat-number {
-            font-family: 'Orbitron', monospace;
-            font-size: clamp(2.5rem, 5vw, 4rem);
+        .ld-logo {
+            font-family: 'Syne',sans-serif;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-cyan));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1;
-            margin-bottom: 0.5rem;
-            animation: pulseNumber 2s infinite ease-in-out;
+            font-size: 12px;
+            letter-spacing: .25em;
+            text-transform: uppercase;
+            color: var(--g)
         }
 
-        @@keyframes pulseNumber {
+        .ld-bar {
+            width: 160px;
+            height: 1px;
+            background: rgba(201,169,110,.14);
+            position: relative;
+            overflow: hidden
+        }
+
+        .ld-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--g);
+            transition: width .1s
+        }
+
+        .ld-pct {
+            font-family: 'DM Mono',monospace;
+            font-size: 10px;
+            letter-spacing: .15em;
+            color: var(--c3)
+        }
+
+        .site {
+            position: relative;
+            z-index: 10
+        }
+
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 32px;
+            overflow: hidden
+        }
+
+        .hero-eye {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'DM Mono',monospace;
+            font-size: 10px;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--g);
+            margin-bottom: 28px;
+            opacity: 0;
+            animation: fu .9s .4s var(--ease) forwards
+        }
+
+            .hero-eye::before, .hero-eye::after {
+                content: '';
+                width: 36px;
+                height: 1px;
+                background: var(--g2)
+            }
+
+        .ldot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 10px rgba(34,197,94,.7);
+            animation: lp 1.8s infinite
+        }
+
+        @@keyframes lp {
             0%, 100% {
                 opacity: 1;
+                transform: scale(1)
             }
 
             50% {
-                opacity: 0.8;
+                opacity: .4;
+                transform: scale(.7)
             }
         }
 
-        .stat-label {
-            color: rgba(229, 231, 235, 0.7);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .hero-h1 {
+            font-family: 'Instrument Serif',serif;
+            font-weight: 400;
+            font-size: clamp(48px,8.8vw,126px);
+            line-height: .92;
+            letter-spacing: -.04em;
+            opacity: 0;
+            animation: fu .9s .6s var(--ease) forwards
         }
 
-        /* === CTA SECTION === */
-        .cta-section {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(157, 0, 255, 0.05));
-            border-radius: 30px;
-            padding: 5rem 2rem;
-            margin: 4rem 0;
+            .hero-h1 em {
+                font-style: italic;
+                color: var(--g)
+            }
+
+        .hero-sub {
+            margin-top: 22px;
+            font-size: clamp(14px,1.3vw,16px);
+            color: var(--c3);
+            max-width: 50ch;
+            line-height: 1.75;
+            opacity: 0;
+            animation: fu .9s .8s var(--ease) forwards
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 14px;
+            margin-top: 38px;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            animation: fu .9s 1s var(--ease) forwards
+        }
+
+        .gbtn {
+            font-family: 'Syne',sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            padding: 13px 32px;
+            cursor: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             position: relative;
             overflow: hidden;
-            border: 2px solid rgba(56, 189, 248, 0.2);
+            transition: color .35s
         }
 
-            .cta-section::before {
+        .gbtn-fill {
+            background: var(--g);
+            color: #04040a;
+            border: 1px solid var(--g)
+        }
+
+            .gbtn-fill::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: #d4b87e;
+                transform: translateX(-101%);
+                transition: transform .4s var(--ease)
+            }
+
+            .gbtn-fill:hover::before {
+                transform: translateX(0)
+            }
+
+            .gbtn-fill:hover {
+                color: #04040a
+            }
+
+        .gbtn-out {
+            background: transparent;
+            border: 1px solid var(--stroke);
+            color: var(--c3)
+        }
+
+            .gbtn-out::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: var(--g4);
+                transform: translateY(101%);
+                transition: transform .35s var(--ease)
+            }
+
+            .gbtn-out:hover::before {
+                transform: translateY(0)
+            }
+
+            .gbtn-out:hover {
+                color: var(--c);
+                border-color: var(--g2)
+            }
+
+        .gbtn span {
+            position: relative;
+            z-index: 1
+        }
+
+        .hero-badge {
+            position: absolute;
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+            padding: 8px 14px;
+            border: 1px solid var(--stroke);
+            background: rgba(4,4,10,.75);
+            backdrop-filter: blur(14px);
+            color: var(--c3);
+            pointer-events: none;
+            white-space: nowrap;
+            opacity: 0;
+            animation: fu .8s var(--ease) forwards
+        }
+
+        .badge-1 {
+            top: 26%;
+            left: 5%;
+            animation-delay: .9s
+        }
+
+        .badge-2 {
+            top: 20%;
+            right: 6%;
+            animation-delay: 1.1s
+        }
+
+        .badge-3 {
+            bottom: 28%;
+            left: 4%;
+            animation-delay: 1.2s
+        }
+
+        .badge-4 {
+            bottom: 26%;
+            right: 5%;
+            animation-delay: 1.3s
+        }
+
+        .badge-dot {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--g);
+            margin-right: 8px;
+            vertical-align: middle
+        }
+
+        .scroll-cue {
+            position: absolute;
+            bottom: 34px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            animation: fi 1s 1.8s forwards
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 56px;
+            background: linear-gradient(to bottom,var(--g2),transparent);
+            animation: sc 2.4s 1.8s infinite
+        }
+
+        @@keyframes sc {
+            0%, 100% {
+                opacity: 1;
+                transform: scaleY(1);
+                transform-origin: top
+            }
+
+            50% {
+                opacity: .25;
+                transform: scaleY(.4);
+                transform-origin: top
+            }
+        }
+
+        .scroll-txt {
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .18em;
+            color: var(--c3);
+            text-transform: uppercase;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg)
+        }
+
+        .mq-wrap {
+            border-top: 1px solid var(--stroke);
+            border-bottom: 1px solid var(--stroke);
+            padding: 14px 0;
+            overflow: hidden;
+            background: rgba(4,4,10,.85);
+            backdrop-filter: blur(20px)
+        }
+
+        .mq-track {
+            display: flex;
+            width: max-content;
+            animation: mq 28s linear infinite
+        }
+
+        .mq-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            padding: 0 32px;
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: var(--c3);
+            white-space: nowrap
+        }
+
+        .mq-sep {
+            display: inline-block;
+            width: 3px;
+            height: 3px;
+            background: var(--g);
+            border-radius: 50%
+        }
+
+        @@keyframes mq {
+            from {
+                transform: translateX(0)
+            }
+
+            to {
+                transform: translateX(-50%)
+            }
+        }
+
+        .stats-sec {
+            padding: 100px 0
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            width: min(1280px,calc(100% - 80px));
+            margin: 0 auto;
+            border: 1px solid var(--stroke)
+        }
+
+        .st {
+            padding: 44px 38px;
+            border-right: 1px solid var(--stroke);
+            position: relative;
+            overflow: hidden;
+            cursor: default
+        }
+
+            .st:last-child {
+                border-right: none
+            }
+
+            .st::before {
                 content: '';
                 position: absolute;
                 top: 0;
                 left: 0;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(45deg, transparent 30%, rgba(56, 189, 248, 0.1) 50%, transparent 70%);
-                animation: ctaShimmer 3s infinite linear;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg,transparent,var(--g),transparent);
+                transform: scaleX(0);
+                transition: transform .7s var(--ease)
             }
 
-        @@keyframes ctaShimmer {
-            0% {
-                transform: translateX(-100%);
+            .st:hover::before {
+                transform: scaleX(1)
             }
 
-            100% {
-                transform: translateX(100%);
-            }
+        .st-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(260px 260px at 50% 50%,rgba(201,169,110,.06),transparent 70%);
+            opacity: 0;
+            transition: opacity .6s
         }
 
-        /* === CYBER BUTTONS === */
-        .cyber-btn {
-            position: relative;
-            padding: 1rem 2.5rem;
-            font-family: 'Orbitron', monospace;
-            font-weight: 700;
-            letter-spacing: 2px;
+        .st:hover .st-bg {
+            opacity: 1
+        }
+
+        .st-num {
+            font-family: 'Instrument Serif',serif;
+            font-size: clamp(48px,5vw,76px);
+            font-weight: 400;
+            line-height: 1;
+            letter-spacing: -.04em
+        }
+
+            .st-num b {
+                color: var(--g)
+            }
+
+        .st-lbl {
+            margin-top: 12px;
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .13em;
             text-transform: uppercase;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            text-decoration: none;
+            color: var(--c3);
+            line-height: 1.65
+        }
+
+        .st-tag {
+            margin-top: 7px;
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            color: var(--g);
+            letter-spacing: .1em
+        }
+
+        .wrap {
+            width: min(1280px,calc(100% - 80px));
+            margin: 0 auto
+        }
+
+        .sec-tag {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
+            gap: 10px;
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--g);
+            margin-bottom: 14px
+        }
+
+            .sec-tag::before {
+                content: '';
+                width: 20px;
+                height: 1px;
+                background: var(--g2)
+            }
+
+        .sec-h {
+            font-family: 'Instrument Serif',serif;
+            font-size: clamp(36px,4.6vw,66px);
+            font-weight: 400;
+            line-height: 1.04;
+            letter-spacing: -.025em
+        }
+
+            .sec-h em {
+                font-style: italic;
+                color: var(--g)
+            }
+
+        .mod-sec {
+            padding: 130px 0;
+            border-top: 1px solid var(--stroke)
+        }
+
+        .mod-top {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: end;
+            margin-bottom: 72px
+        }
+
+        .mod-grid {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 1px;
+            background: var(--stroke)
+        }
+
+        .mcard {
+            background: var(--ink);
+            padding: 52px 48px;
+            position: relative;
             overflow: hidden;
-            font-size: 1.1rem;
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            cursor: default;
+            transition: background .5s
         }
 
-        .cyber-btn-primary {
-            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-purple));
-            color: white;
-            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+            .mcard::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(500px 400px at -10% -10%,rgba(201,169,110,.07),transparent 60%);
+                opacity: 0;
+                transition: opacity .6s;
+                pointer-events: none
+            }
+
+            .mcard:hover {
+                background: #0a0914
+            }
+
+                .mcard:hover::after {
+                    opacity: 1
+                }
+
+        .mcard-br {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-color: var(--g2);
+            border-style: solid;
+            border-width: 0;
+            transition: all .5s var(--ease)
         }
 
-        .cyber-btn-secondary {
-            background: transparent;
-            color: var(--cyber-cyan);
-            border: 3px solid var(--cyber-cyan);
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+            .mcard-br.tl {
+                top: 18px;
+                left: 18px;
+                border-top-width: 1px;
+                border-left-width: 1px
+            }
+
+            .mcard-br.tr {
+                top: 18px;
+                right: 18px;
+                border-top-width: 1px;
+                border-right-width: 1px
+            }
+
+            .mcard-br.bl {
+                bottom: 18px;
+                left: 18px;
+                border-bottom-width: 1px;
+                border-left-width: 1px
+            }
+
+            .mcard-br.br2 {
+                bottom: 18px;
+                right: 18px;
+                border-bottom-width: 1px;
+                border-right-width: 1px
+            }
+
+        .mcard:hover .mcard-br {
+            width: 26px;
+            height: 26px;
+            border-color: var(--g)
         }
 
-        .cyber-btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 20px 50px rgba(56, 189, 248, 0.5), 0 0 100px rgba(56, 189, 248, 0.2);
-            letter-spacing: 3px;
+        .mcard-n {
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .2em;
+            color: var(--c4);
+            text-transform: uppercase;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between
         }
 
-        /* === RESPONSIVE DESIGN === */
-        @@media (max-width: 768px) {
-            .cyber-hero {
-                padding: 4rem 0;
-                min-height: 70vh;
+        .mcard-ic {
+            width: 56px;
+            height: 56px;
+            border: 1px solid var(--g3);
+            display: grid;
+            place-items: center;
+            font-size: 22px;
+            margin-bottom: 26px;
+            position: relative;
+            transition: all .45s var(--ease)
+        }
+
+            .mcard-ic::before {
+                content: '';
+                position: absolute;
+                inset: -4px;
+                border: 1px solid rgba(201,169,110,.06);
+                transition: all .5s var(--ease)
             }
 
-            .feature-card {
-                padding: 2rem 1rem;
-                margin-bottom: 1.5rem;
+        .mcard:hover .mcard-ic {
+            border-color: var(--g2);
+            background: var(--g3)
+        }
+
+            .mcard:hover .mcard-ic::before {
+                inset: -9px
             }
 
-            .feature-icon {
-                font-size: 2.5rem;
+        .mcard-h {
+            font-family: 'Instrument Serif',serif;
+            font-size: 30px;
+            font-weight: 400;
+            letter-spacing: -.01em;
+            margin-bottom: 12px
+        }
+
+        .mcard-p {
+            font-size: 13.5px;
+            color: var(--c3);
+            line-height: 1.72;
+            margin-bottom: auto;
+            padding-bottom: 26px
+        }
+
+        .mcard-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px
+        }
+
+        .mcard-tag {
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            padding: 5px 10px;
+            border: 1px solid var(--stroke);
+            color: var(--c4);
+            transition: all .3s
+        }
+
+        .mcard:hover .mcard-tag {
+            border-color: rgba(201,169,110,.2);
+            color: var(--c3)
+        }
+
+        .mcard-arr {
+            position: absolute;
+            bottom: 48px;
+            right: 48px;
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--stroke);
+            display: grid;
+            place-items: center;
+            font-size: 15px;
+            color: var(--c4);
+            transition: all .45s var(--ease);
+            transform: rotate(-45deg)
+        }
+
+        .mcard:hover .mcard-arr {
+            transform: rotate(0);
+            border-color: var(--g2);
+            color: var(--g)
+        }
+
+        .show-sec {
+            padding: 130px 0;
+            border-top: 1px solid var(--stroke);
+            overflow: hidden
+        }
+
+        .show-inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center
+        }
+
+        .show-canvas-wrap {
+            position: relative;
+            height: 580px
+        }
+
+        #sc {
+            width: 100%;
+            height: 100%;
+            display: block
+        }
+
+        .sc-hud {
+            position: absolute;
+            inset: 0;
+            pointer-events: none
+        }
+
+        .hud-c {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-color: var(--g2);
+            border-style: solid;
+            border-width: 0
+        }
+
+            .hud-c.tl {
+                top: 0;
+                left: 0;
+                border-top-width: 1px;
+                border-left-width: 1px
             }
 
-            .stats-section {
-                padding: 3rem 1rem;
-                margin: 3rem 0;
+            .hud-c.tr {
+                top: 0;
+                right: 0;
+                border-top-width: 1px;
+                border-right-width: 1px
             }
 
-            .cyber-btn {
-                padding: 0.8rem 2rem;
-                font-size: 1rem;
-                width: 100%;
-                max-width: 300px;
+            .hud-c.bl {
+                bottom: 0;
+                left: 0;
+                border-bottom-width: 1px;
+                border-left-width: 1px
+            }
+
+            .hud-c.br {
+                bottom: 0;
+                right: 0;
+                border-bottom-width: 1px;
+                border-right-width: 1px
+            }
+
+        .hud-lbl {
+            position: absolute;
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+            color: var(--g);
+            border: 1px solid var(--g3);
+            background: rgba(4,4,10,.8);
+            backdrop-filter: blur(10px);
+            padding: 5px 11px
+        }
+
+            .hud-lbl.tl {
+                top: 12px;
+                left: 12px
+            }
+
+            .hud-lbl.br {
+                bottom: 12px;
+                right: 12px
+            }
+
+        .scan-ln {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,transparent,rgba(201,169,110,.45),transparent);
+            animation: sln 3.2s linear infinite;
+            top: 0
+        }
+
+        @@keyframes sln {
+            from {
+                top: 0;
+                opacity: 0
+            }
+
+            8% {
+                opacity: 1
+            }
+
+            92% {
+                opacity: 1
+            }
+
+            to {
+                top: 100%;
+                opacity: 0
             }
         }
 
-        /* === NAVIGATION (Will be included in layout) === */
-        /* ... existing nav styles ... */
+        .steps-list {
+            margin-top: 40px;
+            display: grid;
+            gap: 0
+        }
 
-        /* === FOOTER (Will be included in layout) === */
-        /* ... existing footer styles ... */
+        .step-row {
+            display: flex;
+            gap: 20px;
+            padding: 24px 0;
+            border-top: 1px solid var(--stroke);
+            transition: background .3s
+        }
+
+            .step-row:last-child {
+                border-bottom: 1px solid var(--stroke)
+            }
+
+            .step-row:hover {
+                background: rgba(201,169,110,.02)
+            }
+
+        .step-n {
+            font-family: 'DM Mono',monospace;
+            font-size: 10px;
+            letter-spacing: .1em;
+            color: var(--g);
+            min-width: 26px;
+            padding-top: 2px
+        }
+
+        .step-h {
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: .03em;
+            margin-bottom: 4px
+        }
+
+        .step-p {
+            font-size: 12.5px;
+            color: var(--c3);
+            line-height: 1.68
+        }
+
+        .api-sec {
+            padding: 130px 0;
+            border-top: 1px solid var(--stroke)
+        }
+
+        .api-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: start
+        }
+
+        .term {
+            border: 1px solid var(--stroke);
+            position: relative;
+            overflow: hidden;
+            background: rgba(8,8,14,.95)
+        }
+
+            .term::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg,transparent,var(--g2),transparent)
+            }
+
+            .term::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 70px;
+                background: linear-gradient(transparent,rgba(8,8,14,.95));
+                pointer-events: none
+            }
+
+        .term-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 16px;
+            border-bottom: 1px solid var(--stroke);
+            background: rgba(0,0,0,.4)
+        }
+
+        .trd {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%
+        }
+
+            .trd.r {
+                background: #ff5f56
+            }
+
+            .trd.y {
+                background: #ffbd2e
+            }
+
+            .trd.g {
+                background: #27c93f
+            }
+
+        .term-ttl {
+            flex: 1;
+            text-align: center;
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .11em;
+            color: var(--c3);
+            text-transform: uppercase
+        }
+
+        .term-body {
+            padding: 22px 18px;
+            font-family: 'DM Mono',monospace;
+            font-size: 11px;
+            line-height: 2.1;
+            color: var(--c3)
+        }
+
+        .tk {
+            color: #7ec8c8
+        }
+
+        .tv {
+            color: #a8d8a8
+        }
+
+        .ts {
+            color: #ffb984
+        }
+
+        .tn {
+            color: var(--g)
+        }
+
+        .tb {
+            color: rgba(237,233,224,.45)
+        }
+
+        .tcur {
+            display: inline-block;
+            width: 7px;
+            height: 12px;
+            background: var(--g);
+            vertical-align: middle;
+            animation: blink 1s infinite
+        }
+
+        @@keyframes blink {
+            0%, 100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0
+            }
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--stroke);
+            margin-top: 22px
+        }
+
+        .metric-card {
+            background: #04040a;
+            padding: 22px;
+            position: relative;
+            overflow: hidden
+        }
+
+            .metric-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg,transparent,var(--g2),transparent);
+                transform: scaleX(0);
+                transition: transform .5s var(--ease)
+            }
+
+            .metric-card:hover::before {
+                transform: scaleX(1)
+            }
+
+        .metric-val {
+            font-family: 'Instrument Serif',serif;
+            font-size: 34px;
+            font-weight: 400;
+            line-height: 1;
+            letter-spacing: -.03em;
+            margin-bottom: 5px
+        }
+
+            .metric-val b {
+                color: var(--g)
+            }
+
+        .metric-lbl {
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--c3)
+        }
+
+        .metric-badge {
+            font-family: 'DM Mono',monospace;
+            font-size: 8px;
+            letter-spacing: .1em;
+            margin-top: 7px;
+            color: var(--tg,var(--g));
+            display: inline-flex;
+            align-items: center;
+            gap: 5px
+        }
+
+            .metric-badge::before {
+                content: '';
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                background: currentColor
+            }
+
+        .feat-list {
+            display: grid;
+            gap: 0;
+            margin-top: 38px
+        }
+
+        .feat-row {
+            display: flex;
+            gap: 14px;
+            padding: 18px 0;
+            border-top: 1px solid var(--stroke);
+            align-items: flex-start
+        }
+
+            .feat-row:last-child {
+                border-bottom: 1px solid var(--stroke)
+            }
+
+        .feat-ic {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--stroke);
+            display: grid;
+            place-items: center;
+            color: var(--g);
+            font-size: 13px;
+            flex-shrink: 0;
+            margin-top: 1px;
+            transition: all .35s
+        }
+
+        .feat-row:hover .feat-ic {
+            border-color: var(--g2);
+            background: var(--g3)
+        }
+
+        .feat-h {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: .03em;
+            margin-bottom: 4px
+        }
+
+        .feat-p {
+            font-size: 12px;
+            color: var(--c3);
+            line-height: 1.65
+        }
+
+        .uc-sec {
+            padding: 130px 0;
+            border-top: 1px solid var(--stroke)
+        }
+
+        .uc-head {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: end;
+            margin-bottom: 72px
+        }
+
+        .uc-grid {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 1px;
+            background: var(--stroke)
+        }
+
+        .uc-card {
+            background: #04040a;
+            padding: 48px 38px;
+            position: relative;
+            overflow: hidden;
+            transition: background .45s
+        }
+
+            .uc-card:hover {
+                background: #0a0914
+            }
+
+        .uc-badge {
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .17em;
+            text-transform: uppercase;
+            color: var(--g);
+            border: 1px solid var(--g3);
+            padding: 5px 10px;
+            display: inline-block;
+            margin-bottom: 24px
+        }
+
+        .uc-h {
+            font-family: 'Instrument Serif',serif;
+            font-size: 27px;
+            font-weight: 400;
+            margin-bottom: 13px;
+            letter-spacing: -.01em
+        }
+
+        .uc-p {
+            font-size: 13px;
+            color: var(--c3);
+            line-height: 1.72;
+            margin-bottom: 22px
+        }
+
+        .uc-ul {
+            list-style: none;
+            display: grid;
+            gap: 8px
+        }
+
+            .uc-ul li {
+                font-size: 12px;
+                color: var(--c3);
+                padding-left: 16px;
+                position: relative;
+                line-height: 1.55
+            }
+
+                .uc-ul li::before {
+                    content: '—';
+                    position: absolute;
+                    left: 0;
+                    color: var(--g);
+                    font-size: 9px;
+                    top: 3px
+                }
+
+        .uc-card-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,transparent,var(--g),transparent);
+            transform: scaleX(0);
+            transition: transform .65s var(--ease)
+        }
+
+        .uc-card:hover .uc-card-line {
+            transform: scaleX(1)
+        }
+
+        .pr-sec {
+            padding: 130px 0;
+            border-top: 1px solid var(--stroke)
+        }
+
+        .pr-head {
+            text-align: center;
+            margin-bottom: 72px
+        }
+
+        .pr-grid {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 1px;
+            background: var(--stroke)
+        }
+
+        .pr-card {
+            background: #04040a;
+            padding: 52px 42px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden
+        }
+
+            .pr-card.rec {
+                background: #0a0914
+            }
+
+                .pr-card.rec::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 1px;
+                    background: linear-gradient(90deg,transparent,var(--g),transparent)
+                }
+
+        .pr-plan {
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--g);
+            margin-bottom: 20px
+        }
+
+        .pr-amount {
+            font-family: 'Instrument Serif',serif;
+            font-size: 64px;
+            font-weight: 400;
+            line-height: 1;
+            letter-spacing: -.04em;
+            margin-bottom: 5px
+        }
+
+            .pr-amount sup {
+                font-size: 26px;
+                vertical-align: super;
+                color: var(--g)
+            }
+
+        .pr-period {
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            color: var(--c3);
+            letter-spacing: .1em;
+            margin-bottom: 38px
+        }
+
+        .pr-div {
+            height: 1px;
+            background: var(--stroke);
+            margin-bottom: 30px
+        }
+
+        .pr-feats {
+            list-style: none;
+            display: grid;
+            gap: 12px;
+            flex: 1
+        }
+
+            .pr-feats li {
+                display: flex;
+                gap: 11px;
+                align-items: flex-start;
+                font-size: 13px;
+                color: var(--c3);
+                line-height: 1.55
+            }
+
+                .pr-feats li span {
+                    color: var(--g);
+                    font-size: 9px;
+                    margin-top: 3px;
+                    flex-shrink: 0
+                }
+
+        .pr-cta {
+            display: block;
+            text-align: center;
+            margin-top: 38px;
+            font-family: 'Syne',sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            padding: 13px;
+            border: 1px solid var(--stroke);
+            color: var(--c3);
+            cursor: none;
+            transition: all .35s;
+            position: relative;
+            overflow: hidden
+        }
+
+            .pr-cta::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: var(--g);
+                transform: translateY(101%);
+                transition: transform .4s var(--ease);
+                z-index: 0
+            }
+
+            .pr-cta span {
+                position: relative;
+                z-index: 1
+            }
+
+            .pr-cta:hover {
+                color: #04040a;
+                border-color: var(--g)
+            }
+
+                .pr-cta:hover::before {
+                    transform: translateY(0)
+                }
+
+            .pr-cta.gold {
+                background: var(--g);
+                color: #04040a;
+                border-color: var(--g)
+            }
+
+                .pr-cta.gold::before {
+                    background: #d4b87e
+                }
+
+                .pr-cta.gold:hover {
+                    color: #04040a
+                }
+
+        .rec-ribbon {
+            position: absolute;
+            top: 18px;
+            right: -28px;
+            font-family: 'DM Mono',monospace;
+            font-size: 8px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            background: var(--g);
+            color: #04040a;
+            padding: 4px 38px;
+            transform: rotate(45deg)
+        }
+
+        .faq-sec {
+            padding: 130px 0;
+            border-top: 1px solid var(--stroke)
+        }
+
+        .faq-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.9fr;
+            gap: 100px;
+            align-items: start
+        }
+
+        .faq-left {
+            position: sticky;
+            top: 110px
+        }
+
+            .faq-left p {
+                margin-top: 16px;
+                font-size: 14px;
+                color: var(--c3);
+                line-height: 1.75;
+                max-width: 32ch
+            }
+
+        .faq-item {
+            border-top: 1px solid var(--stroke)
+        }
+
+            .faq-item:last-child {
+                border-bottom: 1px solid var(--stroke)
+            }
+
+        .faq-q {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            padding: 20px 0;
+            cursor: none;
+            user-select: none
+        }
+
+        .faq-qt {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--c2)
+        }
+
+        .faq-icon {
+            width: 24px;
+            height: 24px;
+            border: 1px solid var(--stroke);
+            display: grid;
+            place-items: center;
+            font-size: 11px;
+            color: var(--c3);
+            transition: all .4s var(--ease);
+            flex-shrink: 0
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(45deg);
+            border-color: var(--g2);
+            color: var(--g)
+        }
+
+        .faq-ans {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height .5s var(--ease)
+        }
+
+        .faq-ans-inner {
+            padding-bottom: 22px;
+            font-size: 14px;
+            color: var(--c3);
+            line-height: 1.8
+        }
+
+        .faq-item.open .faq-ans {
+            max-height: 240px
+        }
+
+        .cta-sec {
+            padding: 130px 0;
+            border-top: 1px solid var(--stroke)
+        }
+
+        .cta-inner {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 60px;
+            align-items: center
+        }
+
+        .cta-h {
+            font-family: 'Instrument Serif',serif;
+            font-size: clamp(36px,5.2vw,70px);
+            font-weight: 400;
+            line-height: 1.04;
+            letter-spacing: -.03em
+        }
+
+            .cta-h em {
+                font-style: italic;
+                color: var(--g)
+            }
+
+        .cta-p {
+            margin-top: 16px;
+            font-size: 15px;
+            color: var(--c3);
+            line-height: 1.72;
+            max-width: 50ch
+        }
+
+        .cta-right {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+            flex-shrink: 0
+        }
+
+        @@keyframes fu {
+            from {
+                opacity: 0;
+                transform: translateY(22px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @@keyframes fi {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        .rv {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity .9s var(--ease),transform .9s var(--ease)
+        }
+
+            .rv.on {
+                opacity: 1;
+                transform: translateY(0)
+            }
+
+        .d1 {
+            transition-delay: .07s
+        }
+
+        .d2 {
+            transition-delay: .14s
+        }
+
+        .d3 {
+            transition-delay: .21s
+        }
+
+        .d4 {
+            transition-delay: .28s
+        }
+
+        @@media(max-width:1024px) {
+            .mod-top, .show-inner, .api-grid, .uc-head, .uc-grid, .pr-grid, .faq-layout, .cta-inner {
+                grid-template-columns: 1fr
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .mod-grid {
+                grid-template-columns: 1fr
+            }
+
+            .st {
+                border-right: none;
+                border-bottom: 1px solid var(--stroke)
+            }
+
+            .show-canvas-wrap {
+                height: 420px
+            }
+
+            .faq-left {
+                position: static
+            }
+
+            .cta-right {
+                align-items: flex-start
+            }
+        }
+
+        @@media(max-width:640px) {
+            .stats-grid {
+                grid-template-columns: 1fr
+            }
+
+            .metrics {
+                grid-template-columns: 1fr
+            }
+
+            .hero-badge {
+                display: none
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- CYBER BACKGROUND EFFECTS -->
-    <div class="cyber-bg-overlay"></div>
-    <div class="cyber-grid-overlay"></div>
 
-    <!-- HERO SECTION -->
-    <section class="cyber-hero">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10 text-center" data-aos="fade-up">
-                    <h1 class="hero-title">
-                        DEEPFAKE NEXUS
-                    </h1>
+    <!-- THREE.JS: try local first, CDN fallback -->
+    <script src="three.min.js" onerror="
+  var s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+  s.onload=function(){if(window._pendingInit)window._pendingInit();};
+  document.head.appendChild(s);
+  window._usedCdn=true;
+"></script>
 
-                    <p class="hero-subtitle">
-                        A multipurpose cybersecurity platform to detect spoofing, phishing,
-                        deepfake media, and online scams with quantum-level accuracy.
-                    </p>
+    <!-- LOADER -->
+    <div id="loader">
+        <div class="ld-logo">Deepfake Nexus</div>
+        <div class="ld-bar"><div class="ld-fill" id="ld-fill"></div></div>
+        <div class="ld-pct" id="ld-pct">0%</div>
+    </div>
 
-                    <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
-                        <a href="/Account/Register" class="cyber-btn cyber-btn-primary">
-                            <i class="fas fa-rocket me-2"></i>
-                            START FREE TRIAL
-                        </a>
-                        <a href="#features" class="cyber-btn cyber-btn-secondary">
-                            <i class="fas fa-eye me-2"></i>
-                            EXPLORE FEATURES
-                        </a>
+    <canvas id="bg-canvas"></canvas>
+    <div class="noise-over"></div>
+    <div class="vig"></div>
+    <div class="grid-over"></div>
+    <div id="hud-side">
+        <div class="hud-pip a" id="hp0"></div><div class="hud-pip" id="hp1"></div>
+        <div class="hud-pip" id="hp2"></div><div class="hud-pip" id="hp3"></div>
+        <div class="hud-pip" id="hp4"></div><div class="hud-pip" id="hp5"></div>
+    </div>
+    <div id="cur"></div>
+    <div id="cur-r"></div>
+
+    <div class="site">
+        <section class="hero">
+            <div class="hero-badge badge-1"><span class="badge-dot"></span>SPF / DKIM / DMARC</div>
+            <div class="hero-badge badge-2"><span class="badge-dot"></span>GAN Detection · Active</div>
+            <div class="hero-badge badge-3"><span class="badge-dot"></span>Risk Score: 0.91</div>
+            <div class="hero-badge badge-4"><span class="badge-dot"></span>Latency: 47ms</div>
+            <div class="hero-eye"><span class="ldot"></span>Real-time detection · API + Dashboard</div>
+            <h1 class="hero-h1">Stop threats<br><em>before</em> they<br>reach your users.</h1>
+            <p class="hero-sub">A multipurpose cybersecurity detection platform — email spoofing, website legitimacy, AI-generated media, and scam behavior signals — engineered for modern SOC teams.</p>
+            <div class="hero-btns">
+                <a class="gbtn gbtn-fill" href="/Account/Register"><span>&#10022; Start free trial</span></a>
+                <a class="gbtn gbtn-out" href="#modules"><span>Explore modules &#8594;</span></a>
+            </div>
+            <div class="scroll-cue"><div class="scroll-line"></div><span class="scroll-txt">Scroll</span></div>
+        </section>
+        <div class="mq-wrap">
+            <div class="mq-track">
+                <span class="mq-item">Email Spoofing Analysis<span class="mq-sep"></span></span>
+                <span class="mq-item">AI Media Detection<span class="mq-sep"></span></span>
+                <span class="mq-item">Website Legitimacy Check<span class="mq-sep"></span></span>
+                <span class="mq-item">Voice Clone Detection<span class="mq-sep"></span></span>
+                <span class="mq-item">Header Forensics<span class="mq-sep"></span></span>
+                <span class="mq-item">GAN &middot; Diffusion Analysis<span class="mq-sep"></span></span>
+                <span class="mq-item">Scam Behavior Signals<span class="mq-sep"></span></span>
+                <span class="mq-item">SPF &middot; DKIM &middot; DMARC<span class="mq-sep"></span></span>
+                <span class="mq-item">Risk Scoring Engine<span class="mq-sep"></span></span>
+                <span class="mq-item">Evidence Export<span class="mq-sep"></span></span>
+                <span class="mq-item">Email Spoofing Analysis<span class="mq-sep"></span></span>
+                <span class="mq-item">AI Media Detection<span class="mq-sep"></span></span>
+                <span class="mq-item">Website Legitimacy Check<span class="mq-sep"></span></span>
+                <span class="mq-item">Voice Clone Detection<span class="mq-sep"></span></span>
+                <span class="mq-item">Header Forensics<span class="mq-sep"></span></span>
+                <span class="mq-item">GAN &middot; Diffusion Analysis<span class="mq-sep"></span></span>
+                <span class="mq-item">Scam Behavior Signals<span class="mq-sep"></span></span>
+                <span class="mq-item">SPF &middot; DKIM &middot; DMARC<span class="mq-sep"></span></span>
+                <span class="mq-item">Risk Scoring Engine<span class="mq-sep"></span></span>
+                <span class="mq-item">Evidence Export<span class="mq-sep"></span></span>
+            </div>
+        </div>
+        <section class="stats-sec">
+            <div class="stats-grid">
+                <div class="st rv"><div class="st-bg"></div><div class="st-num"><span class="cnt" data-v="99.7">0</span><b>%</b></div><div class="st-lbl">Detection accuracy<br>on benchmark datasets</div><div class="st-tag">MODEL PRECISION</div></div>
+                <div class="st rv d1"><div class="st-bg"></div><div class="st-num"><span class="cnt" data-v="50">0</span><b style="color:var(--c2)">ms</b></div><div class="st-lbl">Average scoring latency<br>per API request</div><div class="st-tag">LOW LATENCY</div></div>
+                <div class="st rv d2"><div class="st-bg"></div><div class="st-num"><span class="cnt" data-v="2.4">0</span><b>M<span style="font-size:.4em;color:var(--c3)">+</span></b></div><div class="st-lbl">Threat intelligence<br>entries indexed</div><div class="st-tag">THREAT INTEL</div></div>
+                <div class="st rv d3"><div class="st-bg"></div><div class="st-num">24<b style="font-size:.46em;color:var(--c3)">/7</b></div><div class="st-lbl">Monitoring-ready<br>architecture</div><div class="st-tag">ALWAYS ON</div></div>
+            </div>
+        </section>
+        <section class="mod-sec" id="modules">
+            <div class="wrap">
+                <div class="mod-top">
+                    <div class="rv"><div class="sec-tag">Detection Modules</div><h2 class="sec-h">Four pillars of<br><em>threat intelligence</em></h2></div>
+                    <p class="rv d1" style="font-size:15px;color:var(--c3);line-height:1.8;max-width:44ch">Each module runs standalone or embeds via API into your email gateway, upload pipeline, or fraud prevention flows.</p>
+                </div>
+            </div>
+            <div class="mod-grid wrap">
+                <article class="mcard rv"><div class="mcard-br tl"></div><div class="mcard-br tr"></div><div class="mcard-br bl"></div><div class="mcard-br br2"></div><div class="mcard-n"><span>01 / Email Analysis</span><span>&#8599;</span></div><div class="mcard-ic">&#9993;</div><h3 class="mcard-h">Email Analysis</h3><p class="mcard-p">Forensic email scoring: sender authentication, header anomalies, reply-chain traps, and payload risk signals. Catch spoofing before it reaches the inbox.</p><div class="mcard-tags"><span class="mcard-tag">SPF / DKIM / DMARC</span><span class="mcard-tag">Header Forensics</span><span class="mcard-tag">URL Signals</span></div><div class="mcard-arr">&#8594;</div></article>
+                <article class="mcard rv d1"><div class="mcard-br tl"></div><div class="mcard-br tr"></div><div class="mcard-br bl"></div><div class="mcard-br br2"></div><div class="mcard-n"><span>02 / Website Check</span><span>&#8599;</span></div><div class="mcard-ic">&#8853;</div><h3 class="mcard-h">Website Check</h3><p class="mcard-p">Detect phishing infrastructure: certificate patterns, redirect chains, domain reputation, and lookalike branding. Real-time legitimacy scoring for any URL.</p><div class="mcard-tags"><span class="mcard-tag">SSL/TLS Analysis</span><span class="mcard-tag">Redirect Chain</span><span class="mcard-tag">Domain Intel</span></div><div class="mcard-arr">&#8594;</div></article>
+                <article class="mcard rv"><div class="mcard-br tl"></div><div class="mcard-br tr"></div><div class="mcard-br bl"></div><div class="mcard-br br2"></div><div class="mcard-n"><span>03 / AI Media Detection</span><span>&#8599;</span></div><div class="mcard-ic">&#9672;</div><h3 class="mcard-h">AI Media Detection</h3><p class="mcard-p">Identify AI-generated images, videos, and audio using artifact analysis, metadata forensics, and model signals. GAN and diffusion detection at scale.</p><div class="mcard-tags"><span class="mcard-tag">GAN / Diffusion</span><span class="mcard-tag">Metadata Integrity</span><span class="mcard-tag">Tamper Indicators</span></div><div class="mcard-arr">&#8594;</div></article>
+                <article class="mcard rv d1"><div class="mcard-br tl"></div><div class="mcard-br tr"></div><div class="mcard-br bl"></div><div class="mcard-br br2"></div><div class="mcard-n"><span>04 / Scam Detection</span><span>&#8599;</span></div><div class="mcard-ic">&#9678;</div><h3 class="mcard-h">Scam Detection</h3><p class="mcard-p">Behavioral risk scoring for voice, chat, and video scams — focused on social engineering patterns and identity verification signals.</p><div class="mcard-tags"><span class="mcard-tag">Voice-Clone Signals</span><span class="mcard-tag">Conversation Heuristics</span><span class="mcard-tag">Risk Policy Rules</span></div><div class="mcard-arr">&#8594;</div></article>
+            </div>
+        </section>
+        <section class="show-sec" id="showcase">
+            <div class="wrap show-inner">
+                <div class="show-canvas-wrap rv">
+                    <canvas id="sc"></canvas>
+                    <div class="sc-hud"><div class="hud-c tl"></div><div class="hud-c tr"></div><div class="hud-c bl"></div><div class="hud-c br"></div><div class="scan-ln"></div><div class="hud-lbl tl">THREAT VISUALIZATION</div><div class="hud-lbl br">REAL-TIME &middot; ACTIVE</div></div>
+                </div>
+                <div class="rv d1">
+                    <div class="sec-tag">Detection Pipeline</div>
+                    <h2 class="sec-h">How it<br><em>works</em></h2>
+                    <div class="steps-list">
+                        <div class="step-row"><div class="step-n">01</div><div><div class="step-h">Multi-signal ingestion</div><div class="step-p">Email headers, URLs, TLS certs, media artifacts, metadata, device &amp; behavior signals unified into a single scoring context.</div></div></div>
+                        <div class="step-row"><div class="step-n">02</div><div><div class="step-h">Risk scoring + model ensemble</div><div class="step-p">Heuristics + ML signals combined to reduce false positives and increase precision across every threat category.</div></div></div>
+                        <div class="step-row"><div class="step-n">03</div><div><div class="step-h">Evidence &amp; explainability</div><div class="step-p">Human-readable reasons: alignment failures, redirect anomalies, artifact clusters, similarity spikes.</div></div></div>
+                        <div class="step-row"><div class="step-n">04</div><div><div class="step-h">Policy enforcement</div><div class="step-p">Block, quarantine, step-up verification, or analyst review — configurable per threat level and context.</div></div></div>
                     </div>
-
-                    <div class="mt-5">
-                        <div class="stats-section">
-                            <div class="row text-center">
-                                <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="100">
-                                    <div class="stat-number">99.7%</div>
-                                    <div class="stat-label">Detection Accuracy</div>
-                                </div>
-                                <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="200">
-                                    <div class="stat-number">2.4M+</div>
-                                    <div class="stat-label">Threat Database</div>
-                                </div>
-                                <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="300">
-                                    <div class="stat-number">50ms</div>
-                                    <div class="stat-label">Average Scan Time</div>
-                                </div>
-                                <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="400">
-                                    <div class="stat-number">24/7</div>
-                                    <div class="stat-label">Real-time Monitoring</div>
-                                </div>
+                </div>
+            </div>
+        </section>
+        <section class="api-sec" id="how">
+            <div class="wrap">
+                <div class="api-grid">
+                    <div class="rv">
+                        <div class="sec-tag">API Response</div>
+                        <h2 class="sec-h" style="margin-bottom:26px">Built for<br><em>developers</em></h2>
+                        <div class="term">
+                            <div class="term-bar"><div class="trd r"></div><div class="trd y"></div><div class="trd g"></div><div class="term-ttl">POST /v1/score &mdash; 200 OK &middot; 47ms</div></div>
+                            <div class="term-body">
+                                <span style="display:block"><span class="tb">{</span></span>
+                                <span style="display:block">  <span class="tk">"request_id"</span>: <span class="ts">"dfn_8f2a19c3d"</span>,</span>
+                                <span style="display:block">  <span class="tk">"risk_score"</span>: <span class="tn">0.91</span>,</span>
+                                <span style="display:block">  <span class="tk">"verdict"</span>: <span class="ts">"HIGH_RISK"</span>,</span>
+                                <span style="display:block">  <span class="tk">"confidence"</span>: <span class="tv">0.94</span>,</span>
+                                <span style="display:block">  <span class="tk">"action"</span>: <span class="ts">"QUARANTINE"</span>,</span>
+                                <span style="display:block">  <span class="tk">"latency_ms"</span>: <span class="tn">47</span></span>
+                                <span style="display:block"><span class="tb">}</span> <span class="tcur"></span></span>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FEATURES SECTION -->
-    <section id="features" class="py-5">
-        <div class="container">
-            <div class="row justify-content-center mb-5">
-                <div class="col-lg-8 text-center">
-                    <h2 class="mb-4" style="font-family: 'Audiowide', cursive; color: white; font-size: 2.5rem;">
-                        QUANTUM DETECTION MODULES
-                    </h2>
-                    <p class="text-white-50">
-                        Powered by neural networks and blockchain verification for unprecedented accuracy
-                    </p>
-                </div>
-            </div>
-
-            <div class="row g-4">
-                <!-- Email Analysis -->
-                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-envelope-open-text"></i>
+                        <div class="metrics">
+                            <div class="metric-card"><div class="metric-val"><span class="cnt" data-v="99.7">0</span><b>%</b></div><div class="metric-lbl">Accuracy</div><div class="metric-badge" style="--tg:#22c55e">BENCHMARK</div></div>
+                            <div class="metric-card"><div class="metric-val"><span class="cnt" data-v="50">0</span><b style="color:var(--c2)">ms</b></div><div class="metric-lbl">Avg Latency</div><div class="metric-badge" style="--tg:#22c55e">LOW LATENCY</div></div>
+                            <div class="metric-card"><div class="metric-val"><span class="cnt" data-v="2.4">0</span><b>M</b></div><div class="metric-lbl">Threat Entries</div><div class="metric-badge">INTEL DB</div></div>
+                            <div class="metric-card"><div class="metric-val">24<b style="color:var(--c2)">/7</b></div><div class="metric-lbl">Uptime Ready</div><div class="metric-badge" style="--tg:#22c55e">ALWAYS ON</div></div>
                         </div>
-                        <h3 class="feature-title">Email Analysis</h3>
-                        <p class="feature-description">
-                            Advanced forensic analysis to detect email spoofing,
-                            phishing attempts, and embedded malware threats.
-                        </p>
-                        <div class="mt-4">
-                            <span class="badge bg-cyber-blue me-2">SPF/DKIM/DMARC</span>
-                            <span class="badge bg-cyber-purple">Header Analysis</span>
+                        <div style="display:flex;gap:11px;margin-top:18px">
+                            <a class="gbtn gbtn-out" href="/Home/Demo" style="font-size:10px;padding:10px 20px"><span>&#9654; Live demo</span></a>
+                            <a class="gbtn gbtn-out" href="/Home/Contact" style="font-size:10px;padding:10px 20px"><span>&#8853; Talk to sales</span></a>
                         </div>
                     </div>
-                </div>
-
-                <!-- Media Detection -->
-                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <h3 class="feature-title">Media Detection</h3>
-                        <p class="feature-description">
-                            Identify AI-generated images, videos, and audio deepfakes
-                            using neural network analysis and metadata forensics.
-                        </p>
-                        <div class="mt-4">
-                            <span class="badge bg-cyber-green me-2">Deepfake AI</span>
-                            <span class="badge bg-cyber-pink">GAN Detection</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Website Check -->
-                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-globe-americas"></i>
-                        </div>
-                        <h3 class="feature-title">Website Check</h3>
-                        <p class="feature-description">
-                            Verify legitimacy of websites with SSL certificate analysis,
-                            domain reputation checks, and phishing pattern detection.
-                        </p>
-                        <div class="mt-4">
-                            <span class="badge bg-cyber-cyan me-2">SSL/TLS</span>
-                            <span class="badge bg-cyber-yellow">Phishing Detection</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Scam Detection -->
-                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <h3 class="feature-title">Scam Detection</h3>
-                        <p class="feature-description">
-                            Detect voice, message, and video scams using behavioral
-                            analysis and social engineering pattern recognition.
-                        </p>
-                        <div class="mt-4">
-                            <span class="badge bg-cyber-red me-2">Voice Clone</span>
-                            <span class="badge bg-cyber-blue">Behavioral AI</span>
+                    <div class="rv d1">
+                        <div class="sec-tag">Built for teams</div>
+                        <h2 class="sec-h" style="margin-bottom:26px">Privacy-first,<br><em>integration-ready</em></h2>
+                        <div class="feat-list">
+                            <div class="feat-row"><div class="feat-ic">&#8862;</div><div><div class="feat-h">API-first + dashboard</div><div class="feat-p">Dashboard for investigation, API for automation. REST + webhooks, SDKs for popular languages.</div></div></div>
+                            <div class="feat-row"><div class="feat-ic">&#9673;</div><div><div class="feat-h">Privacy &amp; data control</div><div class="feat-p">Configurable retention, redaction, evidence-only storage. On-prem deployment options available.</div></div></div>
+                            <div class="feat-row"><div class="feat-ic">&#9672;</div><div><div class="feat-h">Alerting &amp; triage ready</div><div class="feat-p">Severity levels, watchlists, analyst notes to streamline incident response.</div></div></div>
+                            <div class="feat-row"><div class="feat-ic">&#9678;</div><div><div class="feat-h">Compliance-ready reporting</div><div class="feat-p">Export evidence packs aligned with common security frameworks. PDF/JSON/SIEM formats.</div></div></div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- CTA SECTION -->
-    <section class="py-5">
-        <div class="container">
-            <div class="cta-section text-center">
-                <h2 class="mb-4" style="font-family: 'Black Ops One', cursive; color: white; font-size: 2.5rem;">
-                    READY TO SECURE YOUR DIGITAL REALITY?
-                </h2>
-                <p class="text-white-75 mb-5" style="max-width: 700px; margin: 0 auto; font-size: 1.1rem;">
-                    Join thousands of security professionals, enterprises, and government agencies
-                    in the fight against digital deception. Get started with our free tier today.
-                </p>
-                <div class="d-flex flex-wrap justify-content-center gap-3">
-                    <a href="/Account/Register" class="cyber-btn cyber-btn-primary">
-                        <i class="fas fa-user-plus me-2"></i>
-                        CREATE FREE ACCOUNT
-                    </a>
-                    <a href="/Home/Demo" class="cyber-btn" style="background: transparent; border: 3px solid var(--cyber-green); color: var(--cyber-green);">
-                        <i class="fas fa-play-circle me-2"></i>
-                        LIVE DEMO
-                    </a>
-                    <a href="/Home/Contact" class="cyber-btn" style="background: transparent; border: 3px solid var(--cyber-purple); color: var(--cyber-purple);">
-                        <i class="fas fa-headset me-2"></i>
-                        ENTERPRISE SALES
-                    </a>
+        </section>
+        <section class="uc-sec" id="use">
+            <div class="wrap">
+                <div class="uc-head">
+                    <div class="rv"><div class="sec-tag">Use Cases</div><h2 class="sec-h">Built for every<br><em>threat surface</em></h2></div>
+                    <p class="rv d1" style="font-size:15px;color:var(--c3);line-height:1.75;max-width:44ch">Designed to protect end-users, brands, and internal systems &mdash; from the inbox to identity verification.</p>
+                </div>
+                <div class="uc-grid">
+                    <div class="uc-card rv"><span class="uc-badge">Mail Gateway</span><h3 class="uc-h">Enterprise Email Security</h3><p class="uc-p">Reduce spoofing and impersonation with explainable outcomes for analysts and automated enforcement at the gateway.</p><ul class="uc-ul"><li>Detect domain impersonation + reply-to tricks</li><li>Quarantine suspicious payloads automatically</li><li>Prioritize alerts by severity and confidence</li></ul><div class="uc-card-line"></div></div>
+                    <div class="uc-card rv d1"><span class="uc-badge">Media Pipeline</span><h3 class="uc-h">Upload &amp; Content Platforms</h3><p class="uc-p">Flag AI-generated or manipulated media before it goes public or triggers fraud, with evidence for moderation.</p><ul class="uc-ul"><li>AI image / video / audio likelihood scoring</li><li>Metadata integrity checks at upload time</li><li>Evidence packs for moderation teams</li></ul><div class="uc-card-line"></div></div>
+                    <div class="uc-card rv d2"><span class="uc-badge">Risk Engine</span><h3 class="uc-h">Fraud &amp; Social Engineering</h3><p class="uc-p">Detect urgent transfer patterns, voice-clone attempts, and identity manipulation with behavioral signals.</p><ul class="uc-ul"><li>Behavioral + identity verification signals</li><li>Step-up authentication recommendations</li><li>Policy outcomes for automation pipelines</li></ul><div class="uc-card-line"></div></div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- SCRIPTS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+        </section>
+        <section class="pr-sec" id="pricing">
+            <div class="wrap">
+                <div class="pr-head rv"><div class="sec-tag" style="justify-content:center">Pricing</div><h2 class="sec-h" style="text-align:center">Simple, <em>transparent</em> pricing</h2><p style="font-size:15px;color:var(--c3);max-width:50ch;margin:14px auto 0;line-height:1.7">From solo developer to enterprise SOC. Every plan includes core modules and the developer API.</p></div>
+                <div class="pr-grid">
+                    <div class="pr-card rv"><div class="pr-plan">Starter</div><div class="pr-amount">$<span style="color:var(--c)">0</span></div><div class="pr-period">/ month &middot; no card required</div><div class="pr-div"></div><ul class="pr-feats"><li><span>&mdash;</span>Dashboard access</li><li><span>&mdash;</span>500 API calls / month</li><li><span>&mdash;</span>Core modules (standard)</li><li><span>&mdash;</span>Basic evidence output</li><li><span>&mdash;</span>Community support</li></ul><a class="pr-cta" href="/Account/Register"><span>Create free account</span></a></div>
+                    <div class="pr-card rec rv d1"><div class="rec-ribbon">Recommended</div><div class="pr-plan">Pro</div><div class="pr-amount"><sup>$</sup><span style="color:var(--c)">49</span></div><div class="pr-period">/ month &middot; billed monthly</div><div class="pr-div"></div><ul class="pr-feats"><li><span>&mdash;</span>50,000 API calls / month</li><li><span>&mdash;</span>Advanced scoring + custom rules</li><li><span>&mdash;</span>Exportable evidence packs</li><li><span>&mdash;</span>Team workspaces + roles</li><li><span>&mdash;</span>Priority email support</li></ul><a class="pr-cta gold" href="/Account/Register"><span>Start Pro trial</span></a></div>
+                    <div class="pr-card rv d2"><div class="pr-plan">Enterprise</div><div class="pr-amount" style="font-size:40px;padding-top:12px">Custom</div><div class="pr-period">/ year &middot; volume pricing</div><div class="pr-div"></div><ul class="pr-feats"><li><span>&mdash;</span>Unlimited API calls</li><li><span>&mdash;</span>Dedicated deployment</li><li><span>&mdash;</span>SSO / advanced access</li><li><span>&mdash;</span>Custom integrations + SLAs</li><li><span>&mdash;</span>Dedicated security review</li></ul><a class="pr-cta" href="/Home/Contact"><span>Contact sales</span></a></div>
+                </div>
+            </div>
+        </section>
+        <section class="faq-sec" id="faq">
+            <div class="wrap">
+                <div class="faq-layout">
+                    <div class="faq-left rv"><div class="sec-tag">FAQ</div><h2 class="sec-h">Common<br><em>questions</em></h2><p>Quick answers to help you evaluate Deepfake Nexus for your security stack.</p></div>
+                    <div class="faq-items rv d1">
+                        <div class="faq-item open"><div class="faq-q"><span class="faq-qt">Does Deepfake Nexus block threats automatically?</span><div class="faq-icon">+</div></div><div class="faq-ans"><div class="faq-ans-inner">It can. Choose actions based on risk score: allow, warn, quarantine, block, or require step-up verification. Many teams start in monitor-only mode, then enable enforcement once tuned.</div></div></div>
+                        <div class="faq-item"><div class="faq-q"><span class="faq-qt">Can I use only one module and ignore the rest?</span><div class="faq-icon">+</div></div><div class="faq-ans"><div class="faq-ans-inner">Yes. Modules run independently. Integrate just the endpoints you need and expand later. Each module has its own API route and can be billed separately.</div></div></div>
+                        <div class="faq-item"><div class="faq-q"><span class="faq-qt">How do you handle privacy for uploaded media and emails?</span><div class="faq-icon">+</div></div><div class="faq-ans"><div class="faq-ans-inner">Use retention controls, redaction, and evidence-only storage patterns. For stricter environments, route only derived signals and keep raw content on your infrastructure.</div></div></div>
+                        <div class="faq-item"><div class="faq-q"><span class="faq-qt">Is AI-generated content detection 100% accurate?</span><div class="faq-icon">+</div></div><div class="faq-ans"><div class="faq-ans-inner">No detector is perfect. The platform returns evidence signals, confidence scores, and recommended policies so you can make decisions proportional to risk and context.</div></div></div>
+                        <div class="faq-item"><div class="faq-q"><span class="faq-qt">How do I integrate with my existing security stack?</span><div class="faq-icon">+</div></div><div class="faq-ans"><div class="faq-ans-inner">Via REST API with JSON responses. SDKs for popular languages, webhook support for async workflows, and SIEM-compatible log exports. Enterprise customers get custom integration engineering support.</div></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="cta-sec">
+            <div class="wrap">
+                <div class="cta-inner">
+                    <div class="rv"><div class="sec-tag">Get started</div><h2 class="cta-h">Ready to secure<br>your <em>digital reality?</em></h2><p class="cta-p">Launch a modern detection experience for your users and security team. Start with the free plan or request an enterprise walkthrough.</p></div>
+                    <div class="cta-right rv d1">
+                        <a class="gbtn gbtn-fill" href="/Account/Register"><span>&#10022; Start free</span></a>
+                        <a class="gbtn gbtn-out" href="/Home/Demo"><span>&#9654; See live demo</span></a>
+                        <a class="gbtn gbtn-out" href="/Home/Contact"><span>&#8853; Enterprise sales</span></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 
     <script>
-        // Initialize AOS animations
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof AOS !== 'undefined') {
-                AOS.init({
-                    duration: 800,
-                    once: true,
-                    offset: 100,
-                    easing: 'ease-out-cubic'
-                });
-            }
+        (function(){
+        'use strict';
 
-            // Add hover effect to feature cards
-            const featureCards = document.querySelectorAll('.feature-card');
-            featureCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.zIndex = '10';
-                });
+        // LOADER
+        var fill=document.getElementById('ld-fill'),pctEl=document.getElementById('ld-pct'),pct=0;
+        var ldT=setInterval(function(){
+          pct+=Math.floor(Math.random()*14)+5;if(pct>=100){pct=100;clearInterval(ldT);setTimeout(function(){document.getElementById('loader').classList.add('out');},400);}
+          if(fill)fill.style.width=pct+'%';if(pctEl)pctEl.textContent=pct+'%';
+        },70);
 
-                card.addEventListener('mouseleave', function() {
-                    this.style.zIndex = '1';
-                });
-            });
-
-            // Smooth scroll for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-
-            // Animate stats on scroll
-            const observerOptions = {
-                threshold: 0.5
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const numbers = entry.target.querySelectorAll('.stat-number');
-                        numbers.forEach((number, index) => {
-                            const finalValue = number.textContent;
-                            let currentValue = 0;
-                            const increment = finalValue.includes('%')
-                                ? parseFloat(finalValue) / 50
-                                : finalValue.includes('+')
-                                    ? parseInt(finalValue) / 50
-                                    : finalValue.includes('/')
-                                        ? 0
-                                        : parseFloat(finalValue) / 50;
-
-                            if (finalValue.includes('/')) {
-                                number.textContent = finalValue;
-                                return;
-                            }
-
-                            const timer = setInterval(() => {
-                                currentValue += increment;
-                                if (currentValue >= parseFloat(finalValue)) {
-                                    number.textContent = finalValue;
-                                    clearInterval(timer);
-                                } else {
-                                    number.textContent = Math.floor(currentValue) +
-                                        (finalValue.includes('%') ? '%' :
-                                         finalValue.includes('+') ? '+' : '');
-                                }
-                            }, 30);
-                        });
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            const statsSection = document.querySelector('.stats-section');
-            if (statsSection) {
-                observer.observe(statsSection);
-            }
+        // CURSOR
+        var cur=document.getElementById('cur'),curR=document.getElementById('cur-r'),mx=0,my=0,rx=0,ry=0;
+        document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+        (function L(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(L);})();
+        document.querySelectorAll('a,button,.mcard,.faq-q,.uc-card,.st,.pr-card').forEach(function(el){
+          el.addEventListener('mouseenter',function(){curR.style.width='52px';curR.style.height='52px';curR.style.borderColor='rgba(201,169,110,.9)';});
+          el.addEventListener('mouseleave',function(){curR.style.width='30px';curR.style.height='30px';curR.style.borderColor='rgba(201,169,110,.4)';});
         });
+
+        // SCROLL REVEAL
+        var io=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('on');io.unobserve(x.target);}});},{threshold:.07});
+        document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
+
+        // HUD PIPS
+        var pips=[0,1,2,3,4,5].map(function(i){return document.getElementById('hp'+i);});
+        window.addEventListener('scroll',function(){
+          var sp=window.scrollY/Math.max(1,document.body.scrollHeight-window.innerHeight);
+          var a=Math.min(5,Math.floor(sp*6));
+          pips.forEach(function(p,i){if(p)p.classList.toggle('a',i===a);});
+        },{passive:true});
+
+        // COUNTERS
+        function animCount(el){
+          var v=parseFloat(el.dataset.v),isF=String(v).includes('.');
+          var dur=1700,s=performance.now();
+          (function tk(now){var t=Math.min(1,(now-s)/dur),e2=1-Math.pow(1-t,4);el.textContent=isF?(v*e2).toFixed(1):Math.round(v*e2);if(t<1)requestAnimationFrame(tk);})(performance.now());
+        }
+        var cio=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){animCount(x.target);cio.unobserve(x.target);}});},{threshold:.4});
+        document.querySelectorAll('.cnt').forEach(function(el){cio.observe(el);});
+
+        // FAQ
+        document.querySelectorAll('.faq-q').forEach(function(q){
+          q.addEventListener('click',function(){var item=q.closest('.faq-item'),op=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(function(f){f.classList.remove('open');});if(!op)item.classList.add('open');});
+        });
+
+        // SMOOTH SCROLL
+        document.querySelectorAll('a[href^="#"]').forEach(function(a){
+          a.addEventListener('click',function(e){var el=document.querySelector(a.getAttribute('href'));if(!el)return;e.preventDefault();el.scrollIntoView({behavior:'smooth',block:'start'});});
+        });
+
+        // THREE INIT
+        function initThree(){
+          if(typeof THREE==='undefined'){setTimeout(initThree,120);return;}
+          startBg();startShowcase();
+        }
+
+        function startBg(){
+          var canvas=document.getElementById('bg-canvas');
+          var W=function(){return window.innerWidth;},H=function(){return window.innerHeight;};
+          var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));renderer.setSize(W(),H());
+          renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.9;
+          var scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x04040a,.02);
+          var camera=new THREE.PerspectiveCamera(58,W()/H(),.1,400);camera.position.set(0,0,20);
+
+          // Lights
+          scene.add(new THREE.AmbientLight(0x06060e,2.5));
+          var kL=new THREE.SpotLight(0xc9a96e,18,90,Math.PI/6,.35,1.2);kL.position.set(16,20,14);scene.add(kL);
+          var fL=new THREE.SpotLight(0x4ecdc4,8,65,Math.PI/5,.4,1.5);fL.position.set(-18,9,10);scene.add(fL);
+          var bL=new THREE.SpotLight(0x8b5cf6,5,50,Math.PI/4,.5,2);bL.position.set(-10,-10,8);scene.add(bL);
+          var p1=new THREE.PointLight(0xc9a96e,5,35);scene.add(p1);
+          var p2=new THREE.PointLight(0x4ecdc4,3,28);scene.add(p2);
+          var p3=new THREE.PointLight(0x8b5cf6,2.5,20);scene.add(p3);
+          var p4=new THREE.PointLight(0xffe8dd,2,24);scene.add(p4);
+
+          function gM(c,op,r){return new THREE.MeshPhysicalMaterial({color:c||0xc9a96e,metalness:.95,roughness:r||.04,transparent:true,opacity:op||.07,side:THREE.DoubleSide,transmission:.88,thickness:.5,ior:1.5});}
+          function dM(){return new THREE.MeshPhysicalMaterial({color:0x0c0a14,metalness:.92,roughness:.08,transparent:true,opacity:.15,side:THREE.DoubleSide,transmission:.8,thickness:.6,ior:1.42});}
+          function wM(c,op){return new THREE.MeshBasicMaterial({color:c||0xc9a96e,wireframe:true,transparent:true,opacity:op||.08});}
+          function eM(c,op){return new THREE.LineBasicMaterial({color:c||0xc9a96e,transparent:true,opacity:op||.22});}
+
+          var objs=[];
+          function addBox(x,y,z,s,mat){
+            var g=new THREE.BoxGeometry(1,1,1,2,2,2),m=new THREE.Mesh(g,mat);
+            m.scale.setScalar(s);m.position.set(x,y,z);
+            m.rotation.set(Math.random()*6.28,Math.random()*6.28,Math.random()*6.28);
+            m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eM(0xc9a96e,.24)));
+            scene.add(m);
+            objs.push({m:m,ox:x,oy:y,oz:z,fp:Math.random()*6.28,fs:.25+Math.random()*.25,rs:{x:(Math.random()-.5)*.005,y:(Math.random()-.5)*.005,z:(Math.random()-.5)*.003},layer:Math.floor(Math.random()*3)});
+          }
+
+          // Hero foreground — big cubes
+          addBox(5,2,-1,3.8,gM(0xc9a96e,.07,.04));addBox(-4.5,-1.5,-.5,3.2,gM(0x8ed4d0,.06,.05));
+          addBox(1,4.5,-4,5.2,dM());addBox(-1.5,-4.8,-2.5,3,gM(0xd4b87e,.06,.06));
+          addBox(7,-3.5,-5.5,2.5,new THREE.MeshStandardMaterial({color:0x1c1820,metalness:1,roughness:.05}));
+          addBox(-7.5,4,-6,2.8,gM(0xc9a96e,.05,.03));addBox(3.5,-7,-4,2,wM(0xc9a96e,.15));addBox(-3,7,-4,2.2,wM(0x4ecdc4,.12));
+          // Mid layer
+          for(var i=0;i<18;i++){addBox((Math.random()-.5)*28,(Math.random()-.5)*17,-7-Math.random()*8,.8+Math.random()*1.8,i%3===0?dM():i%3===1?wM(0xc9a96e,.07):gM(0xc9a96e,.04));}
+          // Deep bg
+          for(var j=0;j<40;j++){addBox((Math.random()-.5)*44,(Math.random()-.5)*24,-14-Math.random()*20,.1+Math.random()*.45,wM(0xc9a96e,.04+Math.random()*.04));}
+
+          // Tori
+          var tori=[];
+          var td=[{r:1.8,tb:.008,c:0xc9a96e,op:.28,x:3,y:2,z:-2,rx:1.05,rz:.2},{r:3,tb:.005,c:0x4ecdc4,op:.2,x:-5,y:-2,z:-3,rx:.78,rz:0},{r:2.4,tb:.006,c:0xc9a96e,op:.16,x:8,y:5,z:-7,rx:.62,rz:.3},{r:4,tb:.004,c:0x4ecdc4,op:.13,x:-7,y:6,z:-6,rx:.52,rz:0},{r:1.5,tb:.01,c:0x8b5cf6,op:.2,x:0,y:-5,z:-3,rx:1.57,rz:.62},{r:5,tb:.003,c:0xc9a96e,op:.09,x:12,y:0,z:-10,rx:.2,rz:1.05},{r:2.8,tb:.005,c:0x8b5cf6,op:.14,x:-10,y:-7,z:-8,rx:1.05,rz:.78},{r:3.5,tb:.004,c:0x4ecdc4,op:.11,x:-2,y:9,z:-9,rx:.5,rz:.2},{r:2.2,tb:.007,c:0xd4b87e,op:.17,x:6,y:-5,z:-5,rx:.4,rz:.5},{r:6,tb:.003,c:0xc9a96e,op:.07,x:-14,y:3,z:-12,rx:.3,rz:.4}];
+          td.forEach(function(d){
+            var g=new THREE.TorusGeometry(d.r,d.tb,2,80),m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:d.c,transparent:true,opacity:d.op}));
+            m.rotation.set(d.rx,0,d.rz);m.position.set(d.x,d.y,d.z);scene.add(m);
+            tori.push({m:m,rs:.003+Math.random()*.004,ox:d.x,oy:d.y,oz:d.z,fp:Math.random()*6.28,fs:.2+Math.random()*.25,layer:Math.floor(Math.random()*3)});
+          });
+
+          // Octahedra
+          var octas=[];
+          for(var k=0;k<14;k++){
+            var og=new THREE.OctahedronGeometry(.4+Math.random()*.9,0);
+            var om=new THREE.LineSegments(new THREE.EdgesGeometry(og),eM(k%3===0?0x8b5cf6:k%2===0?0xc9a96e:0x4ecdc4,.18));
+            om.position.set((Math.random()-.5)*26,(Math.random()-.5)*16,-5-Math.random()*13);scene.add(om);
+            octas.push({m:om,rs:{x:.005+Math.random()*.005,y:.006+Math.random()*.004,z:.003},ox:om.position.x,oy:om.position.y,oz:om.position.z,fp:Math.random()*6.28,fs:.2+Math.random()*.3,layer:Math.floor(Math.random()*3)});
+          }
+
+          // Icosahedra
+          var icos=[];
+          for(var n=0;n<10;n++){
+            var ig=new THREE.IcosahedronGeometry(.3+Math.random()*.8,1);
+            var im=new THREE.LineSegments(new THREE.EdgesGeometry(ig),eM(n%3===0?0x8b5cf6:n%2===0?0xc9a96e:0x4ecdc4,.14));
+            im.position.set((Math.random()-.5)*30,(Math.random()-.5)*18,-7-Math.random()*15);scene.add(im);
+            icos.push({m:im,rs:{x:.003,y:.007,z:.004},ox:im.position.x,oy:im.position.y,oz:im.position.z,fp:Math.random()*6.28,fs:.18+Math.random()*.28,layer:Math.floor(Math.random()*3)});
+          }
+
+          // Dodecahedra
+          var dodecs=[];
+          for(var q=0;q<8;q++){
+            var dg=new THREE.DodecahedronGeometry(.35+Math.random()*.6,0);
+            var dm=new THREE.LineSegments(new THREE.EdgesGeometry(dg),eM(q%2===0?0xd4b87e:0x8b5cf6,.13));
+            dm.position.set((Math.random()-.5)*24,(Math.random()-.5)*15,-6-Math.random()*11);scene.add(dm);
+            dodecs.push({m:dm,rs:{x:.006,y:.004,z:.005},fp:Math.random()*6.28,fs:.22+Math.random()*.28});
+          }
+
+          // Constellation ring
+          var ring=[];
+          for(var r2=0;r2<16;r2++){
+            var ang=r2/16*6.28,rad=10+Math.random()*2;
+            var cs=.15+Math.random()*.45;
+            var cg=new THREE.BoxGeometry(cs,cs,cs,1,1,1);
+            var cm=new THREE.LineSegments(new THREE.EdgesGeometry(cg),eM(r2%3===0?0x8b5cf6:r2%2===0?0xc9a96e:0x4ecdc4,.18));
+            cm.position.set(Math.cos(ang)*rad,Math.sin(ang)*rad*.4,-13-Math.random()*4);scene.add(cm);
+            ring.push({m:cm,ang:ang,rad:rad,rs:{x:.006,y:.008},fp:Math.random()*6.28,fs:.28+Math.random()*.2});
+          }
+
+          // Particles
+          function mkP(n,spread,zMin,zSpr,col,sz,op){
+            var g=new THREE.BufferGeometry(),pos=new Float32Array(n*3);
+            for(var ii=0;ii<n;ii++){pos[ii*3]=(Math.random()-.5)*spread;pos[ii*3+1]=(Math.random()-.5)*spread*.55;pos[ii*3+2]=zMin-Math.random()*zSpr;}
+            g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+            var pts=new THREE.Points(g,new THREE.PointsMaterial({color:col,size:sz,transparent:true,opacity:op,sizeAttenuation:true}));
+            scene.add(pts);return pts;
+          }
+          var pA=mkP(800,65,4,28,0xc9a96e,.038,.32),pB=mkP(140,28,2,12,0xd4b87e,.085,.48),pC=mkP(100,22,2,9,0x4ecdc4,.065,.4),pD=mkP(70,20,2,7,0x8b5cf6,.055,.35);
+
+          var tmx=0,tmy=0,cmx=0,cmy=0,scrollY=0,lastSY=0,sVel=0;
+          document.addEventListener('mousemove',function(e){tmx=(e.clientX/window.innerWidth-.5)*2;tmy=-(e.clientY/window.innerHeight-.5)*2;});
+          window.addEventListener('scroll',function(){scrollY=window.scrollY;},{passive:true});
+          window.addEventListener('resize',function(){renderer.setSize(W(),H());camera.aspect=W()/H();camera.updateProjectionMatrix();});
+
+          var clock=new THREE.Clock();
+          function lerp(a,b,t){return a+(b-a)*t;}
+
+          function tick(){
+            requestAnimationFrame(tick);
+            var t=clock.getElapsedTime();
+            sVel=scrollY-lastSY;lastSY=scrollY;
+            cmx+=(tmx-cmx)*.016;cmy+=(tmy-cmy)*.016;
+            var sp=Math.min(1,scrollY/Math.max(1,document.body.scrollHeight-window.innerHeight));
+            var xSpin=Math.abs(sVel)*.012;
+
+            // Camera
+            camera.position.x=lerp(camera.position.x,cmx*2.6,.055);
+            camera.position.y=lerp(camera.position.y,cmy*1.7+sp*-5,.055);
+            camera.position.z=lerp(camera.position.z,20-sp*13,.055);
+            camera.fov=lerp(camera.fov,58+sp*14,.04);camera.updateProjectionMatrix();
+            camera.lookAt(cmx*.6,cmy*.4+scrollY*.004,-sp*7);
+
+            // Lights
+            p1.position.set(7+Math.sin(t*.4)*4,7+Math.cos(t*.3)*3,6);p2.position.set(-8+Math.cos(t*.35)*3,-5+Math.sin(t*.28)*2.5,7);
+            p3.position.set(-4+Math.cos(t*.28)*4,3+Math.sin(t*.2)*3,-2);p4.position.set(Math.sin(t*.22)*5,Math.cos(t*.3)*5,9);
+            kL.intensity=18+Math.sin(t*.2)*5;fL.intensity=8+Math.sin(t*.25+1)*2.5;bL.intensity=5+Math.sin(t*.18+2)*2;
+
+            // Cubes — layered scroll response
+            objs.forEach(function(o){
+              var lm=[1,1.6,2.8][o.layer];
+              o.m.rotation.x+=o.rs.x*(1+xSpin*lm);o.m.rotation.y+=o.rs.y*(1+xSpin*lm);o.m.rotation.z+=o.rs.z;
+              o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.42;
+              o.m.position.x=o.ox+Math.cos(t*o.fs*.7+o.fp)*.24+cmx*(.3*lm);
+              o.m.position.z=lerp(o.m.position.z,o.oz-sp*(3+o.layer*3),.04);
+            });
+
+            // Tori
+            tori.forEach(function(o){
+              o.m.rotation.z+=o.rs*(1+xSpin*.5);o.m.rotation.y+=o.rs*.7;o.m.rotation.x+=o.rs*.3;
+              o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.3;
+              o.m.position.z=lerp(o.m.position.z,o.oz-sp*(2+o.layer*2),.04);
+            });
+
+            // Octahedra
+            octas.forEach(function(o){
+              o.m.rotation.x+=o.rs.x*(1+xSpin);o.m.rotation.y+=o.rs.y*(1+xSpin);o.m.rotation.z+=o.rs.z;
+              o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.26;
+              o.m.position.z=lerp(o.m.position.z,o.oz-sp*(1+o.layer*1.5),.04);
+            });
+
+            // Icosahedra
+            icos.forEach(function(o){
+              o.m.rotation.x+=o.rs.x;o.m.rotation.y+=o.rs.y*(1+xSpin*.8);
+              o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.2;
+              o.m.position.z=lerp(o.m.position.z,o.oz-sp*(1+o.layer*1.2),.04);
+            });
+
+            // Dodecahedra
+            dodecs.forEach(function(o){o.m.rotation.x+=o.rs.x;o.m.rotation.y+=o.rs.y;o.m.rotation.z+=o.rs.z;});
+
+            // Constellation ring — orbits + scroll
+            ring.forEach(function(o){
+              o.ang+=.0018+xSpin*.004;
+              o.m.position.x=Math.cos(o.ang)*o.rad*(1+sp*.4);
+              o.m.position.y=Math.sin(o.ang)*o.rad*.4*(1+sp*.25);
+              o.m.position.z=lerp(o.m.position.z,-13-sp*10,.04);
+              o.m.rotation.x+=o.rs.x*(1+xSpin);o.m.rotation.y+=o.rs.y;
+            });
+
+            // Particles
+            pA.rotation.y=t*.007;pA.rotation.x=sp*.45;
+            pB.rotation.y=-t*.012;pB.rotation.z=sp*.32;
+            pC.rotation.y=t*.015;pC.position.z=lerp(pC.position.z,-sp*6,.04);
+            pD.rotation.z=-t*.01;pD.rotation.x=sp*.5;pD.position.y=lerp(pD.position.y,sp*3,.04);
+
+            renderer.render(scene,camera);
+          }
+          tick();
+        }
+
+        function startShowcase(){
+          var canvas=document.getElementById('sc');if(!canvas)return;
+          var wrap=canvas.parentElement;
+          function sz(){return{w:wrap.offsetWidth,h:wrap.offsetHeight};}
+          var s=sz();
+          var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));renderer.setSize(s.w,s.h);
+          renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;
+          var scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(52,s.w/s.h,.1,100);
+          camera.position.set(0,0,9);
+          scene.add(new THREE.AmbientLight(0x06060e,1.5));
+          var sl1=new THREE.SpotLight(0xc9a96e,16,45,Math.PI/5,.3,1.2);sl1.position.set(8,13,9);scene.add(sl1);
+          var sl2=new THREE.SpotLight(0x4ecdc4,10,36,Math.PI/4,.4,1.5);sl2.position.set(-9,6,7);scene.add(sl2);
+          var sl3=new THREE.SpotLight(0x8b5cf6,6,30,Math.PI/3,.5,1.8);sl3.position.set(-4,-10,8);scene.add(sl3);
+          var sp1=new THREE.PointLight(0xc9a96e,6,25);scene.add(sp1);var sp2=new THREE.PointLight(0x4ecdc4,4,20);scene.add(sp2);var sp3=new THREE.PointLight(0x8b5cf6,3,18);scene.add(sp3);
+
+          function mkC(sz2,ec,eo){
+            var g=new THREE.BoxGeometry(sz2,sz2,sz2,3,3,3);
+            var m=new THREE.Mesh(g,new THREE.MeshPhysicalMaterial({color:0x10091a,metalness:.96,roughness:.03,transparent:true,opacity:.07,side:THREE.DoubleSide,transmission:.9,thickness:.8,ior:1.6}));
+            m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),new THREE.LineBasicMaterial({color:ec,transparent:true,opacity:eo})));
+            scene.add(m);return m;
+          }
+          var cA=mkC(3.2,0xc9a96e,.7),cB=mkC(2.0,0x4ecdc4,.62),cC=mkC(1.1,0xd4b87e,.75);
+          var cD=new THREE.Mesh(new THREE.BoxGeometry(.45,.45,.45,1,1,1),new THREE.MeshStandardMaterial({color:0xc9a96e,metalness:.99,roughness:.01}));
+          cD.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(.45,.45,.45)),new THREE.LineBasicMaterial({color:0xfff0cc,transparent:true,opacity:.95})));
+          scene.add(cD);
+
+          // Orbiters — 9
+          var orbs=[];
+          [{r:4.2,sp:.42,ph:0,sz:'.7',c:0x4ecdc4,ti:.5},{r:3.5,sp:.58,ph:2.2,sz:'.48',c:0xc9a96e,ti:.7},
+           {r:5.0,sp:.32,ph:4.4,sz:'.82',c:0xc9a96e,ti:.3},{r:3.0,sp:.72,ph:1.1,sz:'.4',c:0x4ecdc4,ti:.9},
+           {r:5.5,sp:.26,ph:3.6,sz:'.58',c:0xd4b87e,ti:.4},{r:4.0,sp:.48,ph:5.8,sz:'.44',c:0x4ecdc4,ti:.6},
+           {r:4.5,sp:.37,ph:2.8,sz:'.62',c:0xc9a96e,ti:.55},{r:2.8,sp:.82,ph:.8,sz:'.35',c:0x8b5cf6,ti:.8},
+           {r:6.0,sp:.22,ph:4.0,sz:'.72',c:0x8b5cf6,ti:.35}].forEach(function(d){
+            var sz2=parseFloat(d.sz);
+            var g=new THREE.BoxGeometry(sz2,sz2,sz2,2,2,2),m=new THREE.Mesh(g,new THREE.MeshPhysicalMaterial({color:0x12101c,metalness:.9,roughness:.07,transparent:true,opacity:.13,transmission:.75,side:THREE.DoubleSide}));
+            m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),new THREE.LineBasicMaterial({color:d.c,transparent:true,opacity:.55})));
+            scene.add(m);orbs.push({m:m,r:d.r,sp:d.sp,ph:d.ph,ti:d.ti});
+          });
+
+          // Rings — 7
+          var sRings=[];
+          [{r:3.2,tb:.006,c:0xc9a96e,op:.35,rx:1.05,rz:0,rs:.006},{r:4.0,tb:.004,c:0x4ecdc4,op:.24,rx:.78,rz:.78,rs:.0045},{r:5.0,tb:.003,c:0xc9a96e,op:.15,rx:.62,rz:.62,rs:.003},{r:2.4,tb:.007,c:0x4ecdc4,op:.22,rx:1.57,rz:.52,rs:.007},{r:6.0,tb:.002,c:0xd4b87e,op:.1,rx:.52,rz:1.05,rs:.002},{r:3.6,tb:.005,c:0x8b5cf6,op:.18,rx:.4,rz:.6,rs:.005},{r:4.8,tb:.003,c:0x8b5cf6,op:.12,rx:.7,rz:.78,rs:.0035}].forEach(function(d){
+            var g=new THREE.TorusGeometry(d.r,d.tb,2,100),m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:d.c,transparent:true,opacity:d.op}));
+            m.rotation.x=d.rx;m.rotation.z=d.rz;scene.add(m);sRings.push({m:m,rs:d.rs});
+          });
+
+          // Icosa shells — 3
+          [[2.4,.065,0xc9a96e],[3.6,.038,0x4ecdc4],[5,.022,0x8b5cf6]].forEach(function(d){
+            var g=new THREE.IcosahedronGeometry(d[0],1);
+            scene.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),new THREE.LineBasicMaterial({color:d[2],transparent:true,opacity:d[1]})));
+          });
+
+          // Octahedra orbiters — 5
+          var sOctas=[];
+          for(var si=0;si<5;si++){
+            var sg=new THREE.OctahedronGeometry(.28+si*.1,0);
+            var sm=new THREE.LineSegments(new THREE.EdgesGeometry(sg),new THREE.LineBasicMaterial({color:si%2===0?0xc9a96e:0x4ecdc4,transparent:true,opacity:.35}));
+            scene.add(sm);sOctas.push({m:sm,r:3.5+si*.6,sp:.6+si*.12,ph:si*1.26,ti:.4+si*.12});
+          }
+
+          // Particles
+          function mkSP(n,minR,maxR,col,sz,op){
+            var g=new THREE.BufferGeometry(),pos=new Float32Array(n*3);
+            for(var ii=0;ii<n;ii++){
+              var r=minR+Math.random()*(maxR-minR),th=Math.random()*6.28,ph=Math.acos(2*Math.random()-1);
+              pos[ii*3]=r*Math.sin(ph)*Math.cos(th);pos[ii*3+1]=r*Math.sin(ph)*Math.sin(th);pos[ii*3+2]=r*Math.cos(ph);
+            }
+            g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+            var pts=new THREE.Points(g,new THREE.PointsMaterial({color:col,size:sz,transparent:true,opacity:op,sizeAttenuation:true}));
+            scene.add(pts);return pts;
+          }
+          var spPts=mkSP(380,3,6.5,0xc9a96e,.04,.65);
+          var cPts=mkSP(120,4,5.2,0x4ecdc4,.05,.48);
+          var purPts=mkSP(80,3,4.5,0x8b5cf6,.045,.42);
+
+          // Equatorial ring particles
+          var eqG=new THREE.BufferGeometry(),eqPos=new Float32Array(140*3);
+          for(var ei=0;ei<140;ei++){var ea=ei/140*6.28,er=5+Math.random()*.9;eqPos[ei*3]=Math.cos(ea)*er;eqPos[ei*3+1]=(Math.random()-.5)*.5;eqPos[ei*3+2]=Math.sin(ea)*er;}
+          eqG.setAttribute('position',new THREE.BufferAttribute(eqPos,3));
+          var eqPts=new THREE.Points(eqG,new THREE.PointsMaterial({color:0x4ecdc4,size:.055,transparent:true,opacity:.52,sizeAttenuation:true}));
+          scene.add(eqPts);
+
+          var scmx=0,scmy=0,tscmx=0,tscmy=0;
+          document.addEventListener('mousemove',function(e){var rc=canvas.getBoundingClientRect();tscmx=(e.clientX-rc.left-rc.width/2)/(rc.width/2);tscmy=-(e.clientY-rc.top-rc.height/2)/(rc.height/2);});
+          window.addEventListener('resize',function(){var ns=sz();renderer.setSize(ns.w,ns.h);camera.aspect=ns.w/ns.h;camera.updateProjectionMatrix();});
+
+          var clk=new THREE.Clock();
+          function anim(){
+            requestAnimationFrame(anim);var t=clk.getElapsedTime();
+            scmx+=(tscmx-scmx)*.06;scmy+=(tscmy-scmy)*.06;
+            cA.rotation.x+=.0025;cA.rotation.y+=.004;cA.rotation.z+=.001;
+            cB.rotation.x-=.006;cB.rotation.y-=.0045;cB.rotation.z+=.0035;
+            cC.rotation.x+=.011;cC.rotation.y+=.008;cC.rotation.z-=.006;
+            cD.rotation.x-=.016;cD.rotation.y+=.013;cD.rotation.z+=.009;
+            orbs.forEach(function(o){o.m.rotation.x+=.005;o.m.rotation.y+=.008;var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.5,Math.sin(a)*o.r*.7);});
+            sRings.forEach(function(r,i){r.m.rotation.z+=r.rs*(i%2===0?1:-1);r.m.rotation.y+=r.rs*.65;r.m.rotation.x+=r.rs*.3;});
+            sOctas.forEach(function(o){var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.4,Math.sin(a)*o.r*.6);o.m.rotation.x+=.01;o.m.rotation.y+=.012;});
+            spPts.rotation.y=t*.02;spPts.rotation.x=t*.01;cPts.rotation.y=-t*.016;purPts.rotation.y=t*.018;purPts.rotation.x=t*.009;eqPts.rotation.y=-t*.014;
+            camera.position.x=scmx*2.4;camera.position.y=scmy*1.8;camera.lookAt(scmx*.3,scmy*.2,0);
+            sp1.position.set(4+Math.sin(t*.5)*2.5,4+Math.cos(t*.38)*2,5);sp2.position.set(-4+Math.cos(t*.42)*2,-3+Math.sin(t*.3)*2,4);sp3.position.set(Math.sin(t*.26)*3,6+Math.cos(t*.2)*2,3);
+            sl1.intensity=16+Math.sin(t*.3)*5;sl2.intensity=10+Math.sin(t*.24+1)*3;
+            renderer.render(scene,camera);
+          }
+          anim();
+        }
+
+        // Start — if THREE already loaded synchronously, go; else wait
+        if(typeof THREE!=='undefined'){initThree();}
+        else{window._pendingInit=initThree;setTimeout(function(){if(typeof THREE!=='undefined')initThree();},2500);}
+
+        })();
     </script>
 </body>
 </html>

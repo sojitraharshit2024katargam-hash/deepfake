@@ -1,1783 +1,941 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>DEEPFAKE NEXUS | Email Analysis</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-
-    <!-- DEPENDENCIES -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&family=Audiowide&display=swap" rel="stylesheet">
-
-    <style>
-        /* === CYBERPUNK THEME ENHANCED === */
-        :root {
-            --cyber-void: #0b0f19;
-            --cyber-dark: #0f172a;
-            --cyber-darker: #090d1a;
-            --cyber-blue: #38bdf8;
-            --cyber-cyan: #00f3ff;
-            --cyber-purple: #9d00ff;
-            --cyber-green: #00ff9d;
-            --cyber-red: #ff003c;
-            --cyber-yellow: #fff700;
-            --cyber-pink: #ff00ff;
-            --cyber-orange: #ff6b00;
-        }
-
-        /* === BASE STYLES === */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-            background: var(--cyber-void);
-        }
-
-        body {
-            font-family: 'Exo 2', sans-serif;
-            background: var(--cyber-void);
-            color: #e5e7eb;
-            overflow-x: hidden;
-            min-height: 100vh;
-            position: relative;
-        }
-
-        /* === ENHANCED BACKGROUND EFFECTS === */
-        .enhanced-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(157, 0, 255, 0.15) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(255, 0, 60, 0.08) 0%, transparent 50%);
-            z-index: -200;
-            pointer-events: none;
-        }
-
-        .matrix-grid {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: linear-gradient(90deg, rgba(0, 255, 157, 0.03) 1px, transparent 1px), linear-gradient(0deg, rgba(0, 255, 157, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
-            z-index: -199;
-            pointer-events: none;
-            animation: gridPulse 8s ease-in-out infinite;
-        }
-
-        @@keyframes gridPulse {
-            0%, 100% {
-                opacity: 0.3;
-            }
-
-            50% {
-                opacity: 0.6;
-            }
-        }
-
-        .binary-fall {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -198;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        /* === FLOATING ORBS === */
-        .floating-orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(40px);
-            z-index: -197;
-            animation: float 15s ease-in-out infinite;
-        }
-
-        .orb-1 {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, var(--cyber-purple) 0%, transparent 70%);
-            top: 10%;
-            left: 5%;
-            animation-delay: 0s;
-        }
-
-        .orb-2 {
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, var(--cyber-blue) 0%, transparent 70%);
-            bottom: 10%;
-            right: 5%;
-            animation-delay: -5s;
-        }
-
-        .orb-3 {
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, var(--cyber-green) 0%, transparent 70%);
-            top: 50%;
-            left: 80%;
-            animation-delay: -10s;
-        }
-
-        @@keyframes float {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-            }
-
-            33% {
-                transform: translate(50px, -30px) scale(1.1);
-            }
-
-            66% {
-                transform: translate(-30px, 40px) scale(0.9);
-            }
-        }
-
-        /* === ENHANCED SCAN LINE === */
-        .enhanced-scan-line {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--cyber-green), var(--cyber-cyan), var(--cyber-pink), var(--cyber-blue), transparent);
-            z-index: 999;
-            pointer-events: none;
-            animation: enhancedScan 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-            box-shadow: 0 0 30px var(--cyber-green), 0 0 60px var(--cyber-cyan);
-        }
-
-        @@keyframes enhancedScan {
-            0% {
-                transform: translateY(-100vh);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 1;
-            }
-
-            90% {
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(100vh);
-                opacity: 0;
-            }
-        }
-
-        /* === MAIN CONTAINER === */
-        .analysis-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-            position: relative;
-        }
-
-        @@media (max-width: 768px) {
-            .analysis-container {
-                padding: 1rem;
-            }
-        }
-
-        /* === ENHANCED BACK BUTTON === */
-        .cyber-back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.8rem;
-            padding: 0.8rem 2rem;
-            font-family: 'Orbitron', monospace;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: white;
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(157, 0, 255, 0.2));
-            border: 2px solid transparent;
-            border-image: linear-gradient(135deg, var(--cyber-blue), var(--cyber-purple)) 1;
-            border-radius: 12px;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 3rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-            .cyber-back-btn::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-                transition: 0.6s;
-            }
-
-            .cyber-back-btn:hover::before {
-                left: 100%;
-            }
-
-            .cyber-back-btn:hover {
-                transform: translateX(-5px);
-                box-shadow: 0 15px 40px rgba(56, 189, 248, 0.4), 0 0 80px rgba(157, 0, 255, 0.3);
-                letter-spacing: 3px;
-            }
-
-        /* === ENHANCED HEADER === */
-        .analysis-header {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(20px);
-            border-radius: 25px;
-            padding: 3.5rem;
-            margin-bottom: 4rem;
-            border: 2px solid rgba(56, 189, 248, 0.3);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 100px rgba(56, 189, 248, 0.15);
-        }
-
-            .analysis-header::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.15), transparent);
-                transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            .analysis-header:hover::before {
-                left: 100%;
-            }
-
-        .analysis-title {
-            font-family: 'Audiowide', cursive;
-            font-size: 3.5rem;
-            background: linear-gradient(135deg, var(--cyber-blue) 0%, var(--cyber-cyan) 25%, var(--cyber-pink) 50%, var(--cyber-purple) 75%, var(--cyber-green) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            line-height: 1.2;
-            text-shadow: 0 0 50px rgba(56, 189, 248, 0.3);
-        }
-
-        .analysis-subtitle {
-            font-size: 1.3rem;
-            color: rgba(229, 231, 235, 0.9);
-            line-height: 1.7;
-            max-width: 900px;
-        }
-
-        /* === ENHANCED STATS BAR === */
-        .stats-bar {
-            display: flex;
-            gap: 3rem;
-            margin: 2rem 0 4rem;
-            padding: 2rem;
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 20px;
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .stat-item {
-            text-align: center;
-            flex: 1;
-            min-width: 150px;
-        }
-
-        .stat-value {
-            font-family: 'Orbitron', monospace;
-            font-size: 2.5rem;
-            color: var(--cyber-green);
-            margin-bottom: 0.5rem;
-            text-shadow: 0 0 20px currentColor;
-        }
-
-        .stat-label {
-            color: rgba(229, 231, 235, 0.7);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9rem;
-        }
-
-        /* === ENHANCED ANALYSIS MODULE === */
-        .analysis-module {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(15px);
-            border-radius: 30px;
-            border: 2px solid rgba(56, 189, 248, 0.4);
-            padding: 3.5rem;
-            margin-bottom: 3rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 30px 100px rgba(0, 0, 0, 0.7), 0 0 120px rgba(56, 189, 248, 0.2), inset 0 0 60px rgba(56, 189, 248, 0.1);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-            .analysis-module::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 2px;
-                background: linear-gradient(90deg, transparent, var(--cyber-blue), var(--cyber-cyan), var(--cyber-green), transparent);
-                animation: borderScan 3s linear infinite;
-            }
-
-        @@keyframes borderScan {
-            0% {
-                transform: translateX(-100%);
-            }
-
-            100% {
-                transform: translateX(100%);
-            }
-        }
-
-        .analysis-module:hover {
-            border-color: var(--cyber-cyan);
-            transform: translateY(-5px);
-            box-shadow: 0 40px 120px rgba(0, 0, 0, 0.8), 0 0 150px rgba(56, 189, 248, 0.3), inset 0 0 80px rgba(56, 189, 248, 0.15);
-        }
-
-        .module-header {
-            display: flex;
-            align-items: center;
-            gap: 2.5rem;
-            margin-bottom: 3rem;
-            padding-bottom: 2rem;
-            border-bottom: 2px solid rgba(56, 189, 248, 0.3);
-        }
-
-        .module-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-purple));
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3.5rem;
-            color: white;
-            box-shadow: 0 0 50px rgba(56, 189, 248, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.2);
-        }
-
-        .module-info {
-            flex: 1;
-        }
-
-        .module-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 2.2rem;
-            color: white;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
-        }
-
-        .module-subtitle {
-            color: rgba(229, 231, 235, 0.9);
-            font-size: 1.2rem;
-            line-height: 1.6;
-        }
-
-        .cyber-error {
-            margin-top: 1.5rem;
-            padding: 1.5rem;
-            border-radius: 15px;
-            border: 2px solid rgba(255, 0, 60, 0.6);
-            background: linear-gradient(135deg, rgba(255, 0, 60, 0.1), rgba(255, 77, 109, 0.05));
-            color: #ff4d6d;
-            font-family: 'Orbitron', monospace;
-            box-shadow: 0 0 40px rgba(255, 0, 60, 0.3), inset 0 0 20px rgba(255, 0, 60, 0.1);
-            animation: errorPulse 2s ease-in-out infinite;
-        }
-
-        @@keyframes errorPulse {
-            0%, 100% {
-                box-shadow: 0 0 30px rgba(255, 0, 60, 0.3);
-            }
-
-            50% {
-                box-shadow: 0 0 60px rgba(255, 0, 60, 0.5);
-            }
-        }
-
-        .d-none {
-            display: none;
-        }
-
-        /* === ENHANCED TEXTAREA === */
-        .cyber-textarea-group {
-            margin-bottom: 3rem;
-            position: relative;
-        }
-
-        .cyber-textarea-label {
-            display: flex;
-            align-items: center;
-            gap: 1.2rem;
-            font-family: 'Orbitron', monospace;
-            font-weight: 700;
-            color: var(--cyber-blue);
-            margin-bottom: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 1.3rem;
-        }
-
-        .cyber-textarea {
-            background: rgba(15, 23, 42, 0.95);
-            border: 2px solid rgba(56, 189, 248, 0.4);
-            border-radius: 20px;
-            color: #e5e7eb;
-            padding: 2rem;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 1.1rem;
-            width: 100%;
-            min-height: 400px;
-            resize: vertical;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            line-height: 1.7;
-        }
-
-            .cyber-textarea:focus {
-                outline: none;
-                border-color: var(--cyber-cyan);
-                background: rgba(15, 23, 42, 0.98);
-                box-shadow: 0 0 60px rgba(56, 189, 248, 0.5), inset 0 0 40px rgba(56, 189, 248, 0.15);
-            }
-
-            .cyber-textarea::placeholder {
-                color: rgba(229, 231, 235, 0.4);
-                font-style: italic;
-                font-family: 'Exo 2', sans-serif;
-            }
-
-        .input-stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1.2rem;
-            padding: 0 1rem;
-            font-size: 1rem;
-        }
-
-        .char-count {
-            font-family: 'Orbitron', monospace;
-            color: var(--cyber-cyan);
-        }
-
-        .input-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--cyber-green);
-            font-family: 'Share Tech Mono', monospace;
-        }
-
-        /* === ENHANCED ANALYZE BUTTON === */
-        .cyber-analyze-btn {
-            width: 100%;
-            padding: 1.8rem;
-            font-family: 'Orbitron', monospace;
-            font-weight: 800;
-            font-size: 1.4rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-purple), var(--cyber-pink));
-            background-size: 200% 200%;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: 3rem;
-            animation: gradientShift 3s ease infinite;
-        }
-
-        @@keyframes gradientShift {
-            0%, 100% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-        }
-
-        .cyber-analyze-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: 0.8s ease;
-        }
-
-        .cyber-analyze-btn:hover::before {
-            left: 100%;
-        }
-
-        .cyber-analyze-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 30px 80px rgba(56, 189, 248, 0.6), 0 0 150px rgba(157, 0, 255, 0.4);
-            letter-spacing: 4px;
-        }
-
-        .cyber-analyze-btn:active {
-            transform: translateY(-2px);
-        }
-
-        .cyber-analyze-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            animation: none;
-            transform: none !important;
-        }
-
-        /* === ENHANCED RESULTS SECTION === */
-        .results-container {
-            display: none;
-            margin-top: 4rem;
-        }
-
-            .results-container.show {
-                display: block;
-                animation: quantumReveal 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-        @@keyframes quantumReveal {
-            from {
-                opacity: 0;
-                transform: translateY(50px) scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .results-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 3rem;
-            padding-bottom: 2rem;
-            border-bottom: 3px solid rgba(0, 255, 157, 0.4);
-        }
-
-        .results-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 2.2rem;
-            color: var(--cyber-green);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .results-score {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .score-circle {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            background: conic-gradient( var(--cyber-green) 0%, var(--cyber-yellow) 50%, var(--cyber-red) 100% );
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            animation: scorePulse 2s ease-in-out infinite;
-        }
-
-            .score-circle::before {
-                content: '';
-                position: absolute;
-                width: 110px;
-                height: 110px;
-                background: var(--cyber-dark);
-                border-radius: 50%;
-            }
-
-        .score-value {
-            font-family: 'Audiowide', cursive;
-            font-size: 3rem;
-            font-weight: 700;
-            color: white;
-            z-index: 1;
-        }
-
-        @@keyframes scorePulse {
-            0%, 100% {
-                transform: scale(1);
-                box-shadow: 0 0 50px rgba(0, 255, 157, 0.5);
-            }
-
-            50% {
-                transform: scale(1.05);
-                box-shadow: 0 0 80px rgba(0, 255, 157, 0.8);
-            }
-        }
-
-        .score-label {
-            color: rgba(229, 231, 235, 0.8);
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-
-        /* === ENHANCED RESULTS GRID === */
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2.5rem;
-            margin-bottom: 4rem;
-        }
-
-        .result-card {
-            background: rgba(15, 23, 42, 0.9);
-            border-radius: 25px;
-            padding: 2.5rem;
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-            .result-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 4px;
-            }
-
-            .result-card.safe::before {
-                background: linear-gradient(90deg, var(--cyber-green), var(--cyber-cyan));
-            }
-
-            .result-card.warning::before {
-                background: linear-gradient(90deg, var(--cyber-yellow), var(--cyber-orange));
-            }
-
-            .result-card.danger::before {
-                background: linear-gradient(90deg, var(--cyber-red), var(--cyber-pink));
-            }
-
-            .result-card:hover {
-                transform: translateY(-8px);
-                box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
-            }
-
-        .result-header {
-            display: flex;
-            align-items: center;
-            gap: 1.8rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1.8rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .result-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2rem;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .result-card.safe .result-icon {
-            color: var(--cyber-green);
-            box-shadow: 0 0 40px rgba(0, 255, 157, 0.4);
-        }
-
-        .result-card.warning .result-icon {
-            color: var(--cyber-yellow);
-            box-shadow: 0 0 40px rgba(255, 247, 0, 0.4);
-        }
-
-        .result-card.danger .result-icon {
-            color: var(--cyber-red);
-            box-shadow: 0 0 40px rgba(255, 0, 60, 0.4);
-        }
-
-        .result-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.5rem;
-            color: white;
-            margin: 0;
-        }
-
-        .result-content {
-            color: rgba(229, 231, 235, 0.95);
-            line-height: 1.7;
-            font-size: 1.1rem;
-        }
-
-        /* === ENHANCED ANALYSIS DETAILS === */
-        .analysis-details {
-            background: rgba(15, 23, 42, 0.95);
-            border-radius: 25px;
-            padding: 3rem;
-            border: 2px solid rgba(56, 189, 248, 0.4);
-            margin-bottom: 3rem;
-        }
-
-        .details-title {
-            font-family: 'Orbitron', monospace;
-            color: var(--cyber-blue);
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .details-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .detail-item {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
-            transition: all 0.3s ease;
-            border-radius: 12px;
-        }
-
-            .detail-item:last-child {
-                border-bottom: none;
-            }
-
-            .detail-item:hover {
-                background: rgba(56, 189, 248, 0.08);
-                transform: translateX(5px);
-            }
-
-        .detail-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-
-        .detail-item.safe .detail-icon {
-            background: rgba(0, 255, 157, 0.15);
-            color: var(--cyber-green);
-        }
-
-        .detail-item.warning .detail-icon {
-            background: rgba(255, 247, 0, 0.15);
-            color: var(--cyber-yellow);
-        }
-
-        .detail-item.danger .detail-icon {
-            background: rgba(255, 0, 60, 0.15);
-            color: var(--cyber-red);
-        }
-
-        .detail-text {
-            color: rgba(229, 231, 235, 0.95);
-            flex: 1;
-            font-size: 1.1rem;
-        }
-
-        /* === ENHANCED SCANNING ANIMATION === */
-        .scanning-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(11, 15, 25, 0.98);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-
-            .scanning-overlay.show {
-                display: flex;
-                animation: overlayFade 0.4s ease-out;
-            }
-
-        @@keyframes overlayFade {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .scanning-content {
-            text-align: center;
-            max-width: 700px;
-            padding: 4rem;
-            background: rgba(15, 23, 42, 0.95);
-            border-radius: 30px;
-            border: 2px solid var(--cyber-cyan);
-            box-shadow: 0 0 150px rgba(0, 243, 255, 0.5), inset 0 0 80px rgba(0, 243, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-            .scanning-content::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 2px;
-                background: linear-gradient(90deg, transparent, var(--cyber-green), var(--cyber-cyan), var(--cyber-blue), transparent);
-                animation: borderScan 2s linear infinite;
-            }
-
-        .scanning-icon {
-            font-size: 5rem;
-            color: var(--cyber-cyan);
-            margin-bottom: 2.5rem;
-            animation: scanningPulse 2s ease-in-out infinite;
-        }
-
-        @@keyframes scanningPulse {
-            0%, 100% {
-                transform: scale(1);
-                text-shadow: 0 0 30px currentColor;
-            }
-
-            50% {
-                transform: scale(1.1);
-                text-shadow: 0 0 60px currentColor;
-            }
-        }
-
-        .scanning-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 2.5rem;
-            color: var(--cyber-cyan);
-            margin-bottom: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-
-        .scanning-subtitle {
-            color: rgba(229, 231, 235, 0.9);
-            font-size: 1.2rem;
-            margin-bottom: 3rem;
-            line-height: 1.7;
-        }
-
-        .scanning-progress {
-            height: 6px;
-            background: rgba(229, 231, 235, 0.15);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-
-        .scanning-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--cyber-blue), var(--cyber-cyan), var(--cyber-green));
-            width: 0%;
-            animation: progressScan 2s ease-in-out infinite;
-        }
-
-        @@keyframes progressScan {
-            0%, 100% {
-                width: 0%;
-                transform: translateX(0);
-            }
-
-            50% {
-                width: 100%;
-                transform: translateX(0);
-            }
-        }
-
-        .scanning-stats {
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--cyber-green);
-            font-size: 1rem;
-            letter-spacing: 1px;
-        }
-
-        /* === ENHANCED HISTORY SECTION === */
-        .history-section {
-            margin-top: 4rem;
-            padding-top: 3rem;
-            border-top: 2px solid rgba(56, 189, 248, 0.3);
-        }
-
-        .section-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.8rem;
-            color: var(--cyber-blue);
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .history-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .history-card {
-            background: rgba(15, 23, 42, 0.9);
-            border-radius: 20px;
-            padding: 2rem;
-            border: 2px solid rgba(56, 189, 248, 0.2);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-        }
-
-            .history-card:hover {
-                transform: translateY(-5px);
-                border-color: var(--cyber-blue);
-                box-shadow: 0 20px 50px rgba(56, 189, 248, 0.3), 0 0 80px rgba(56, 189, 248, 0.2);
-            }
-
-        .history-score {
-            font-family: 'Audiowide', cursive;
-            font-size: 2.2rem;
-            margin-bottom: 1rem;
-        }
-
-            .history-score.safe {
-                color: var(--cyber-green);
-                text-shadow: 0 0 20px currentColor;
-            }
-
-            .history-score.warning {
-                color: var(--cyber-yellow);
-                text-shadow: 0 0 20px currentColor;
-            }
-
-            .history-score.danger {
-                color: var(--cyber-red);
-                text-shadow: 0 0 20px currentColor;
-            }
-
-        .history-meta {
-            color: rgba(229, 231, 235, 0.8);
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        /* === CLEAR HISTORY BUTTON === */
-        .cyber-clear-btn {
-            background: linear-gradient(135deg, #ff003c, #ff4d6d);
-            border: none;
-            color: white;
-            font-family: 'Orbitron', monospace;
-            letter-spacing: 2px;
-            padding: 0.8rem 1.8rem;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-left: 1rem;
-        }
-
-            .cyber-clear-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 15px 40px rgba(255, 0, 60, 0.5), 0 0 60px rgba(255, 0, 60, 0.3);
-            }
-
-        /* === RESPONSIVE DESIGN === */
-        @@media (max-width: 1200px) {
-            .analysis-title {
-                font-size: 2.8rem;
-            }
-
-            .results-grid {
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            }
-        }
-
-        @@media (max-width: 992px) {
-            .analysis-title {
-                font-size: 2.3rem;
-            }
-
-            .module-header {
-                flex-direction: column;
-                text-align: center;
-                gap: 2rem;
-            }
-
-            .results-header {
-                flex-direction: column;
-                gap: 2rem;
-                text-align: center;
-            }
-
-            .stats-bar {
-                gap: 2rem;
-            }
-
-            .stat-item {
-                min-width: 120px;
-            }
-        }
-
-        @@media (max-width: 768px) {
-            .analysis-title {
-                font-size: 1.8rem;
-            }
-
-            .analysis-module {
-                padding: 2rem;
-            }
-
-            .module-icon {
-                width: 80px;
-                height: 80px;
-                font-size: 2.8rem;
-            }
-
-            .module-title {
-                font-size: 1.8rem;
-            }
-
-            .cyber-textarea {
-                min-height: 300px;
-                padding: 1.5rem;
-            }
-
-            .score-circle {
-                width: 100px;
-                height: 100px;
-            }
-
-                .score-circle::before {
-                    width: 80px;
-                    height: 80px;
-                }
-
-            .score-value {
-                font-size: 2.2rem;
-            }
-        }
-
-        @@media (max-width: 480px) {
-            .analysis-container {
-                padding: 1rem;
-            }
-
-            .analysis-header {
-                padding: 2rem;
-            }
-
-            .analysis-title {
-                font-size: 1.5rem;
-            }
-
-            .stats-bar {
-                flex-direction: column;
-                gap: 1.5rem;
-                padding: 1.5rem;
-            }
-
-            .results-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .result-card {
-                padding: 1.8rem;
-            }
-        }
-
-        /* === UTILITY CLASSES === */
-        .glow-text {
-            text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
-        }
-
-        .fade-in {
-            animation: fadeIn 0.6s ease;
-        }
-
-        @@keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .pulse {
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @@keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.7;
-            }
-        }
-
-        /* === CUSTOM SCROLLBAR === */
-        ::-webkit-scrollbar {
-            width: 12px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--cyber-dark);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(var(--cyber-blue), var(--cyber-purple));
-            border-radius: 6px;
-        }
-
-            ::-webkit-scrollbar-thumb:hover {
-                background: linear-gradient(var(--cyber-green), var(--cyber-cyan));
-            }
-    </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Deepfake Nexus — Email Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden;scroll-behavior:smooth}
+:root{
+  --g:#c9a96e;--g2:rgba(201,169,110,.45);--g3:rgba(201,169,110,.12);--g4:rgba(201,169,110,.07);
+  --c:#ede9e0;--c2:rgba(237,233,224,.65);--c3:rgba(237,233,224,.38);--c4:rgba(237,233,224,.14);
+  --ink:#04040a;--s:rgba(237,233,224,.08);--teal:#4ecdc4;--pur:#8b5cf6;--red:#ff4466;--ok:#22c55e;--warn:#f59e0b;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+body{background:var(--ink);color:var(--c);font-family:'Syne',sans-serif;overflow-x:hidden;cursor:none;min-height:100vh}
+a{color:inherit;text-decoration:none}
+/* Cursor */
+#CUR{position:fixed;width:8px;height:8px;border-radius:50%;background:var(--g);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen}
+#CUR2{position:fixed;width:32px;height:32px;border-radius:50%;border:1.5px solid var(--g2);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .5s var(--ease),height .5s var(--ease),border-color .4s,background .4s}
+/* BG */
+#BG{position:fixed;inset:0;z-index:0;pointer-events:none}
+.noise{position:fixed;inset:-200px;z-index:1;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:220px;animation:nn 9s steps(4) infinite}
+@@keyframes nn{to{transform:translate(-4%,3%)}}
+.vig{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 80% 70% at 50% 40%,transparent 30%,rgba(4,4,10,.75) 100%)}
+.gridL{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:linear-gradient(rgba(201,169,110,.013) 1px,transparent 1px),linear-gradient(90deg,rgba(201,169,110,.013) 1px,transparent 1px);
+  background-size:76px 76px}
+.scanBeam{position:fixed;left:0;top:-2px;width:100%;height:2px;z-index:2;pointer-events:none;
+  background:linear-gradient(90deg,transparent 0%,var(--g2) 40%,rgba(201,169,110,.7) 50%,var(--g2) 60%,transparent 100%);
+  box-shadow:0 0 40px 2px var(--g2);animation:SB 14s linear infinite}
+@@keyframes SB{0%{top:-4px;opacity:0}4%{opacity:1}96%{opacity:.5}100%{top:100vh;opacity:0}}
+
+/* Layout */
+.page{position:relative;z-index:10;min-height:100vh}
+
+/* Topbar */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--s);background:rgba(4,4,10,.88);backdrop-filter:blur(28px);position:sticky;top:0;z-index:100}
+.brand-row{display:flex;align-items:center;gap:14px}
+.bmark{width:38px;height:38px;border:1px solid var(--g2);display:grid;place-items:center;color:var(--g);font-size:14px;flex-shrink:0;transition:all .4s var(--ease)}
+.bmark:hover{background:var(--g3);box-shadow:0 0 24px var(--g3)}
+.btxt{font-family:'Syne',sans-serif;font-weight:800;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--g)}
+.bsub{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--c4);margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tbtn{display:flex;align-items:center;gap:9px;padding:9px 18px;border:1px solid var(--s);color:var(--c3);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;background:transparent;cursor:none;transition:all .3s var(--ease)}
+.tbtn:hover{border-color:var(--g2);color:var(--g);background:var(--g4)}
+.tbtn.fill{background:var(--g);color:var(--ink);border-color:var(--g);font-weight:700}
+.tbtn.fill:hover{background:#d4b87e;border-color:#d4b87e}
+
+/* Hero band */
+.hero-band{position:relative;height:480px;overflow:hidden;border-bottom:1px solid var(--s)}
+#HERO3D{position:absolute;inset:0;width:100%;height:100%}
+.hero-hud-tl{position:absolute;top:14px;left:14px;z-index:3;pointer-events:none;width:20px;height:20px;border-top:1px solid var(--g2);border-left:1px solid var(--g2)}
+.hero-hud-tr{position:absolute;top:14px;right:14px;z-index:3;pointer-events:none;width:20px;height:20px;border-top:1px solid var(--g2);border-right:1px solid var(--g2)}
+.hero-hud-bl{position:absolute;bottom:14px;left:14px;z-index:3;pointer-events:none;width:20px;height:20px;border-bottom:1px solid var(--g2);border-left:1px solid var(--g2)}
+.hero-hud-br{position:absolute;bottom:14px;right:14px;z-index:3;pointer-events:none;width:20px;height:20px;border-bottom:1px solid var(--g2);border-right:1px solid var(--g2)}
+.hero-scan{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--g2),transparent);animation:HS 3.5s linear infinite;z-index:3;pointer-events:none;top:0}
+@@keyframes HS{from{top:0;opacity:0}6%{opacity:1}94%{opacity:.6}to{top:100%;opacity:0}}
+.hero-lbl{position:absolute;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--g);border:1px solid var(--g3);background:rgba(4,4,10,.8);backdrop-filter:blur(10px);padding:4px 10px;z-index:3;pointer-events:none}
+.hero-lbl.tl{top:10px;left:38px}
+.hero-lbl.br{bottom:10px;right:38px}
+.hero-overlay{position:absolute;inset:0;z-index:2;display:flex;align-items:flex-end;padding:44px 48px;background:linear-gradient(to top,rgba(4,4,10,.92) 0%,rgba(4,4,10,.5) 50%,transparent 100%);pointer-events:none}
+.hero-content{pointer-events:auto}
+.hero-eye{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--g);display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.hero-eye::before{content:'';width:22px;height:1px;background:var(--g2)}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px rgba(34,197,94,.8);animation:LP 1.8s infinite;display:inline-block}
+@@keyframes LP{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+.hero-h{font-family:'Instrument Serif',serif;font-size:clamp(36px,5.5vw,70px);font-weight:400;line-height:1.02;letter-spacing:-.035em}
+.hero-h em{font-style:italic;color:var(--g)}
+.hero-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+.chip{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;padding:6px 11px;border:1px solid var(--s);color:var(--c4);background:rgba(4,4,10,.65)}
+.chip i{color:var(--g);margin-right:5px}
+
+/* Stat strip */
+.stat-strip{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--s)}
+.stcell{padding:22px 24px;border-right:1px solid var(--s);position:relative;overflow:hidden;cursor:default;transition:background .4s}
+.stcell:last-child{border-right:none}
+.stcell::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--g),transparent);transform:scaleX(0);transition:transform .7s var(--ease)}
+.stcell:hover{background:rgba(201,169,110,.03)}
+.stcell:hover::before{transform:scaleX(1)}
+.stnum{font-family:'Instrument Serif',serif;font-size:clamp(28px,3.5vw,48px);font-weight:400;line-height:1;letter-spacing:-.04em}
+.stnum b{color:var(--g)}
+.stlbl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--c3);margin-top:6px;line-height:1.6}
+.sttrend{font-family:'DM Mono',monospace;font-size:8px;color:var(--ok);margin-top:4px}
+
+/* Main grid */
+.main-grid{display:grid;grid-template-columns:1fr 480px;gap:0;border-bottom:1px solid var(--s)}
+.main-grid .left{border-right:1px solid var(--s)}
+
+/* Section header */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--s)}
+.sec-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--g);display:flex;align-items:center;gap:9px}
+.sec-title::before{content:'';width:12px;height:1px;background:var(--g2)}
+.KBD{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--c4);border:1px solid var(--s);padding:3px 8px;background:rgba(0,0,0,.3)}
+
+/* 3D canvas panels */
+.c3d{position:relative;overflow:hidden}
+.c3d canvas{width:100%!important;height:100%!important;display:block}
+.c3d-hud{position:absolute;inset:0;pointer-events:none;z-index:2}
+.c3d-lbl{position:absolute;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--g);border:1px solid var(--g3);background:rgba(4,4,10,.8);backdrop-filter:blur(8px);padding:4px 9px}
+.c3d-lbl.tl{top:10px;left:10px} .c3d-lbl.br{bottom:10px;right:10px} .c3d-lbl.tr{top:10px;right:10px}
+.c3d-scan{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,169,110,.5),transparent);animation:HS 3s linear infinite;top:0}
+.c3d-corner{position:absolute;width:14px;height:14px;border-color:var(--g2);border-style:solid}
+.c3d-corner.tl{top:8px;left:8px;border-width:1px 0 0 1px}
+.c3d-corner.tr{top:8px;right:8px;border-width:1px 1px 0 0}
+.c3d-corner.bl{bottom:8px;left:8px;border-width:0 0 1px 1px}
+.c3d-corner.br2{bottom:8px;right:8px;border-width:0 1px 1px 0}
+
+/* Input area */
+.input-zone{padding:24px}
+.field-lbl{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--g);display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.field-lbl::before{content:'';width:14px;height:1px;background:var(--g2)}
+.cyber-textarea{background:rgba(0,0,0,.35);border:1px solid var(--s);color:var(--c);font-family:'DM Mono',monospace;font-size:11px;line-height:1.9;padding:16px;width:100%;min-height:260px;resize:vertical;outline:none;transition:border-color .3s,box-shadow .3s;border-radius:0}
+.cyber-textarea:focus{border-color:var(--g2);box-shadow:0 0 0 2px var(--g3),inset 0 0 40px rgba(201,169,110,.04)}
+.cyber-textarea::placeholder{color:var(--c4);font-style:italic}
+.textarea-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-family:'DM Mono',monospace;font-size:8px;color:var(--c4);letter-spacing:.1em}
+.char-live{color:var(--teal)}
+
+/* Analyze button */
+.analyze-btn{width:100%;margin-top:16px;padding:15px;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;background:var(--g);color:var(--ink);border:1px solid var(--g);cursor:none;display:flex;align-items:center;justify-content:center;gap:12px;position:relative;overflow:hidden;transition:all .4s var(--ease)}
+.analyze-btn::before{content:'';position:absolute;inset:0;background:#d4b87e;transform:translateX(-101%);transition:transform .5s var(--ease)}
+.analyze-btn:hover::before{transform:translateX(0)}
+.analyze-btn:hover{letter-spacing:.22em}
+.analyze-btn span,.analyze-btn i{position:relative;z-index:1}
+.analyze-btn:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
+
+/* Right panel */
+.right-panel{display:flex;flex-direction:column}
+
+/* 3D side panel — tall */
+.side-3d-tall{height:360px}
+
+/* Score ring */
+.score-block{padding:22px;border-bottom:1px solid var(--s)}
+.score-row{display:flex;align-items:center;gap:18px}
+.ring-wrap{position:relative;width:88px;height:88px;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(237,233,224,.07);stroke-width:6}
+.ring-fg{fill:none;stroke-width:6;stroke-linecap:round;stroke-dasharray:251.3;stroke-dashoffset:251.3;transition:stroke-dashoffset 1.4s var(--ease),stroke .5s}
+.ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-num{font-family:'Instrument Serif',serif;font-size:22px;font-weight:400;line-height:1;letter-spacing:-.04em}
+.ring-pct{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:.12em;color:var(--c3);margin-top:1px}
+.score-info{flex:1}
+.score-verdict{font-family:'Instrument Serif',serif;font-size:22px;font-weight:400;letter-spacing:-.02em;line-height:1.1}
+.score-risk{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--c3);margin-top:4px}
+.score-risk.high{color:var(--red)}
+.score-risk.med{color:var(--warn)}
+.score-risk.low{color:var(--ok)}
+
+/* Result cards */
+.results-list{padding:0}
+.res-item{padding:14px 20px;border-bottom:1px solid var(--s);display:flex;align-items:flex-start;gap:12px;transition:background .3s}
+.res-item:hover{background:rgba(201,169,110,.025)}
+.res-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.res-dot.ok{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.res-dot.warn{background:var(--warn);box-shadow:0 0 8px var(--warn)}
+.res-dot.bad{background:var(--red);box-shadow:0 0 8px var(--red)}
+.res-h{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;margin-bottom:3px}
+.res-p{font-size:10.5px;color:var(--c3);line-height:1.65}
+.res-badge{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;padding:3px 7px;border:1px solid;display:inline-flex;align-items:center;gap:4px;margin-top:6px}
+.res-badge.ok{color:var(--ok);border-color:rgba(34,197,94,.35)}
+.res-badge.warn{color:var(--warn);border-color:rgba(245,158,11,.35)}
+.res-badge.bad{color:var(--red);border-color:rgba(255,68,102,.35)}
+
+/* Findings detail table */
+.findings-sec{padding:20px}
+.find-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px solid var(--s)}
+.find-row:first-child{border-top:none}
+.find-ico{width:28px;height:28px;border:1px solid var(--s);display:grid;place-items:center;font-size:10px;flex-shrink:0;color:var(--g);transition:all .35s}
+.find-row:hover .find-ico{border-color:var(--g2);background:var(--g3)}
+.find-h{font-size:11.5px;font-weight:700;margin-bottom:2px}
+.find-p{font-size:10px;color:var(--c3);line-height:1.6}
+
+/* Score breakdown */
+.breakdown-list{padding:16px 20px;display:grid;gap:0}
+.bk-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--s);font-size:10.5px}
+.bk-row:first-child{border-top:none}
+.bk-label{color:var(--c3);flex:1}
+.bk-val{font-family:'DM Mono',monospace;font-size:9px;font-weight:700}
+.bk-val.pos{color:var(--ok)}
+.bk-val.neg{color:var(--red)}
+.bk-bar{width:80px;height:4px;background:rgba(237,233,224,.07);position:relative;overflow:hidden}
+.bk-bar-fill{position:absolute;top:0;left:0;height:100%;transition:width 1s var(--ease)}
+.bk-bar-fill.pos{background:var(--ok)}
+.bk-bar-fill.neg{background:var(--red)}
+
+/* History section */
+.hist-sec{border-top:1px solid var(--s);padding:0}
+.hist-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--s)}
+.hist-card{background:var(--ink);padding:20px;cursor:none;transition:background .3s;position:relative;overflow:hidden}
+.hist-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--g),transparent);transform:scaleX(0);transition:transform .6s var(--ease)}
+.hist-card:hover{background:#0a0914}
+.hist-card:hover::after{transform:scaleX(1)}
+.hist-score{font-family:'Instrument Serif',serif;font-size:34px;font-weight:400;letter-spacing:-.04em;line-height:1;margin-bottom:6px}
+.hist-score.ok{color:var(--ok)}
+.hist-score.warn{color:var(--warn)}
+.hist-score.bad{color:var(--red)}
+.hist-meta{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--c3);letter-spacing:.08em;line-height:1.7}
+
+/* Bottom 3D strip */
+.bottom-3d-strip{height:260px;border-top:1px solid var(--s);display:grid;grid-template-columns:1fr 1fr 1fr}
+.b3d-cell{position:relative;overflow:hidden;border-right:1px solid var(--s)}
+.b3d-cell:last-child{border-right:none}
+.b3d-cell canvas{width:100%!important;height:100%!important;display:block}
+
+/* Scanning overlay */
+.scan-overlay{position:fixed;inset:0;z-index:4000;display:none;place-items:center;background:rgba(4,4,10,.96);backdrop-filter:blur(18px)}
+.scan-overlay.show{display:grid;animation:OFI .4s ease}
+@@keyframes OFI{from{opacity:0}to{opacity:1}}
+.scan-card{width:min(520px,calc(100vw - 32px));border:1px solid var(--g2);background:rgba(4,4,10,.98);padding:48px;text-align:center;position:relative;overflow:hidden}
+.scan-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--g),transparent)}
+.scan-ic{font-size:48px;color:var(--g);margin-bottom:24px;animation:SI 2s ease-in-out infinite}
+@@keyframes SI{0%,100%{transform:scale(1);text-shadow:0 0 20px var(--g2)}50%{transform:scale(1.08);text-shadow:0 0 50px var(--g)}}
+.scan-h{font-family:'Instrument Serif',serif;font-size:36px;font-weight:400;letter-spacing:-.03em;margin-bottom:12px}
+.scan-h em{font-style:italic;color:var(--g)}
+.scan-sub{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.12em;color:var(--c3);line-height:1.9;margin-bottom:28px}
+.scan-pbar{height:1px;background:rgba(237,233,224,.08);position:relative;overflow:hidden;margin-bottom:10px}
+.scan-pfill{position:absolute;top:0;left:0;height:100%;background:var(--g);animation:SP 2s ease-in-out infinite}
+@@keyframes SP{0%{width:0%;transform:translateX(0)}50%{width:100%;transform:translateX(0)}100%{width:0%;transform:translateX(100%)}}
+.scan-stat{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.13em;color:var(--c4)}
+
+/* Toast */
+.toast-wrap{position:fixed;right:20px;bottom:20px;z-index:3000;display:grid;gap:8px;width:min(340px,calc(100vw - 40px))}
+.toastx{border:1px solid var(--s);background:rgba(4,4,10,.95);backdrop-filter:blur(24px);padding:13px 15px;display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;animation:TI .4s var(--ease);position:relative;overflow:hidden}
+.toastx::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--g),transparent)}
+@@keyframes TI{from{transform:translateX(10px);opacity:0}to{transform:translateX(0);opacity:1}}
+.t-ic{width:30px;height:30px;border:1px solid var(--g3);display:grid;place-items:center;color:var(--g);font-size:11px}
+.t-h{font-size:11px;font-weight:700}
+.t-p{font-family:'DM Mono',monospace;font-size:8px;color:var(--c3);margin-top:2px}
+.t-x{background:none;border:none;cursor:none;color:var(--c4);font-size:12px;padding:4px;transition:color .2s}
+.t-x:hover{color:var(--c)}
+
+/* Error box */
+.err-box{border:1px solid rgba(255,68,102,.45);background:rgba(255,68,102,.06);padding:12px 16px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--red);display:none;margin-bottom:14px}
+.err-box.show{display:block}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:rgba(4,4,10,.8)}
+::-webkit-scrollbar-thumb{background:var(--g2)}
+
+/* Responsive */
+@@media(max-width:1100px){
+  .main-grid{grid-template-columns:1fr}
+  .main-grid .left{border-right:none;border-bottom:1px solid var(--s)}
+  .stat-strip{grid-template-columns:repeat(3,1fr)}
+  .hist-grid{grid-template-columns:repeat(2,1fr)}
+  .bottom-3d-strip{grid-template-columns:1fr 1fr}
+}
+@@media(max-width:640px){
+  .stat-strip{grid-template-columns:1fr 1fr}
+  .hist-grid{grid-template-columns:1fr}
+  .bottom-3d-strip{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
-    <!-- ENHANCED BACKGROUND EFFECTS -->
-    <div class="enhanced-bg"></div>
-    <div class="matrix-grid"></div>
-    <div class="binary-fall" id="binaryFall"></div>
-    <div class="floating-orb orb-1"></div>
-    <div class="floating-orb orb-2"></div>
-    <div class="floating-orb orb-3"></div>
-    <div class="enhanced-scan-line"></div>
 
-    <!-- SCANNING OVERLAY (UNCHANGED LOGIC) -->
-    <div class="scanning-overlay" id="scanningOverlay">
-        <div class="scanning-content">
-            <div class="scanning-icon">
-                <i class="fas fa-search"></i>
-            </div>
-            <h2 class="scanning-title">ANALYZING EMAIL</h2>
-            <p class="scanning-subtitle">
-                Scanning for spoofing indicators, phishing patterns, and malicious content...
-            </p>
-            <div class="scanning-progress">
-                <div class="scanning-progress-bar" id="scanningProgress"></div>
-            </div>
-            <div class="scanning-stats" id="scanningStats">Initializing neural networks...</div>
-        </div>
+<div id="CUR"></div>
+<div id="CUR2"></div>
+<canvas id="BG"></canvas>
+<div class="noise"></div>
+<div class="vig"></div>
+<div class="gridL"></div>
+<div class="scanBeam"></div>
+<div class="toast-wrap" id="TW"></div>
+
+<!-- SCANNING OVERLAY -->
+<div class="scan-overlay" id="scanOverlay">
+  <div class="scan-card">
+    <div class="scan-ic"><i class="fa-solid fa-envelope-open-text"></i></div>
+    <h2 class="scan-h">Scanning <em>email</em></h2>
+    <p class="scan-sub">
+      Analyzing spoofing indicators · phishing patterns<br>
+      Header forensics · SPF / DKIM / DMARC<br>
+      Payload risk signals · URL reputation
+    </p>
+    <div class="scan-pbar"><div class="scan-pfill"></div></div>
+    <div class="scan-stat" id="scanStat">Initializing neural analysis…</div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="brand-row">
+      <a href="/Home/Dashboard" class="bmark"><i class="fa-solid fa-shield-halved"></i></a>
+      <div><div class="btxt">Deepfake Nexus</div><div class="bsub">Email Forensics</div></div>
     </div>
+    <div class="topbar-right">
+      <a class="tbtn" href="/Home/Dashboard"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+      <a class="tbtn" href="#modules">Modules</a>
+      <a class="tbtn fill" href="/Account/Register">Free Trial</a>
+    </div>
+  </div>
 
-    <!-- MAIN CONTAINER -->
-    <div class="analysis-container">
-        <!-- BACK BUTTON -->
-        <a href="/Home/Dashboard" class="cyber-back-btn">
-            <i class="fas fa-arrow-left"></i>
-            BACK TO DASHBOARD
-        </a>
-
-        <!-- ENHANCED HEADER SECTION -->
-        <div class="analysis-header">
-            <h1 class="analysis-title">QUANTUM EMAIL FORENSICS</h1>
-            <p class="analysis-subtitle">
-                Advanced AI-powered analysis of email content, headers, and metadata
-                to detect spoofing, phishing, and malicious content in real-time.
-                Paste full email content for comprehensive security analysis.
-            </p>
-
-            <!-- STATS BAR -->
-            <div class="stats-bar">
-                <div class="stat-item">
-                    <div class="stat-value">99.7%</div>
-                    <div class="stat-label">Detection Rate</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">256+</div>
-                    <div class="stat-label">Threat Indicators</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">0.2s</div>
-                    <div class="stat-label">Analysis Time</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">AI</div>
-                    <div class="stat-label">Neural Network</div>
-                </div>
-            </div>
+  <!-- HERO 3D BAND -->
+  <div class="hero-band">
+    <canvas id="HERO3D"></canvas>
+    <div class="hero-hud-tl"></div><div class="hero-hud-tr"></div>
+    <div class="hero-hud-bl"></div><div class="hero-hud-br"></div>
+    <div class="hero-lbl tl">EMAIL FORENSICS · QUANTUM ANALYSIS</div>
+    <div class="hero-lbl br">NEURAL MESH · <span id="uplinkTxt">ACTIVE</span></div>
+    <div class="hero-scan"></div>
+    <div class="hero-overlay">
+      <div class="hero-content">
+        <div class="hero-eye"><span class="sdot"></span>SPF / DKIM / DMARC · Header Forensics · Payload Scanning</div>
+        <h1 class="hero-h">Email threat<br><em>forensics</em> engine</h1>
+        <div class="hero-chips">
+          <span class="chip"><i class="fa-solid fa-shield"></i>256+ Indicators</span>
+          <span class="chip"><i class="fa-solid fa-clock"></i>~50ms latency</span>
+          <span class="chip"><i class="fa-solid fa-fingerprint"></i>SPF · DKIM · DMARC</span>
+          <span class="chip"><i class="fa-solid fa-link"></i>URL Reputation</span>
+          <span class="chip"><i class="fa-solid fa-network-wired"></i>Header Forensics</span>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <!-- ENHANCED ANALYSIS MODULE -->
-        <div class="analysis-module">
-            <div class="module-header">
-                <div class="module-icon">
-                    <i class="fas fa-envelope-open-text"></i>
-                </div>
-                <div class="module-info">
-                    <h2 class="module-title">QUANTUM ANALYSIS ENGINE</h2>
-                    <p class="module-subtitle">
-                        Our quantum neural network analyzes 256+ phishing indicators,
-                        SPF/DKIM/DMARC authentication, header forgery, and behavioral patterns
-                        to detect sophisticated email attacks.
-                    </p>
-                </div>
-            </div>
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stcell"><div class="stnum"><span class="cnt" data-v="99.7">0</span><b>%</b></div><div class="stlbl">Detection<br>accuracy</div><div class="sttrend">▲ benchmark</div></div>
+    <div class="stcell"><div class="stnum"><span class="cnt" data-v="256">0</span></div><div class="stlbl">Threat<br>indicators</div><div class="sttrend">▲ +14 new</div></div>
+    <div class="stcell"><div class="stnum"><span class="cnt" data-v="50">0</span><b style="color:var(--c3);font-size:.5em">ms</b></div><div class="stlbl">Avg<br>latency</div><div class="sttrend">▲ 3ms faster</div></div>
+    <div class="stcell"><div class="stnum"><span class="cnt" data-v="2.4">0</span><b>M<span style="font-size:.35em;color:var(--c3)">+</span></b></div><div class="stlbl">Threat<br>intel entries</div><div class="sttrend">▲ +240K</div></div>
+    <div class="stcell"><div class="stnum">24<b style="font-size:.4em;color:var(--c3)">/7</b></div><div class="stlbl">Always-on<br>architecture</div><div class="sttrend">● operational</div></div>
+  </div>
 
-            <!-- ERROR BOX (UNCHANGED) -->
-            <div id="errorBox" class="cyber-error d-none">
-                <i class="fas fa-triangle-exclamation me-2"></i>
-                <span id="errorText"></span>
-            </div>
+  <!-- MAIN GRID -->
+  <div class="main-grid">
 
-            <!-- TEXTAREA GROUP -->
-            <div class="cyber-textarea-group">
-                <label class="cyber-textarea-label">
-                    <i class="fas fa-paste"></i>
-                    PASTE SUSPICIOUS EMAIL CONTENT
-                </label>
-                <textarea class="cyber-textarea"
-                          id="emailInput"
-                          rows="12"
-                          placeholder="Paste email content here...
+    <!-- LEFT: Input + Findings -->
+    <div class="left">
+      <div class="sec-hdr">
+        <span class="sec-title">Email Analysis · Input</span>
+        <span class="KBD">PASTE EMAIL</span>
+      </div>
+
+      <!-- 3D panel above input -->
+      <div class="c3d" style="height:200px;border-bottom:1px solid var(--s)">
+        <canvas id="C3D_INPUT"></canvas>
+        <div class="c3d-hud">
+          <div class="c3d-corner tl"></div><div class="c3d-corner tr"></div>
+          <div class="c3d-corner bl"></div><div class="c3d-corner br2"></div>
+          <div class="c3d-lbl tl">EMAIL SCAN ENGINE · READY</div>
+          <div class="c3d-lbl br">FORENSICS ACTIVE</div>
+          <div class="c3d-scan"></div>
+        </div>
+      </div>
+
+      <div class="input-zone">
+        <div class="field-lbl"><i class="fa-solid fa-paste"></i> Paste suspicious email content</div>
+        <div class="err-box" id="errBox"><i class="fa-solid fa-triangle-exclamation"></i> <span id="errTxt"></span></div>
+        <textarea class="cyber-textarea" id="emailInput" placeholder="Paste full email content here…
 
 Example:
-From: security@bank-example.com
-Subject: Urgent: Account Security Alert
-Date: Wed, 15 Mar 2024 10:30:00 +0000
+From: security@bank-secure-alerts.com
+Subject: URGENT: Verify your account immediately
+Date: Mon, 10 Mar 2025 09:14:32 +0000
+Received: from smtp.suspicious-relay.net
 
 Dear Customer,
-We detected unusual activity on your account. Click here to verify:
-http://fake-bank-security.com/login
+We detected unusual activity on your account.
+Please verify now: http://bank-verify-secure.xyz/login?token=abc123
 
-Sincerely,
-Bank Security Team"></textarea>
+Your account will be locked in 24 hours.
 
-                <div class="input-stats">
-                    <span class="char-count">
-                        Characters: <span id="charCount">0</span> / 10000
-                    </span>
-                    <span class="input-status" id="inputStatus">
-                        <i class="fas fa-circle-notch fa-spin"></i>
-                        <span>Ready for analysis</span>
-                    </span>
-                </div>
-            </div>
-
-            <!-- ANALYZE BUTTON -->
-            <button class="cyber-analyze-btn" id="analyzeBtn">
-                <i class="fas fa-search"></i>
-                INITIATE QUANTUM SCAN
-            </button>
+Best,
+Security Team"></textarea>
+        <div class="textarea-footer">
+          <span>Characters: <span class="char-live" id="charCount">0</span> / 10000</span>
+          <span id="inputStatus" style="color:var(--c4);font-family:'DM Mono',monospace;font-size:8px">Waiting for input</span>
         </div>
+        <button class="analyze-btn" id="analyzeBtn" disabled>
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span>Initiate Quantum Scan</span>
+        </button>
+      </div>
 
-        <!-- ENHANCED RESULTS SECTION -->
-        <div class="results-container" id="resultsContainer">
-            <div class="results-header">
-                <h2 class="results-title">SECURITY ANALYSIS REPORT</h2>
-                <div class="results-score">
-                    <div class="score-circle">
-                        <div class="score-value" id="securityScore">87%</div>
-                    </div>
-                    <div>
-                        <div class="score-label">SECURITY SCORE</div>
-                        <div class="score-label" style="color: var(--cyber-green);" id="riskLevel">LOW RISK</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- RESULTS GRID -->
-            <div class="results-grid">
-                <div class="result-card danger" id="spoofingCard">
-                    <div class="result-header">
-                        <div class="result-icon">
-                            <i class="fas fa-user-secret"></i>
-                        </div>
-                        <h3 class="result-title">SPOOFING DETECTION</h3>
-                    </div>
-                    <div class="result-content" id="spoofingResult"></div>
-                </div>
-
-                <div class="result-card warning" id="phishingCard">
-                    <div class="result-header">
-                        <div class="result-icon">
-                            <i class="fas fa-fish"></i>
-                        </div>
-                        <h3 class="result-title">PHISHING ANALYSIS</h3>
-                    </div>
-                    <div class="result-content" id="phishingResult"></div>
-                </div>
-
-                <div class="result-card safe" id="maliciousCard">
-                    <div class="result-header">
-                        <div class="result-icon">
-                            <i class="fas fa-shield-virus"></i>
-                        </div>
-                        <h3 class="result-title">MALICIOUS CONTENT</h3>
-                    </div>
-                    <div class="result-content" id="maliciousResult"></div>
-                </div>
-            </div>
-
-            <!-- DETAILED ANALYSIS -->
-            <div class="analysis-details">
-                <h3 class="details-title">
-                    <i class="fas fa-list-alt"></i>
-                    DETAILED FINDINGS
-                </h3>
-                <ul class="details-list" id="detailsList">
-                    <!-- Will be populated by JavaScript -->
-                </ul>
-            </div>
-
-            <!-- SCORE BREAKDOWN -->
-            <div class="analysis-details">
-                <h3 class="details-title">
-                    <i class="fas fa-chart-bar"></i>
-                    SCORE BREAKDOWN
-                </h3>
-                <ul class="details-list" id="scoreBreakdownList">
-                    <!-- Will be populated by JavaScript -->
-                </ul>
-            </div>
+      <!-- Results section (hidden until scan) -->
+      <div id="resultsArea" style="display:none">
+        <div class="sec-hdr" style="border-top:1px solid var(--s)">
+          <span class="sec-title">Detailed Findings</span>
+          <span class="KBD" style="color:var(--ok)">COMPLETE</span>
         </div>
-
-        <!-- ENHANCED HISTORY SECTION -->
-        <div class="history-section">
-            <div class="section-title">
-                <i class="fas fa-history"></i>
-                ANALYSIS HISTORY
-                <button class="cyber-clear-btn" onclick="openClearHistoryModal()">
-                    <i class="fas fa-trash"></i> CLEAR
-                </button>
-            </div>
-            <div class="history-grid" id="historyContainer">
-                <!-- History cards will be populated here -->
-            </div>
+        <!-- 3D anomaly field -->
+        <div class="c3d" style="height:180px;border-bottom:1px solid var(--s)">
+          <canvas id="C3D_RESULT"></canvas>
+          <div class="c3d-hud">
+            <div class="c3d-corner tl"></div><div class="c3d-corner tr"></div>
+            <div class="c3d-corner bl"></div><div class="c3d-corner br2"></div>
+            <div class="c3d-lbl tl">THREAT FIELD · MAPPED</div>
+            <div class="c3d-scan" style="animation-delay:.9s"></div>
+          </div>
         </div>
+        <div class="findings-sec" id="findingsList"></div>
+
+        <div class="sec-hdr" style="border-top:1px solid var(--s)">
+          <span class="sec-title">Score Breakdown</span>
+        </div>
+        <div class="breakdown-list" id="breakdownList"></div>
+      </div>
     </div>
 
-    <!-- CLEAR HISTORY MODAL (UNCHANGED LOGIC) -->
-    <div class="scanning-overlay" id="clearHistoryModal">
-        <div class="scanning-content">
-            <div class="scanning-icon" style="color: var(--cyber-red);">
-                <i class="fas fa-triangle-exclamation"></i>
-            </div>
-            <h2 class="scanning-title" style="color: var(--cyber-red);">CLEAR HISTORY</h2>
-            <p class="scanning-subtitle">
-                This will permanently delete all your email analysis history.
-                <br><strong>This action cannot be undone.</strong>
-            </p>
-            <div style="display: flex; gap: 2rem; justify-content: center; margin-top: 3rem;">
-                <button class="cyber-analyze-btn"
-                        onclick="closeClearHistoryModal()"
-                        style="background: linear-gradient(135deg, #444, #222); width: 180px;">
-                    CANCEL
-                </button>
-                <button class="cyber-analyze-btn"
-                        onclick="confirmClearHistory()"
-                        style="background: linear-gradient(135deg, #ff003c, #ff4d6d); width: 180px;">
-                    <i class="fas fa-trash"></i> DELETE
-                </button>
-            </div>
+    <!-- RIGHT: 3D + Score + Results -->
+    <div class="right-panel">
+      <!-- Big 3D side panel -->
+      <div class="sec-hdr">
+        <span class="sec-title">Threat Core · 3D</span>
+        <span class="KBD">LIVE</span>
+      </div>
+      <div class="c3d side-3d-tall">
+        <canvas id="C3D_SIDE"></canvas>
+        <div class="c3d-hud">
+          <div class="c3d-corner tl"></div><div class="c3d-corner tr"></div>
+          <div class="c3d-corner bl"></div><div class="c3d-corner br2"></div>
+          <div class="c3d-lbl tl">THREAT CORE · ACTIVE</div>
+          <div class="c3d-lbl br">RISK: <span id="riskLbl" style="color:var(--warn)">SCANNING</span></div>
+          <div class="c3d-scan"></div>
         </div>
+      </div>
+
+      <!-- Score ring -->
+      <div class="sec-hdr" style="border-top:1px solid var(--s)">
+        <span class="sec-title">Security Score</span>
+        <span class="KBD" id="verdictKbd">PENDING</span>
+      </div>
+      <div class="score-block">
+        <div class="score-row">
+          <div class="ring-wrap">
+            <svg width="88" height="88" viewBox="0 0 88 88">
+              <circle class="ring-bg" cx="44" cy="44" r="40"/>
+              <circle class="ring-fg" id="ringFg" cx="44" cy="44" r="40" stroke="var(--g)"/>
+            </svg>
+            <div class="ring-label">
+              <div class="ring-num" id="ringNum">—</div>
+              <div class="ring-pct">SCORE</div>
+            </div>
+          </div>
+          <div class="score-info">
+            <div class="score-verdict" id="scoreVerdict">Awaiting<br><em style="font-style:italic;color:var(--g)">analysis</em></div>
+            <div class="score-risk" id="scoreRisk">— SUBMIT EMAIL —</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result cards -->
+      <div class="sec-hdr" style="border-top:1px solid var(--s)">
+        <span class="sec-title">Detection Results</span>
+      </div>
+      <div class="results-list">
+        <div class="res-item">
+          <div class="res-dot" id="spfDot" style="background:var(--c4)"></div>
+          <div>
+            <div class="res-h">Spoofing Detection</div>
+            <div class="res-p" id="spfResult">Paste an email to begin analysis.</div>
+            <div class="res-badge" id="spfBadge" style="display:none"></div>
+          </div>
+        </div>
+        <div class="res-item">
+          <div class="res-dot" id="phishDot" style="background:var(--c4)"></div>
+          <div>
+            <div class="res-h">Phishing Analysis</div>
+            <div class="res-p" id="phishResult">Header patterns and URL signals.</div>
+            <div class="res-badge" id="phishBadge" style="display:none"></div>
+          </div>
+        </div>
+        <div class="res-item">
+          <div class="res-dot" id="malDot" style="background:var(--c4)"></div>
+          <div>
+            <div class="res-h">Malicious Content</div>
+            <div class="res-p" id="malResult">Payload and attachment scanning.</div>
+            <div class="res-badge" id="malBadge" style="display:none"></div>
+          </div>
+        </div>
+        <div class="res-item" style="border-bottom:none">
+          <div class="res-dot" id="authDot" style="background:var(--c4)"></div>
+          <div>
+            <div class="res-h">Auth Alignment</div>
+            <div class="res-p" id="authResult">SPF · DKIM · DMARC verification.</div>
+            <div class="res-badge" id="authBadge" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Small 3D inside right panel -->
+      <div class="c3d" style="height:160px;border-top:1px solid var(--s)">
+        <canvas id="C3D_MINI"></canvas>
+        <div class="c3d-hud">
+          <div class="c3d-corner tl"></div><div class="c3d-corner tr"></div>
+          <div class="c3d-corner bl"></div><div class="c3d-corner br2"></div>
+          <div class="c3d-lbl tl">NEURAL SYNC</div>
+          <div class="c3d-scan" style="animation-delay:1.5s"></div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- YOUR ORIGINAL JAVASCRIPT (NO CHANGES TO BACKEND LOGIC) -->
-    <script>
-        /* ======================================================
-           DOM READY
-        ====================================================== */
-        document.addEventListener("DOMContentLoaded", () => {
-            // Create binary rain effect
-            createBinaryRain();
+  <!-- HISTORY -->
+  <div class="hist-sec">
+    <div class="sec-hdr">
+      <span class="sec-title">Analysis History</span>
+      <div style="display:flex;gap:8px">
+        <span class="KBD">STORED</span>
+        <button class="tbtn" id="clearHistBtn" style="font-size:8px;padding:5px 12px"><i class="fa-solid fa-trash"></i> Clear</button>
+      </div>
+    </div>
+    <div class="hist-grid" id="histGrid">
+      <div style="grid-column:1/-1;padding:28px 20px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--c4)">
+        <i class="fa-solid fa-history" style="font-size:1.8rem;opacity:.25;display:block;margin-bottom:10px"></i>
+        No analysis history yet
+      </div>
+    </div>
+  </div>
 
-            // Initialize input tracking
-            const emailInput = document.getElementById("emailInput");
-            const analyzeBtn = document.getElementById("analyzeBtn");
-            const charCount = document.getElementById("charCount");
-            const inputStatus = document.getElementById("inputStatus");
+  <!-- BOTTOM 3D STRIP -->
+  <div class="bottom-3d-strip">
+    <div class="b3d-cell">
+      <canvas id="B3D_A"></canvas>
+      <div class="c3d-hud">
+        <div class="c3d-corner tl"></div><div class="c3d-corner tr"></div>
+        <div class="c3d-corner bl"></div><div class="c3d-corner br2"></div>
+        <div class="c3d-lbl tl">ANOMALY FIELD</div>
+        <div class="c3d-scan"></div>
+      </div>
+    </div>
+    <div class="b3d-cell">
+      <canvas id="B3D_B"></canvas>
+      <div class="c3d-hud">
+        <div class="c3d-corner tl"></div><div class="c3d-corner tr"></div>
+        <div class="c3d-corner bl"></div><div class="c3d-corner br2"></div>
+        <div class="c3d-lbl tl">SIGNAL MATRIX</div>
+        <div class="c3d-scan" style="animation-delay:1.1s"></div>
+      </div>
+    </div>
+    <div class="b3d-cell">
+      <canvas id="B3D_C"></canvas>
+      <div class="c3d-hud">
+        <div class="c3d-corner tl"></div><div class="c3d-corner tr"></div>
+        <div class="c3d-corner bl"></div><div class="c3d-corner br2"></div>
+        <div class="c3d-lbl tl">DETECTION CORE</div>
+        <div class="c3d-scan" style="animation-delay:2.1s"></div>
+      </div>
+    </div>
+  </div>
 
-            /* ===============================
-               INPUT VALIDATION UI
-            =============================== */
-            emailInput.addEventListener("input", () => {
-                const len = emailInput.value.length;
-                charCount.textContent = len;
+  <div style="padding:14px 24px;border-top:1px solid var(--s);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--c4);display:flex;justify-content:space-between">
+    <span>Deepfake Nexus © 2026 — Email Forensics Module</span>
+    <span>For legitimate security research only</span>
+  </div>
 
-                if (len === 0) {
-                    inputStatus.innerHTML = '<i class="fas fa-clock"></i> Waiting for input';
-                    inputStatus.style.color = "#666";
-                    analyzeBtn.disabled = true;
-                } else if (len < 50) {
-                    inputStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Add more content';
-                    inputStatus.style.color = "var(--cyber-yellow)";
-                    analyzeBtn.disabled = true;
-                } else {
-                    inputStatus.innerHTML = '<i class="fas fa-check-circle"></i> Ready for analysis';
-                    inputStatus.style.color = "var(--cyber-green)";
-                    analyzeBtn.disabled = false;
-                }
-            });
+</div>
 
-            /* ===============================
-               ERROR UI
-            =============================== */
-            window.showError = function (message) {
-                const box = document.getElementById("errorBox");
-                document.getElementById("errorText").innerText = message;
-                box.classList.remove("d-none");
-            };
+<script>
+(function(){
+'use strict';
 
-            window.clearError = function () {
-                document.getElementById("errorBox").classList.add("d-none");
-            };
+/* ── Cursor ── */
+var CUR=document.getElementById('CUR'),CUR2=document.getElementById('CUR2'),mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;CUR.style.left=mx+'px';CUR.style.top=my+'px';});
+(function L(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;CUR2.style.left=rx+'px';CUR2.style.top=ry+'px';requestAnimationFrame(L);})();
+document.querySelectorAll('a,button,.hist-card,.stcell,.res-item').forEach(function(el){
+  el.addEventListener('mouseenter',function(){CUR2.style.width='52px';CUR2.style.height='52px';CUR2.style.borderColor='rgba(201,169,110,.9)';CUR2.style.background='rgba(201,169,110,.05)';});
+  el.addEventListener('mouseleave',function(){CUR2.style.width='32px';CUR2.style.height='32px';CUR2.style.borderColor='rgba(201,169,110,.4)';CUR2.style.background='transparent';});
+});
 
-            /* ===============================
-               ANALYZE BUTTON
-            =============================== */
-            analyzeBtn.addEventListener("click", async () => {
-                const emailText = emailInput.value.trim();
+/* ── Uplink flicker ── */
+setInterval(function(){document.getElementById('uplinkTxt').textContent=['ACTIVE','STABLE','NOMINAL'][Math.floor(Math.random()*3)];},5200);
 
-                if (emailText.length < 50 || isLikelyGarbage(emailText)) {
-                    showError("Input does not look like a real email. Please paste full email content.");
-                    return;
-                }
+/* ── Counters ── */
+function animCnt(el){
+  var v=parseFloat(el.dataset.v),isF=String(v).includes('.');
+  var dur=1600,s=performance.now();
+  (function t(now){var p=Math.min(1,(now-s)/dur),e=1-Math.pow(1-p,4);el.textContent=isF?(v*e).toFixed(1):Math.round(v*e);if(p<1)requestAnimationFrame(t);})(performance.now());
+}
+var cio=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){animCnt(x.target);cio.unobserve(x.target);}});},{threshold:.4});
+document.querySelectorAll('.cnt').forEach(function(el){cio.observe(el);});
 
-                clearError();
+/* ── Toast ── */
+var TW=document.getElementById('TW');
+function toast(h,p,ic,col){
+  var el=document.createElement('div');el.className='toastx';
+  el.innerHTML='<div class="t-ic" style="'+(col?'color:'+col+';border-color:'+col+'44':'')+'"><i class="fa-solid '+(ic||'fa-circle-info')+'"></i></div><div><div class="t-h">'+h+'</div><div class="t-p">'+p+'</div></div><button class="t-x"><i class="fa-solid fa-xmark"></i></button>';
+  el.querySelector('.t-x').addEventListener('click',function(){el.remove();});
+  TW.appendChild(el);setTimeout(function(){if(el.isConnected)el.remove();},5000);
+}
 
-                const overlay = document.getElementById("scanningOverlay");
-                overlay.classList.add("show");
+/* ── Input ── */
+var emailInput=document.getElementById('emailInput'),analyzeBtn=document.getElementById('analyzeBtn');
+var charCount=document.getElementById('charCount'),inputStatus=document.getElementById('inputStatus');
+emailInput.addEventListener('input',function(){
+  var len=emailInput.value.length;
+  charCount.textContent=len;
+  if(len===0){inputStatus.textContent='Waiting for input';inputStatus.style.color='var(--c4)';analyzeBtn.disabled=true;}
+  else if(len<50){inputStatus.textContent='Add more content';inputStatus.style.color='var(--warn)';analyzeBtn.disabled=true;}
+  else{inputStatus.textContent='Ready to scan';inputStatus.style.color='var(--ok)';analyzeBtn.disabled=false;}
+});
 
-                try {
-                    // YOUR ORIGINAL API CALL - NO CHANGES
-                    const res = await fetch("/api/email/analyze", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ emailContent: emailText })
-                    });
+/* ── Error ── */
+function showErr(m){var b=document.getElementById('errBox');document.getElementById('errTxt').textContent=m;b.classList.add('show');}
+function clearErr(){document.getElementById('errBox').classList.remove('show');}
 
-                    const result = await res.json();
+/* ── Ring animation ── */
+function animateRing(score){
+  var fg=document.getElementById('ringFg');
+  var circumference=251.3;
+  var offset=circumference-(score/100)*circumference;
+  fg.style.strokeDashoffset=offset;
+  fg.style.stroke=score>=70?'var(--ok)':score>=40?'var(--warn)':'var(--red)';
+  document.getElementById('ringNum').textContent=score+'%';
+  var riskEl=document.getElementById('scoreRisk');
+  var verdictEl=document.getElementById('scoreVerdict');
+  if(score>=70){riskEl.textContent='LOW RISK';riskEl.className='score-risk low';verdictEl.innerHTML='Email appears<br><em style="font-style:italic;color:var(--ok)">legitimate</em>';}
+  else if(score>=40){riskEl.textContent='MEDIUM RISK';riskEl.className='score-risk med';verdictEl.innerHTML='Suspicious<br><em style="font-style:italic;color:var(--warn)">patterns found</em>';}
+  else{riskEl.textContent='HIGH RISK';riskEl.className='score-risk high';verdictEl.innerHTML='Likely<br><em style="font-style:italic;color:var(--red)">malicious</em>';}
+  document.getElementById('riskLbl').textContent=score>=70?'LOW':score>=40?'MEDIUM':'HIGH';
+  document.getElementById('riskLbl').style.color=score>=70?'var(--ok)':score>=40?'var(--warn)':'var(--red)';
+  document.getElementById('verdictKbd').textContent=score>=70?'SAFE':score>=40?'SUSPICIOUS':'DANGER';
+  document.getElementById('verdictKbd').style.color=score>=70?'var(--ok)':score>=40?'var(--warn)':'var(--red)';
+}
 
-                    setTimeout(() => {
-                        overlay.classList.remove("show");
-                        if (result.riskLevel !== "Invalid") {
-                            showResults(result);
-                            loadHistory();
-                        }
-                    }, 1200);
+/* ── Show results ── */
+function showResults(result){
+  // Animate ring
+  animateRing(result.securityScore||75);
+  // Result dots
+  function setDot(id,sev){
+    var dot=document.getElementById(id);
+    if(sev==='Danger'){dot.className='res-dot bad';}
+    else if(sev==='Warning'){dot.className='res-dot warn';}
+    else{dot.className='res-dot ok';}
+  }
+  function setRes(id,badgeId,dotId,msg,sev){
+    document.getElementById(id).textContent=msg||'No issues detected.';
+    setDot(dotId,sev);
+    var badge=document.getElementById(badgeId);
+    var cls=sev==='Danger'?'bad':sev==='Warning'?'warn':'ok';
+    badge.className='res-badge '+cls;
+    badge.innerHTML='<i class="fa-solid fa-'+(sev==='Danger'?'times-circle':sev==='Warning'?'exclamation-triangle':'check-circle')+'"></i>'+sev;
+    badge.style.display='inline-flex';
+  }
+  setRes('spfResult','spfBadge','spfDot','Spoofing analysis complete.','Safe');
+  setRes('phishResult','phishBadge','phishDot','Phishing analysis complete.','Safe');
+  setRes('malResult','malBadge','malDot','No malicious content detected.','Safe');
+  setRes('authResult','authBadge','authDot','Auth alignment checked.','Safe');
+  if(result.findings){
+    result.findings.forEach(function(f){
+      if(f.type==='Spoofing')setRes('spfResult','spfBadge','spfDot',f.message,f.severity);
+      if(f.type==='Phishing')setRes('phishResult','phishBadge','phishDot',f.message,f.severity);
+      if(f.type==='Malware')setRes('malResult','malBadge','malDot',f.message,f.severity);
+      if(f.type==='Auth')setRes('authResult','authBadge','authDot',f.message,f.severity);
+    });
+  }
+  // Findings list
+  var fl=document.getElementById('findingsList');
+  fl.innerHTML='';
+  if(result.findings&&result.findings.length){
+    result.findings.forEach(function(f){
+      var cls=f.severity==='Danger'?'bad':f.severity==='Warning'?'warn':'ok';
+      var ic=f.severity==='Danger'?'fa-times-circle':f.severity==='Warning'?'fa-exclamation-triangle':'fa-check-circle';
+      fl.innerHTML+='<div class="find-row"><div class="find-ico"><i class="fa-solid '+ic+'" style="color:'+(cls==='bad'?'var(--red)':cls==='warn'?'var(--warn)':'var(--ok)')+'"></i></div><div><div class="find-h">'+f.type+'</div><div class="find-p">'+f.message+'</div></div></div>';
+    });
+  } else {
+    fl.innerHTML='<div class="find-row"><div class="find-ico"><i class="fa-solid fa-check-circle" style="color:var(--ok)"></i></div><div><div class="find-h">Clean</div><div class="find-p">No threat indicators found in this email.</div></div></div>';
+  }
+  // Breakdown
+  var bl=document.getElementById('breakdownList');
+  bl.innerHTML='';
+  if(result.scoreBreakdown&&result.scoreBreakdown.length){
+    result.scoreBreakdown.forEach(function(b){
+      var pos=b.points>=0;
+      var pct=Math.min(100,Math.abs(b.points));
+      bl.innerHTML+='<div class="bk-row"><div class="bk-label">'+b.reason+'</div><div class="bk-bar"><div class="bk-bar-fill '+(pos?'pos':'neg')+'" style="width:'+pct+'%"></div></div><div class="bk-val '+(pos?'pos':'neg')+'">'+(pos?'+':'')+b.points+'</div></div>';
+    });
+  } else {
+    bl.innerHTML='<div class="bk-row"><div class="bk-label">Base score</div><div class="bk-bar"><div class="bk-bar-fill pos" style="width:100%"></div></div><div class="bk-val pos">+100</div></div>';
+  }
+  document.getElementById('resultsArea').style.display='block';
+  // Show result 3D
+  if(!window._resultSceneInited){window._resultSceneInited=true;initResultScene();}
+}
 
-                } catch (err) {
-                    overlay.classList.remove("show");
-                    console.error(err);
-                    showError("Analysis failed. Please try again.");
-                }
-            });
+/* ── Analyze ── */
+var scanStats=['Parsing email headers…','Checking SPF / DKIM / DMARC…','Analyzing URL reputation…','Scanning payload signals…','Running neural classifier…','Scoring threat indicators…','Generating report…'];
+var statIdx=0;
+analyzeBtn.addEventListener('click',async function(){
+  var text=emailInput.value.trim();
+  if(text.length<50||!text.includes(' ')){showErr('Input does not look like a real email. Please paste full email content.');return;}
+  clearErr();
+  var overlay=document.getElementById('scanOverlay');
+  overlay.classList.add('show');
+  statIdx=0;
+  var statEl=document.getElementById('scanStat');
+  var statTimer=setInterval(function(){statEl.textContent=scanStats[statIdx%scanStats.length];statIdx++;},420);
+  try{
+    var res=await fetch('/api/email/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({emailContent:text})});
+    var result=await res.json();
+    clearInterval(statTimer);
+    setTimeout(function(){
+      overlay.classList.remove('show');
+      if(result.riskLevel!=='Invalid'){showResults(result);toast('Analysis complete','Email scored: '+result.securityScore+'%','fa-shield-halved',result.securityScore>=70?'var(--ok)':result.securityScore>=40?'var(--warn)':'var(--red)');loadHistory();}
+    },900);
+  }catch(err){
+    clearInterval(statTimer);overlay.classList.remove('show');
+    showErr('Analysis failed. Please try again.');
+    toast('Connection error','Check your network connection.','fa-triangle-exclamation','var(--red)');
+  }
+});
 
-            loadHistory();
-        });
+/* ── History ── */
+async function loadHistory(){
+  try{
+    var res=await fetch('/api/email/history');
+    if(res.status===401){document.getElementById('histGrid').innerHTML='<div style="grid-column:1/-1;padding:24px;text-align:center;font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:.12em;color:var(--c4)"><i class="fa-solid fa-lock" style="font-size:1.5rem;margin-bottom:8px;display:block;color:var(--warn)"></i>Login required to view history</div>';return;}
+    var history=await res.json();
+    var container=document.getElementById('histGrid');
+    container.innerHTML='';
+    if(!history.length){container.innerHTML='<div style="grid-column:1/-1;padding:24px;text-align:center;font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:.12em;color:var(--c4)"><i class="fa-solid fa-history" style="font-size:1.5rem;margin-bottom:8px;display:block;opacity:.3"></i>No history yet</div>';return;}
+    history.forEach(function(h){
+      var cls=h.riskLevel==='High'?'bad':h.riskLevel==='Medium'?'warn':'ok';
+      var d=document.createElement('div');d.className='hist-card';
+      d.innerHTML='<div class="hist-score '+cls+'">'+h.securityScore+'%</div><div class="hist-meta">Risk: '+h.riskLevel+'<br>Findings: '+(h.findingsCount||0)+'<br>'+new Date(h.createdAt).toLocaleString()+'</div>';
+      container.appendChild(d);
+    });
+  }catch(e){console.error(e);}
+}
+loadHistory();
+document.getElementById('clearHistBtn').addEventListener('click',async function(){
+  if(!confirm('Clear all email analysis history?'))return;
+  try{await fetch('/api/email/history',{method:'DELETE'});loadHistory();toast('History cleared','All records deleted.','fa-broom');}catch(e){}
+});
 
-        /* ======================================================
-           BINARY RAIN EFFECT
-        ====================================================== */
-        function createBinaryRain() {
-            const container = document.getElementById('binaryFall');
-            if (!container) return;
+/* ═══════════════════════════
+   THREE.JS SCENES
+═══════════════════════════ */
+function lerp(a,b,t){return a+(b-a)*t;}
+function eL(c,op){return new THREE.LineBasicMaterial({color:c,transparent:true,opacity:op});}
+function mPP(c,op,r){return new THREE.MeshPhysicalMaterial({color:c,metalness:.95,roughness:r||.04,transparent:true,opacity:op||.08,side:THREE.DoubleSide,transmission:.88,thickness:.6,ior:1.5});}
+function mBB(c,op){return new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:op});}
+function mkR(canvas,alpha){var r=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:alpha!==false,powerPreference:'high-performance'});r.setPixelRatio(Math.min(window.devicePixelRatio,1.8));r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.1;return r;}
 
-            // Clear existing
-            container.innerHTML = '';
+/* ── 1. BACKGROUND SCENE ── */
+(function(){
+  var canvas=document.getElementById('BG');
+  var W=function(){return window.innerWidth;},H=function(){return window.innerHeight;};
+  var renderer=mkR(canvas);renderer.setSize(W(),H());
+  canvas.style.cssText='position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;height:100%';
+  var scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x04040a,.018);
+  var camera=new THREE.PerspectiveCamera(56,W()/H(),.1,500);camera.position.set(0,0,22);
+  scene.add(new THREE.AmbientLight(0x04040e,2.5));
+  var kL=new THREE.SpotLight(0xc9a96e,20,100,Math.PI/6,.35,1.2);kL.position.set(18,22,16);scene.add(kL);
+  var fL=new THREE.SpotLight(0x4ecdc4,10,80,Math.PI/5,.4,1.5);fL.position.set(-20,10,12);scene.add(fL);
+  var bL=new THREE.SpotLight(0x8b5cf6,7,60,Math.PI/4,.5,2);bL.position.set(-12,-12,9);scene.add(bL);
+  var p1=new THREE.PointLight(0xc9a96e,6,42);scene.add(p1);
+  var p2=new THREE.PointLight(0x4ecdc4,4,30);scene.add(p2);
+  var p3=new THREE.PointLight(0x8b5cf6,3.5,24);scene.add(p3);
+  var objs=[];
+  function addCube(x,y,z,s,mat){var g=new THREE.BoxGeometry(1,1,1,2,2,2),m=new THREE.Mesh(g,mat);m.scale.setScalar(s);m.position.set(x,y,z);m.rotation.set(Math.random()*6.28,Math.random()*6.28,Math.random()*6.28);m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(0xc9a96e,.18)));scene.add(m);objs.push({m:m,ox:x,oy:y,oz:z,fp:Math.random()*6.28,fs:.2+Math.random()*.25,rs:{x:(Math.random()-.5)*.005,y:(Math.random()-.5)*.005,z:(Math.random()-.5)*.003},ly:Math.floor(Math.random()*3)});}
+  addCube(6,2,-1,4,mPP(0xc9a96e,.07));addCube(-5.5,-1.5,-.5,3.5,mPP(0x8ed4d0,.06));
+  addCube(1.5,5,-4.5,5.5,mPP(0x0c0a14,.12,.08));addCube(-1.5,-5,-2.5,3.2,mPP(0xd4b87e,.06));
+  addCube(8,-4,-6.5,2.8,new THREE.MeshStandardMaterial({color:0x1a1428,metalness:1,roughness:.05}));
+  for(var i=0;i<22;i++){addCube((Math.random()-.5)*32,(Math.random()-.5)*19,-8-Math.random()*11,.7+Math.random()*2,i%3===0?new THREE.MeshBasicMaterial({color:0xc9a96e,wireframe:true,transparent:true,opacity:.07}):mPP(0xc9a96e,.04));}
+  for(var j=0;j<50;j++){addCube((Math.random()-.5)*52,(Math.random()-.5)*30,-16-Math.random()*26,.1+Math.random()*.5,new THREE.MeshBasicMaterial({color:0xc9a96e,wireframe:true,transparent:true,opacity:.04+Math.random()*.03}));}
+  var tori=[];
+  [{r:2.2,tb:.008,c:0xc9a96e,op:.26,x:4,y:2,z:-2,rx:1.05,rz:.2,rs:.004},{r:4,tb:.005,c:0x4ecdc4,op:.18,x:-7,y:-2,z:-4,rx:.78,rz:0,rs:.003},{r:3,tb:.006,c:0xc9a96e,op:.14,x:10,y:7,z:-8,rx:.62,rz:.3,rs:.0035},{r:6,tb:.004,c:0x8b5cf6,op:.12,x:-9,y:8,z:-7,rx:.52,rz:.2,rs:.0025},{r:2,tb:.009,c:0x8b5cf6,op:.19,x:0,y:-6,z:-3,rx:1.57,rz:.6,rs:.006},{r:8,tb:.003,c:0xc9a96e,op:.07,x:15,y:0,z:-13,rx:.2,rz:1.05,rs:.002},{r:4,tb:.004,c:0x4ecdc4,op:.13,x:-10,y:-8,z:-9,rx:1.05,rz:.78,rs:.004}].forEach(function(d){var g=new THREE.TorusGeometry(d.r,d.tb,2,90),m=new THREE.Mesh(g,mBB(d.c,d.op));m.rotation.set(d.rx,0,d.rz);m.position.set(d.x,d.y||0,d.z);scene.add(m);tori.push({m:m,rs:d.rs,ox:d.x,oy:d.y||0,oz:d.z,fp:Math.random()*6.28,fs:.2+Math.random()*.25,ly:Math.floor(Math.random()*3)});});
+  var wires=[];
+  for(var k=0;k<18;k++){var wg=new THREE.IcosahedronGeometry(.4+Math.random()*1,0);var wm=new THREE.LineSegments(new THREE.EdgesGeometry(wg),eL(k%3===0?0x8b5cf6:k%2===0?0xc9a96e:0x4ecdc4,.14));wm.position.set((Math.random()-.5)*32,(Math.random()-.5)*19,-6-Math.random()*16);scene.add(wm);wires.push({m:wm,rs:{x:.005+Math.random()*.006,y:.006+Math.random()*.005,z:.003},oy:wm.position.y,fp:Math.random()*6.28,fs:.18+Math.random()*.3,ly:Math.floor(Math.random()*3)});}
+  var ring=[];for(var r2=0;r2<18;r2++){var ang=r2/18*6.28,rad=11+Math.random()*2.5;var cs=.12+Math.random()*.48;var cg=new THREE.BoxGeometry(cs,cs,cs);var cm=new THREE.LineSegments(new THREE.EdgesGeometry(cg),eL(r2%3===0?0x8b5cf6:r2%2===0?0xc9a96e:0x4ecdc4,.15));cm.position.set(Math.cos(ang)*rad,Math.sin(ang)*rad*.38,-14-Math.random()*5);scene.add(cm);ring.push({m:cm,ang:ang,rad:rad,rs:{x:.007,y:.009},fp:Math.random()*6.28,fs:.25+Math.random()*.22});}
+  function mkP(n,spr,zMin,zSpr,col,sz,op){var g=new THREE.BufferGeometry(),pos=new Float32Array(n*3);for(var ii=0;ii<n;ii++){pos[ii*3]=(Math.random()-.5)*spr;pos[ii*3+1]=(Math.random()-.5)*spr*.5;pos[ii*3+2]=zMin-Math.random()*zSpr;}g.setAttribute('position',new THREE.BufferAttribute(pos,3));var pts=new THREE.Points(g,new THREE.PointsMaterial({color:col,size:sz,transparent:true,opacity:op,sizeAttenuation:true}));scene.add(pts);return pts;}
+  var pA=mkP(1100,72,4,30,0xc9a96e,.034,.26),pB=mkP(180,30,2,14,0xd4b87e,.08,.4),pC=mkP(140,26,2,11,0x4ecdc4,.058,.34),pD=mkP(90,22,2,8,0x8b5cf6,.048,.28);
+  var tmx=0,tmy=0,cmx=0,cmy=0,sY=0,lstY=0,sV=0;
+  document.addEventListener('mousemove',function(e){tmx=(e.clientX/W()-.5)*2;tmy=-(e.clientY/H()-.5)*2;});
+  window.addEventListener('scroll',function(){sY=window.scrollY;},{passive:true});
+  window.addEventListener('resize',function(){renderer.setSize(W(),H());camera.aspect=W()/H();camera.updateProjectionMatrix();});
+  var clock=new THREE.Clock();
+  (function tick(){
+    requestAnimationFrame(tick);var t=clock.getElapsedTime();
+    sV=sY-lstY;lstY=sY;cmx+=(tmx-cmx)*.016;cmy+=(tmy-cmy)*.016;
+    var sp=Math.min(1,sY/Math.max(1,document.body.scrollHeight-H()));var xSpin=Math.abs(sV)*.011;
+    camera.position.x=lerp(camera.position.x,cmx*3,.055);camera.position.y=lerp(camera.position.y,cmy*2+sp*-5,.055);camera.position.z=lerp(camera.position.z,22-sp*14,.055);camera.fov=lerp(camera.fov,56+sp*12,.04);camera.updateProjectionMatrix();camera.lookAt(cmx*.55,cmy*.35+sY*.003,-sp*8);
+    p1.position.set(9+Math.sin(t*.38)*5,9+Math.cos(t*.28)*4,8);p2.position.set(-10+Math.cos(t*.32)*3,-7+Math.sin(t*.26)*2.5,9);p3.position.set(-6+Math.cos(t*.26)*4,5+Math.sin(t*.18)*3.5,-2);
+    objs.forEach(function(o){var lm=[1,1.6,2.8][o.ly];o.m.rotation.x+=o.rs.x*(1+xSpin*lm);o.m.rotation.y+=o.rs.y*(1+xSpin*lm);o.m.rotation.z+=o.rs.z;o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.42;o.m.position.x=o.ox+Math.cos(t*o.fs*.7+o.fp)*.22+cmx*(.3*lm);o.m.position.z=lerp(o.m.position.z,o.oz-sp*(3+o.ly*3),.04);});
+    tori.forEach(function(o){o.m.rotation.z+=o.rs*(1+xSpin*.5);o.m.rotation.y+=o.rs*.7;o.m.rotation.x+=o.rs*.3;o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.28;o.m.position.z=lerp(o.m.position.z,o.oz-sp*(2+o.ly*2),.04);});
+    wires.forEach(function(o){o.m.rotation.x+=o.rs.x*(1+xSpin);o.m.rotation.y+=o.rs.y*(1+xSpin);o.m.rotation.z+=o.rs.z;o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.2;o.m.position.z=lerp(o.m.position.z,o.oz-sp*(1+o.ly*1.4),.04);});
+    ring.forEach(function(o){o.ang+=.0016+xSpin*.004;o.m.position.x=Math.cos(o.ang)*o.rad;o.m.position.y=Math.sin(o.ang)*o.rad*.38;o.m.position.z=lerp(o.m.position.z,-14-sp*10,.04);o.m.rotation.x+=o.rs.x;o.m.rotation.y+=o.rs.y;});
+    pA.rotation.y=t*.007;pA.rotation.x=sp*.4;pB.rotation.y=-t*.011;pB.rotation.z=sp*.28;pC.rotation.y=t*.014;pC.position.z=lerp(pC.position.z,-sp*5,.04);pD.rotation.z=-t*.009;pD.rotation.x=sp*.42;
+    renderer.render(scene,camera);
+  })();
+})();
 
-            // Create binary characters
-            for (let i = 0; i < 100; i++) {
-                const span = document.createElement('span');
-                span.textContent = Math.random() > 0.5 ? '0' : '1';
-                span.style.position = 'absolute';
-                span.style.left = Math.random() * 100 + '%';
-                span.style.top = Math.random() * 100 + '%';
-                span.style.color = Math.random() > 0.5 ? 'var(--cyber-green)' : 'var(--cyber-cyan)';
-                span.style.opacity = Math.random() * 0.2 + 0.05;
-                span.style.fontSize = (Math.random() * 12 + 8) + 'px';
-                span.style.fontFamily = 'monospace';
-                span.style.fontWeight = 'bold';
-                span.style.animation = `fall ${Math.random() * 5 + 3}s linear infinite`;
-                span.style.animationDelay = Math.random() * -5 + 's';
-                span.style.zIndex = '-198';
-                container.appendChild(span);
-            }
+/* ── 2. HERO 3D ── */
+(function(){
+  var canvas=document.getElementById('HERO3D');
+  var wrap=canvas.parentElement;
+  var W=function(){return wrap.offsetWidth;},H=function(){return wrap.offsetHeight;};
+  var renderer=mkR(canvas);renderer.setSize(W(),H());
+  var scene=new THREE.Scene();var camera=new THREE.PerspectiveCamera(52,W()/H(),.1,100);camera.position.set(0,0,10);
+  scene.add(new THREE.AmbientLight(0x04040e,2));
+  var kL=new THREE.SpotLight(0xc9a96e,26,50,Math.PI/5,.3,1.2);kL.position.set(10,14,12);scene.add(kL);
+  var fL=new THREE.SpotLight(0x4ecdc4,14,38,Math.PI/4,.35,1.5);fL.position.set(-9,6,9);scene.add(fL);
+  var bL=new THREE.SpotLight(0x8b5cf6,8,28,Math.PI/3,.5,1.8);bL.position.set(-4,-9,7);scene.add(bL);
+  var p1=new THREE.PointLight(0xc9a96e,7,22);scene.add(p1);var p2=new THREE.PointLight(0x4ecdc4,5,17);scene.add(p2);
+  /* Envelope-themed geometry — cube cluster mimicking letter forms */
+  var cubes=[];
+  [[4.2,.07,.04,0xc9a96e],[2.8,.08,.05,0xd4b87e],[1.7,.1,.03,0x4ecdc4],[.9,.12,.04,0xc9a96e],[.45,.15,.04,0xd4b87e]].forEach(function(d,i){var g=new THREE.BoxGeometry(d[0],d[0],d[0],3,3,3);var m=new THREE.Mesh(g,mPP(d[3],d[1],d[2]));m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(d[3],i===0?.48:.62)));scene.add(m);cubes.push({m:m,rx:(.003+i*.0022)*(i%2===0?1:-1),ry:.0038+i*.0024,rz:.0015+i*.001});});
+  /* Many orbiting cubes */
+  var orbs=[];
+  for(var oi=0;oi<16;oi++){var sz=.2+Math.random()*.7;var g2=new THREE.BoxGeometry(sz,sz,sz,2,2,2);var col=oi%4===0?0xc9a96e:oi%4===1?0x4ecdc4:oi%4===2?0x8b5cf6:0xd4b87e;var om=new THREE.Mesh(g2,mPP(col,.1,.05));om.add(new THREE.LineSegments(new THREE.EdgesGeometry(g2),eL(col,.56)));scene.add(om);orbs.push({m:om,r:2.6+Math.random()*4.5,sp:.22+Math.random()*.56,ph:oi*.393,ti:.32+Math.random()*.52});}
+  /* Rings */
+  var rings=[];
+  [{r:3.5,tb:.007,c:0xc9a96e,op:.28,rx:1.05,rz:0,rs:.006},{r:5,tb:.005,c:0x4ecdc4,op:.2,rx:.78,rz:.78,rs:.005},{r:6.5,tb:.003,c:0xc9a96e,op:.13,rx:.62,rz:.62,rs:.003},{r:3,tb:.008,c:0x4ecdc4,op:.2,rx:1.57,rz:.52,rs:.007},{r:8,tb:.002,c:0xd4b87e,op:.08,rx:.52,rz:1.05,rs:.0018},{r:4.2,tb:.006,c:0x8b5cf6,op:.17,rx:.4,rz:.6,rs:.005},{r:5.8,tb:.003,c:0x8b5cf6,op:.11,rx:.7,rz:.78,rs:.0034},{r:2.5,tb:.009,c:0xd4b87e,op:.24,rx:.3,rz:1.2,rs:.006},{r:9,tb:.002,c:0xc9a96e,op:.06,rx:.15,rz:.5,rs:.0016}].forEach(function(d){var g=new THREE.TorusGeometry(d.r,d.tb,2,100),m=new THREE.Mesh(g,mBB(d.c,d.op));m.rotation.x=d.rx;m.rotation.z=d.rz;scene.add(m);rings.push({m:m,rs:d.rs});});
+  /* Icosa shells */
+  [[2.8,.058,0xc9a96e],[4.2,.036,0x4ecdc4],[5.8,.022,0x8b5cf6],[7.5,.013,0xd4b87e]].forEach(function(d){scene.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(d[0],1)),eL(d[2],d[1])));});
+  /* Octahedra orbiters */
+  var soctas=[];for(var si=0;si<10;si++){var sg=new THREE.OctahedronGeometry(.2+si*.1,0);var sm=new THREE.LineSegments(new THREE.EdgesGeometry(sg),eL(si%2===0?0xc9a96e:0x4ecdc4,.34));scene.add(sm);soctas.push({m:sm,r:2.8+si*.5,sp:.52+si*.1,ph:si*1.26,ti:.38+si*.09});}
+  /* Threat pings */
+  var pings=[];for(var pi=0;pi<22;pi++){var phi=Math.acos(2*Math.random()-1),theta=Math.random()*Math.PI*2,rr=3.5;var pd=new THREE.Mesh(new THREE.SphereGeometry(.065,6,6),new THREE.MeshBasicMaterial({color:pi%4===0?0xff4466:pi%4===1?0xc9a96e:pi%4===2?0x22c55e:0x4ecdc4,transparent:true,opacity:.88}));pd.position.set(rr*Math.sin(phi)*Math.cos(theta),rr*Math.cos(phi),rr*Math.sin(phi)*Math.sin(theta));scene.add(pd);pings.push({m:pd,fp:Math.random()*6.28,fs:.3+Math.random()*.7});}
+  /* Globe grid */
+  var gg=new THREE.Group();for(var lat=0;lat<9;lat++){var ry=Math.PI/8*lat-Math.PI/2;var rn=new THREE.TorusGeometry(3.6*Math.cos(ry),.003,2,80);var rm=new THREE.Mesh(rn,mBB(0xc9a96e,.1));rm.rotation.x=Math.PI/2;rm.position.y=3.6*Math.sin(ry);gg.add(rm);}for(var lon=0;lon<14;lon++){var ln=new THREE.TorusGeometry(3.6,.003,2,80);var lm=new THREE.Mesh(ln,mBB(0xc9a96e,.07));lm.rotation.y=Math.PI/7*lon;gg.add(lm);}scene.add(gg);
+  /* Particles */
+  function mkSP(n,mn,mx,col,sz,op){var g=new THREE.BufferGeometry(),pos=new Float32Array(n*3);for(var ii=0;ii<n;ii++){var r=mn+Math.random()*(mx-mn),th=Math.random()*6.28,ph=Math.acos(2*Math.random()-1);pos[ii*3]=r*Math.sin(ph)*Math.cos(th);pos[ii*3+1]=r*Math.sin(ph)*Math.sin(th);pos[ii*3+2]=r*Math.cos(ph);}g.setAttribute('position',new THREE.BufferAttribute(pos,3));var pts=new THREE.Points(g,new THREE.PointsMaterial({color:col,size:sz,transparent:true,opacity:op,sizeAttenuation:true}));scene.add(pts);return pts;}
+  var sp1=mkSP(650,3.6,9,0xc9a96e,.04,.52),sp2=mkSP(200,5,7.5,0x4ecdc4,.05,.38),sp3=mkSP(130,4,6.5,0x8b5cf6,.044,.3);
+  var eqG=new THREE.BufferGeometry(),eqPos=new Float32Array(260*3);for(var ei=0;ei<260;ei++){var ea=ei/260*6.28,er=4.6+Math.random()*.8;eqPos[ei*3]=Math.cos(ea)*er;eqPos[ei*3+1]=(Math.random()-.5)*.42;eqPos[ei*3+2]=Math.sin(ea)*er;}eqG.setAttribute('position',new THREE.BufferAttribute(eqPos,3));scene.add(new THREE.Points(eqG,new THREE.PointsMaterial({color:0x4ecdc4,size:.055,transparent:true,opacity:.48,sizeAttenuation:true})));
+  var hmx=0,hmy=0,thmx=0,thmy=0;
+  document.addEventListener('mousemove',function(e){var rc=canvas.getBoundingClientRect();thmx=(e.clientX-rc.left-rc.width/2)/(rc.width/2);thmy=-(e.clientY-rc.top-rc.height/2)/(rc.height/2);});
+  window.addEventListener('resize',function(){renderer.setSize(W(),H());camera.aspect=W()/H();camera.updateProjectionMatrix();});
+  var clk=new THREE.Clock();
+  (function anim(){requestAnimationFrame(anim);var t=clk.getElapsedTime();
+    hmx+=(thmx-hmx)*.055;hmy+=(thmy-hmy)*.055;
+    cubes.forEach(function(o){o.m.rotation.x+=o.rx;o.m.rotation.y+=o.ry;o.m.rotation.z+=o.rz;});
+    orbs.forEach(function(o){o.m.rotation.x+=.006;o.m.rotation.y+=.009;var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.44,Math.sin(a)*o.r*.7);});
+    rings.forEach(function(r,i){r.m.rotation.z+=r.rs*(i%2===0?1:-1);r.m.rotation.y+=r.rs*.6;r.m.rotation.x+=r.rs*.25;});
+    soctas.forEach(function(o){var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.4,Math.sin(a)*o.r*.6);o.m.rotation.x+=.01;o.m.rotation.y+=.013;});
+    pings.forEach(function(p){var s=.7+Math.sin(t*p.fs+p.fp)*.36;p.m.scale.setScalar(s);p.m.material.opacity=.5+Math.sin(t*p.fs+p.fp)*.36;});
+    gg.rotation.y=t*.08;
+    sp1.rotation.y=t*.016;sp1.rotation.x=t*.008;sp2.rotation.y=-t*.013;sp3.rotation.y=t*.015;
+    camera.position.x=hmx*2;camera.position.y=hmy*1.5;camera.lookAt(hmx*.28,hmy*.2,0);
+    p1.position.set(5+Math.sin(t*.45)*2.5,5+Math.cos(t*.35)*2,6);p2.position.set(-5+Math.cos(t*.38)*2,-3+Math.sin(t*.28)*2,5);
+    kL.intensity=26+Math.sin(t*.28)*7;fL.intensity=14+Math.sin(t*.22+1)*4;
+    renderer.render(scene,camera);})();
+})();
 
-            // Add animation keyframes
-            if (!document.getElementById('binaryRainStyle')) {
-                const style = document.createElement('style');
-                style.id = 'binaryRainStyle';
-                style.textContent = `
-                    @@keyframes fall {
-                        0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
-                        10% { opacity: 0.5; }
-                        90% { opacity: 0.5; }
-                        100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-        }
+/* ── MINI SCENE FACTORY ── */
+function makeMini(id,accent1,accent2,style,height){
+  var canvas=document.getElementById(id);if(!canvas)return;
+  var wrap=canvas.parentElement;
+  wrap.style.height=(height||200)+'px';
+  var W=function(){return wrap.offsetWidth;},H2=function(){return wrap.offsetHeight;};
+  var renderer=mkR(canvas);renderer.setSize(W(),H2());
+  var scene=new THREE.Scene();var camera=new THREE.PerspectiveCamera(50,W()/H2(),.1,50);camera.position.set(0,0,6);
+  scene.add(new THREE.AmbientLight(0x04040a,2));
+  var kL=new THREE.SpotLight(0xc9a96e,16,28,Math.PI/4,.3,1.4);kL.position.set(5,8,7);scene.add(kL);
+  var fL=new THREE.SpotLight(accent1,12,20,Math.PI/3,.4,1.6);fL.position.set(-5,3,5);scene.add(fL);
+  var p1=new THREE.PointLight(accent1,5,13);scene.add(p1);
+  var objs=[];
+  if(style==='nested'){
+    [[2.5,.07,.04,0xc9a96e],[1.55,.09,.05,accent1],[.88,.11,.04,accent2],[.44,.14,.03,0xc9a96e]].forEach(function(d,i){var g=new THREE.BoxGeometry(d[0],d[0],d[0],2,2,2);var m=new THREE.Mesh(g,mPP(d[3],d[1],d[2]));m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(d[3],i===0?.58:.68)));scene.add(m);objs.push({m:m,rx:(.004+i*.002)*(i%2===0?1:-1),ry:.005+i*.003,rz:.002+i*.001,type:'cube'});});
+    for(var oi=0;oi<12;oi++){var sz=.16+Math.random()*.42;var g2=new THREE.BoxGeometry(sz,sz,sz,1,1,1);var om=new THREE.LineSegments(new THREE.EdgesGeometry(g2),eL(oi%2===0?accent1:accent2,.5));scene.add(om);objs.push({m:om,r:2+Math.random()*2.2,sp:.35+Math.random()*.55,ph:oi*.523,ti:.4+Math.random()*.45,type:'orb'});}
+    [[3,.006,0xc9a96e,.28,1.05,0,.005],[3.8,.004,accent1,.18,.78,.78,.004],[4.5,.003,accent2,.12,.62,.62,.003]].forEach(function(d){var g=new THREE.TorusGeometry(d[0],d[1],2,80),m=new THREE.Mesh(g,mBB(d[2],d[3]));m.rotation.x=d[4];m.rotation.z=d[5];scene.add(m);objs.push({m:m,rs:d[6],type:'ring'});});
+  } else if(style==='orbs'){
+    var ig=new THREE.IcosahedronGeometry(1.5,2);var im=new THREE.Mesh(ig,mPP(accent1,.1,.06));im.add(new THREE.LineSegments(new THREE.EdgesGeometry(ig),eL(accent1,.42)));scene.add(im);objs.push({m:im,rx:.007,ry:.009,rz:.005,type:'cube'});
+    for(var oi2=0;oi2<14;oi2++){var sz2=.14+Math.random()*.44;var gg2=new THREE.BoxGeometry(sz2,sz2,sz2,1,1,1);var om2=new THREE.LineSegments(new THREE.EdgesGeometry(gg2),eL(oi2%3===0?0xc9a96e:oi2%3===1?accent1:accent2,.52));scene.add(om2);objs.push({m:om2,r:1.8+Math.random()*2.5,sp:.3+Math.random()*.6,ph:oi2*.449,ti:.35+Math.random()*.5,type:'orb'});}
+    [[2.6,.007,accent1,.28,1.05,0,.006],[3.4,.004,accent2,.17,.78,.78,.004],[4.2,.003,0xc9a96e,.11,.5,.5,.003]].forEach(function(d){var g=new THREE.TorusGeometry(d[0],d[1],2,80),m=new THREE.Mesh(g,mBB(d[2],d[3]));m.rotation.x=d[4];m.rotation.z=d[5];scene.add(m);objs.push({m:m,rs:d[6],type:'ring'});});
+  } else {
+    for(var i2=0;i2<20;i2++){var t2=i2%3;var sz3=.18+Math.random()*.52;var g3;if(t2===0)g3=new THREE.BoxGeometry(sz3,sz3,sz3,1,1,1);else if(t2===1)g3=new THREE.OctahedronGeometry(sz3*.7,0);else g3=new THREE.IcosahedronGeometry(sz3*.6,0);var m3=new THREE.LineSegments(new THREE.EdgesGeometry(g3),eL(i2%3===0?0xc9a96e:i2%3===1?accent1:accent2,.12+Math.random()*.18));m3.position.set((Math.random()-.5)*4.8,(Math.random()-.5)*3.6,-Math.random()*3);m3.rotation.set(Math.random()*6.28,Math.random()*6.28,Math.random()*6.28);scene.add(m3);objs.push({m:m3,rs:{x:(Math.random()-.5)*.013,y:(Math.random()-.5)*.014,z:(Math.random()-.5)*.009},oy:m3.position.y,fp:Math.random()*6.28,fs:.18+Math.random()*.28,type:'scatter'});}
+  }
+  window.addEventListener('resize',function(){renderer.setSize(W(),H2());camera.aspect=W()/H2();camera.updateProjectionMatrix();});
+  var clk=new THREE.Clock();
+  (function anim(){requestAnimationFrame(anim);var t=clk.getElapsedTime();
+    objs.forEach(function(o){
+      if(o.type==='cube'){o.m.rotation.x+=o.rx;o.m.rotation.y+=o.ry;o.m.rotation.z+=o.rz;}
+      else if(o.type==='orb'){var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.38,Math.sin(a)*o.r*.6);o.m.rotation.x+=.009;o.m.rotation.y+=.012;}
+      else if(o.type==='ring'){o.m.rotation.z+=o.rs;o.m.rotation.y+=o.rs*.6;o.m.rotation.x+=o.rs*.22;}
+      else{o.m.rotation.x+=o.rs.x;o.m.rotation.y+=o.rs.y;o.m.rotation.z+=o.rs.z;o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.2;}
+    });
+    p1.position.set(Math.sin(t*.45)*3,Math.cos(t*.38)*3,4.5);
+    renderer.render(scene,camera);})();
+}
 
-        /* ======================================================
-           RESULTS UI
-        ====================================================== */
-        function showResults(result) {
-            document.getElementById("resultsContainer").classList.add("show");
-            document.getElementById("securityScore").innerText = result.securityScore + "%";
+/* ── 3. SIDE 3D (Threat core — big right panel) ── */
+(function(){
+  var canvas=document.getElementById('C3D_SIDE');
+  var wrap=canvas.parentElement;
+  var W=function(){return wrap.offsetWidth;},H=function(){return wrap.offsetHeight;};
+  var renderer=mkR(canvas);renderer.setSize(W(),H());
+  var scene=new THREE.Scene();var camera=new THREE.PerspectiveCamera(48,W()/H(),.1,80);camera.position.set(0,0,8);
+  scene.add(new THREE.AmbientLight(0x04040e,2));
+  var kL=new THREE.SpotLight(0xc9a96e,22,38,Math.PI/5,.3,1.2);kL.position.set(8,12,10);scene.add(kL);
+  var fL=new THREE.SpotLight(0xff4466,18,30,Math.PI/4,.35,1.5);fL.position.set(-8,5,8);scene.add(fL);
+  var bL=new THREE.SpotLight(0x8b5cf6,10,22,Math.PI/3,.5,1.8);bL.position.set(-4,-9,7);scene.add(bL);
+  var p1=new THREE.PointLight(0xff4466,9,20);scene.add(p1);var p2=new THREE.PointLight(0xc9a96e,7,18);scene.add(p2);
+  var coreObjs=[];
+  [[4.5,.06,.04,0xc9a96e],[3,.08,.05,0xff4466],[1.8,.1,.04,0x8b5cf6],[1,.13,.03,0x4ecdc4],[.5,.16,.04,0xc9a96e]].forEach(function(d,i){var g=new THREE.BoxGeometry(d[0],d[0],d[0],3,3,3);var m=new THREE.Mesh(g,mPP(d[3],d[1],d[2]));m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(d[3],i===0?.44:.65)));scene.add(m);coreObjs.push({m:m,rx:(.003+i*.0025)*(i%2===0?1:-1),ry:.004+i*.003,rz:.002+i*.0015,type:'core'});});
+  for(var oi=0;oi<20;oi++){var sz=.18+Math.random()*.62;var g2=new THREE.BoxGeometry(sz,sz,sz,2,2,2);var col=oi%4===0?0xc9a96e:oi%4===1?0xff4466:oi%4===2?0x4ecdc4:0x8b5cf6;var om=new THREE.Mesh(g2,mPP(col,.1,.05));om.add(new THREE.LineSegments(new THREE.EdgesGeometry(g2),eL(col,.6)));scene.add(om);coreObjs.push({m:om,r:2.8+Math.random()*5,sp:.2+Math.random()*.55,ph:oi*.314,ti:.3+Math.random()*.6,type:'orb'});}
+  [{r:3.2,tb:.007,c:0xc9a96e,op:.26,rx:1.05,rz:0,rs:.006},{r:4.5,tb:.005,c:0xff4466,op:.2,rx:.78,rz:.78,rs:.005},{r:5.8,tb:.004,c:0xc9a96e,op:.14,rx:.62,rz:.62,rs:.004},{r:3.8,tb:.008,c:0x4ecdc4,op:.19,rx:1.57,rz:.52,rs:.007},{r:7,tb:.003,c:0xd4b87e,op:.1,rx:.52,rz:1.05,rs:.002},{r:4.8,tb:.006,c:0x8b5cf6,op:.17,rx:.4,rz:.6,rs:.005},{r:6.5,tb:.003,c:0x8b5cf6,op:.11,rx:.7,rz:.78,rs:.0034},{r:8.5,tb:.002,c:0xc9a96e,op:.07,rx:.15,rz:.5,rs:.0016}].forEach(function(d){var g=new THREE.TorusGeometry(d.r,d.tb,2,100),m=new THREE.Mesh(g,mBB(d.c,d.op));m.rotation.x=d.rx;m.rotation.z=d.rz;scene.add(m);coreObjs.push({m:m,rs:d.rs,type:'ring'});});
+  [[2.4,.06,0xc9a96e],[3.6,.04,0xff4466],[5,.025,0x8b5cf6],[6.5,.016,0x4ecdc4]].forEach(function(d){scene.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(d[0],1)),eL(d[2],d[1])));});
+  var tpings=[];for(var pi=0;pi<18;pi++){var phi=Math.acos(2*Math.random()-1),theta=Math.random()*Math.PI*2,rr=2.5+Math.random()*.5;var pd=new THREE.Mesh(new THREE.SphereGeometry(.07,5,5),new THREE.MeshBasicMaterial({color:pi%3===0?0xff4466:pi%3===1?0xc9a96e:0x22c55e,transparent:true,opacity:.9}));pd.position.set(rr*Math.sin(phi)*Math.cos(theta),rr*Math.cos(phi),rr*Math.sin(phi)*Math.sin(theta));scene.add(pd);tpings.push({m:pd,fp:Math.random()*6.28,fs:.3+Math.random()*.7});}
+  var spg=new THREE.BufferGeometry(),spPos=new Float32Array(800*3);for(var si=0;si<800;si++){var sr=2+Math.random()*8,st=Math.random()*6.28,sphi=Math.acos(2*Math.random()-1);spPos[si*3]=sr*Math.sin(sphi)*Math.cos(st);spPos[si*3+1]=sr*Math.sin(sphi)*Math.sin(st);spPos[si*3+2]=sr*Math.cos(sphi);}spg.setAttribute('position',new THREE.BufferAttribute(spPos,3));var spPts=new THREE.Points(spg,new THREE.PointsMaterial({color:0xc9a96e,size:.038,transparent:true,opacity:.44,sizeAttenuation:true}));scene.add(spPts);
+  var rspg=new THREE.BufferGeometry(),rspPos=new Float32Array(300*3);for(var si2=0;si2<300;si2++){var sr2=3+Math.random()*5,st2=Math.random()*6.28,sphi2=Math.acos(2*Math.random()-1);rspPos[si2*3]=sr2*Math.sin(sphi2)*Math.cos(st2);rspPos[si2*3+1]=sr2*Math.sin(sphi2)*Math.sin(st2);rspPos[si2*3+2]=sr2*Math.cos(sphi2);}rspg.setAttribute('position',new THREE.BufferAttribute(rspPos,3));var rPts=new THREE.Points(rspg,new THREE.PointsMaterial({color:0xff4466,size:.042,transparent:true,opacity:.34,sizeAttenuation:true}));scene.add(rPts);
+  var hmx3=0,hmy3=0,thmx3=0,thmy3=0;
+  document.addEventListener('mousemove',function(e){var rc=canvas.getBoundingClientRect();thmx3=(e.clientX-rc.left-rc.width/2)/(rc.width/2);thmy3=-(e.clientY-rc.top-rc.height/2)/(rc.height/2);});
+  window.addEventListener('resize',function(){renderer.setSize(W(),H());camera.aspect=W()/H();camera.updateProjectionMatrix();});
+  var clk=new THREE.Clock();
+  var idx=0;
+  (function anim(){requestAnimationFrame(anim);var t=clk.getElapsedTime();
+    coreObjs.forEach(function(o){
+      if(o.type==='core'){o.m.rotation.x+=o.rx;o.m.rotation.y+=o.ry;o.m.rotation.z+=o.rz;}
+      else if(o.type==='orb'){var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.42,Math.sin(a)*o.r*.68);o.m.rotation.x+=.007;o.m.rotation.y+=.01;}
+      else if(o.type==='ring'){idx++;o.m.rotation.z+=o.rs*(idx%2===0?1:-1);o.m.rotation.y+=o.rs*.6;o.m.rotation.x+=o.rs*.22;}
+    });idx=0;
+    tpings.forEach(function(p){var s=.6+Math.sin(t*p.fs+p.fp)*.42;p.m.scale.setScalar(s);p.m.material.opacity=.45+Math.sin(t*p.fs+p.fp)*.44;});
+    spPts.rotation.y=t*.014;spPts.rotation.x=t*.007;rPts.rotation.y=-t*.011;rPts.rotation.z=t*.008;
+    camera.position.x=hmx3*2;camera.position.y=hmy3*1.6;camera.lookAt(hmx3*.25,hmy3*.2,0);
+    p1.position.set(4+Math.sin(t*.45)*2.5,4+Math.cos(t*.35)*2,6);p2.position.set(-4+Math.cos(t*.38)*2,-3+Math.sin(t*.28)*2,5);
+    kL.intensity=22+Math.sin(t*.28)*7;fL.intensity=18+Math.sin(t*.22+1)*5;
+    renderer.render(scene,camera);})();
+})();
 
-            // Update risk level text
-            const riskLevel = document.getElementById("riskLevel");
-            if (result.securityScore >= 80) {
-                riskLevel.textContent = "LOW RISK";
-                riskLevel.style.color = "var(--cyber-green)";
-            } else if (result.securityScore >= 50) {
-                riskLevel.textContent = "MEDIUM RISK";
-                riskLevel.style.color = "var(--cyber-yellow)";
-            } else {
-                riskLevel.textContent = "HIGH RISK";
-                riskLevel.style.color = "var(--cyber-red)";
-            }
+/* ── Init mini scenes ── */
+makeMini('C3D_INPUT', 0xc9a96e, 0x4ecdc4, 'nested', 200);
+makeMini('C3D_MINI',  0x8b5cf6, 0xd4b87e, 'orbs', 160);
+makeMini('B3D_A',     0xff4466, 0x8b5cf6, 'orbs', 260);
+makeMini('B3D_B',     0x4ecdc4, 0xc9a96e, 'scatter', 260);
+makeMini('B3D_C',     0xc9a96e, 0xd4b87e, 'nested', 260);
 
-            updateResultCards(result.findings);
+/* ── Result scene (init on demand) ── */
+function initResultScene(){
+  makeMini('C3D_RESULT', 0xff4466, 0xc9a96e, 'orbs', 180);
+}
 
-            /* DETAILS */
-            const details = document.getElementById("detailsList");
-            details.innerHTML = "";
-
-            result.findings.forEach(f => {
-                details.innerHTML += `
-                    <li class="detail-item ${f.severity.toLowerCase()}">
-                        <div class="detail-icon">
-                            <i class="fas ${getIcon(f.severity)}"></i>
-                        </div>
-                        <div class="detail-text">${f.message}</div>
-                    </li>
-                `;
-            });
-
-            /* SCORE BREAKDOWN */
-            const scoreList = document.getElementById("scoreBreakdownList");
-            scoreList.innerHTML = "";
-
-            if (result.scoreBreakdown?.length) {
-                result.scoreBreakdown.forEach(item => {
-                    scoreList.innerHTML += `
-                        <li class="detail-item ${item.points < 0 ? "danger" : "safe"}">
-                            <div class="detail-icon">
-                                <i class="fas ${item.points < 0 ? "fa-minus-circle" : "fa-plus-circle"}"></i>
-                            </div>
-                            <div class="detail-text">
-                                ${item.reason}
-                                <strong style="float: right; color: ${item.points < 0 ? 'var(--cyber-red)' : 'var(--cyber-green)'}">
-                                    (${item.points > 0 ? "+" : ""}${item.points})
-                                </strong>
-                            </div>
-                        </li>
-                    `;
-                });
-            } else {
-                scoreList.innerHTML = `
-                    <li class="detail-item safe">
-                        <div class="detail-icon">
-                            <i class="fas fa-info-circle"></i>
-                        </div>
-                        <div class="detail-text">No score deductions applied</div>
-                    </li>
-                `;
-            }
-        }
-
-        /* ======================================================
-           RESULT CARDS
-        ====================================================== */
-        function updateResultCards(findings) {
-            // Set default safe state
-            setCard("spoofingCard", "spoofingResult", "safe", "No spoofing detected");
-            setCard("phishingCard", "phishingResult", "safe", "No phishing detected");
-            setCard("maliciousCard", "maliciousResult", "safe", "No malicious content detected");
-
-            // Update based on findings
-            findings.forEach(f => {
-                if (f.type === "Spoofing")
-                    setCard("spoofingCard", "spoofingResult", mapSeverity(f.severity), f.message);
-                if (f.type === "Phishing")
-                    setCard("phishingCard", "phishingResult", mapSeverity(f.severity), f.message);
-                if (f.type === "Malware")
-                    setCard("maliciousCard", "maliciousResult", mapSeverity(f.severity), f.message);
-            });
-        }
-
-        function setCard(cardId, textId, status, text) {
-            document.getElementById(cardId).className = `result-card ${status}`;
-            document.getElementById(textId).innerText = text;
-        }
-
-        /* ======================================================
-           HELPERS
-        ====================================================== */
-        function isLikelyGarbage(text) {
-            if (!text.includes(" ")) return true;
-            if (new Set(text).size < 5) return true;
-            if (!/[.!?\n]/.test(text)) return true;
-            return false;
-        }
-
-        function mapSeverity(sev) {
-            return sev === "Danger" ? "danger" : sev === "Warning" ? "warning" : "safe";
-        }
-
-        function getIcon(sev) {
-            return sev === "Danger"
-                ? "fa-times-circle"
-                : sev === "Warning"
-                ? "fa-exclamation-triangle"
-                : "fa-check-circle";
-        }
-
-        /* ======================================================
-           HISTORY
-        ====================================================== */
-        async function loadHistory() {
-            try {
-                const res = await fetch("/api/email/history");
-
-                if (res.status === 401) {
-                    document.getElementById("historyContainer").innerHTML =
-                        `<div class="history-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
-                            <i class="fas fa-user-lock" style="font-size: 3rem; margin-bottom: 1rem; color: var(--cyber-yellow);"></i>
-                            <h3>Authentication Required</h3>
-                            <p style="opacity: 0.7;">Please log in to view history</p>
-                        </div>`;
-                    return;
-                }
-
-                const history = await res.json();
-                const container = document.getElementById("historyContainer");
-                container.innerHTML = "";
-
-                if (!history.length) {
-                    container.innerHTML = `
-                        <div class="history-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
-                            <i class="fas fa-history" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
-                            <h3>No History Yet</h3>
-                            <p style="opacity: 0.7;">Your analysis history will appear here</p>
-                        </div>`;
-                    return;
-                }
-
-                history.forEach(h => {
-                    let scoreClass = "safe";
-                    if (h.riskLevel === "High") scoreClass = "danger";
-                    else if (h.riskLevel === "Medium") scoreClass = "warning";
-
-                    container.innerHTML += `
-                        <div class="history-card" onclick="viewHistoryItem('${h.id || ''}')">
-                            <div class="history-score ${scoreClass}">${h.securityScore}%</div>
-                            <div class="history-meta">
-                                <p><strong>Risk:</strong> ${h.riskLevel}</p>
-                                <p><strong>Findings:</strong> ${h.findingsCount || 0}</p>
-                                <p><strong>Date:</strong> ${new Date(h.createdAt).toLocaleString()}</p>
-                            </div>
-                        </div>
-                    `;
-                });
-
-            } catch (err) {
-                console.error("History UI error:", err);
-                document.getElementById("historyContainer").innerHTML = `
-                    <div class="history-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; color: var(--cyber-red);"></i>
-                        <h3>Error Loading History</h3>
-                        <p style="opacity: 0.7;">Please try again later</p>
-                    </div>`;
-            }
-        }
-
-        function viewHistoryItem(id) {
-            // Placeholder for viewing historical item
-            console.log("Viewing history item:", id);
-            alert("History item details would open here");
-        }
-
-        /* ======================================================
-           CLEAR HISTORY MODAL
-        ====================================================== */
-        function openClearHistoryModal() {
-            document.getElementById("clearHistoryModal").classList.add("show");
-        }
-
-        function closeClearHistoryModal() {
-            document.getElementById("clearHistoryModal").classList.remove("show");
-        }
-
-        async function confirmClearHistory() {
-            try {
-                const res = await fetch("/api/email/history", { method: "DELETE" });
-                if (res.ok) {
-                    closeClearHistoryModal();
-                    loadHistory();
-                }
-            } catch (err) {
-                console.error("Failed to clear history", err);
-                closeClearHistoryModal();
-            }
-        }
-    </script>
+})();
+</script>
 </body>
 </html>

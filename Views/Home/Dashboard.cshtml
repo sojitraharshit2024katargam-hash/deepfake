@@ -1,1325 +1,2521 @@
 ﻿<!DOCTYPE html>
-<html lang="en" class="cyberpunk-2077">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>DEEPFAKE NEXUS | QUANTUM DASHBOARD</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-
-    <!-- DEPENDENCIES -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&family=Audiowide&family=Black+Ops+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
-
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Deepfake Nexus — Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        /* === CYBERPUNK THEME === */
-        :root {
-            --cyber-void: #0b0f19;
-            --cyber-dark: #0f172a;
-            --cyber-darker: #090d1a;
-            --cyber-blue: #38bdf8;
-            --cyber-cyan: #00f3ff;
-            --cyber-purple: #9d00ff;
-            --cyber-pink: #ff00ff;
-            --cyber-green: #00ff9d;
-            --cyber-red: #ff003c;
-            --cyber-yellow: #fff700;
-            --cyber-orange: #ff7700;
-            --cyber-neon: #ff00ff;
-        }
-
-        /* === BASE STYLES === */
-        * {
-            margin: 0;
-            padding: 0;
+        *, *::before, *::after {
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            margin: 0;
+            padding: 0
         }
 
         html {
-            scroll-behavior: smooth;
             overflow-x: hidden;
-            background: var(--cyber-void);
+            scroll-behavior: smooth
+        }
+
+        :root {
+            --g: #c9a96e;
+            --g2: rgba(201,169,110,.45);
+            --g3: rgba(201,169,110,.12);
+            --g4: rgba(201,169,110,.07);
+            --c: #ede9e0;
+            --c2: rgba(237,233,224,.65);
+            --c3: rgba(237,233,224,.38);
+            --c4: rgba(237,233,224,.14);
+            --ink: #04040a;
+            --s: rgba(237,233,224,.08);
+            --teal: #4ecdc4;
+            --pur: #8b5cf6;
+            --red: #ff4466;
+            --ok: #22c55e;
+            --warn: #f59e0b;
+            --ease: cubic-bezier(.16,1,.3,1);
         }
 
         body {
-            font-family: 'Exo 2', sans-serif;
-            background: var(--cyber-void);
-            color: #e5e7eb;
+            background: var(--ink);
+            color: var(--c);
+            font-family: 'Syne',sans-serif;
             overflow-x: hidden;
-            min-height: 100vh;
-            line-height: 1.6;
-            letter-spacing: 0.3px;
+            cursor: none;
+            min-height: 100vh
         }
 
-        /* === QUANTUM BACKGROUND EFFECTS === */
-        .quantum-bg {
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        /* ── Cursor ──────────────────────── */
+        #CUR {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(157, 0, 255, 0.05) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(0, 243, 255, 0.03) 0%, transparent 60%);
-            z-index: -100;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--g);
             pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%,-50%);
+            mix-blend-mode: screen
         }
 
-        .holographic-grid {
+        #CUR2 {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px), linear-gradient(0deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -99;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1.5px solid var(--g2);
             pointer-events: none;
-            opacity: 0.3;
+            z-index: 9998;
+            transform: translate(-50%,-50%);
+            transition: width .5s var(--ease),height .5s var(--ease),border-color .4s,background .4s
         }
 
-        .cyber-scan-beam {
+        /* ── Global BG ───────────────────── */
+        #BG {
             position: fixed;
-            top: 0;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none
+        }
+
+        .noise {
+            position: fixed;
+            inset: -200px;
+            z-index: 1;
+            pointer-events: none;
+            opacity: .035;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 220px;
+            animation: nn 9s steps(4) infinite
+        }
+
+        @@keyframes nn {
+            to {
+                transform: translate(-4%,3%)
+            }
+        }
+
+        .vig {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(ellipse 80% 70% at 50% 40%,transparent 30%,rgba(4,4,10,.75) 100%)
+        }
+
+        .gridL {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background-image: linear-gradient(rgba(201,169,110,.013) 1px,transparent 1px),linear-gradient(90deg,rgba(201,169,110,.013) 1px,transparent 1px);
+            background-size: 76px 76px
+        }
+
+        .scanBeam {
+            position: fixed;
             left: 0;
+            top: -2px;
             width: 100%;
             height: 2px;
-            background: linear-gradient(90deg, transparent, var(--cyber-cyan), var(--cyber-blue), var(--cyber-purple), transparent);
-            z-index: 999;
+            z-index: 2;
             pointer-events: none;
-            animation: cyberScan 10s linear infinite;
-            box-shadow: 0 0 40px var(--cyber-cyan);
+            background: linear-gradient(90deg,transparent 0%,var(--g2) 40%,rgba(201,169,110,.7) 50%,var(--g2) 60%,transparent 100%);
+            box-shadow: 0 0 40px 2px var(--g2);
+            animation: SB 14s linear infinite
         }
 
-        @@keyframes cyberScan {
+        @@keyframes SB {
             0% {
-                transform: translateY(-100vh);
-                opacity: 0;
+                top: -4px;
+                opacity: 0
             }
 
-            10% {
-                opacity: 1;
+            4% {
+                opacity: 1
             }
 
-            90% {
-                opacity: 1;
+            96% {
+                opacity: .5
             }
 
             100% {
-                transform: translateY(100vh);
-                opacity: 0;
+                top: 100vh;
+                opacity: 0
             }
         }
 
-        .data-stream {
-            position: fixed;
+        /* ── Layout ──────────────────────── */
+        .shell {
+            display: grid;
+            grid-template-columns: 270px 1fr;
+            min-height: 100vh;
+            position: relative;
+            z-index: 10
+        }
+
+        /* ══════════════════════════════════
+           SIDEBAR
+        ══════════════════════════════════ */
+        .sidebar {
+            position: sticky;
             top: 0;
-            right: 20%;
-            width: 2px;
-            height: 100%;
-            background: linear-gradient(180deg, transparent, var(--cyber-green), transparent);
-            z-index: -98;
-            pointer-events: none;
-            animation: dataStream 3s linear infinite;
-        }
-
-        @@keyframes dataStream {
-            0% {
-                transform: translateY(-100%);
-            }
-
-            100% {
-                transform: translateY(100%);
-            }
-        }
-
-        /* === DASHBOARD CONTAINER === */
-        .quantum-container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 2rem;
-            position: relative;
-        }
-
-        /* === USER PROFILE HEADER === */
-        .user-profile-header {
-            background: rgba(15, 23, 42, 0.85);
-            border-radius: 25px;
-            border: 2px solid rgba(56, 189, 248, 0.3);
-            padding: 2.5rem;
-            margin-bottom: 3rem;
-            backdrop-filter: blur(25px);
-            box-shadow: 0 25px 75px rgba(0, 0, 0, 0.7), 0 0 100px rgba(56, 189, 248, 0.2), inset 0 0 50px rgba(56, 189, 248, 0.1);
-            position: relative;
+            height: 100vh;
+            border-right: 1px solid var(--s);
+            background: rgba(4,4,10,.88);
+            backdrop-filter: blur(28px);
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
-            transform-style: preserve-3d;
         }
 
-            .user-profile-header::before {
+        #SB3D {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0
+        }
+
+        .sb-inner {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 22px 18px
+        }
+
+        /* Brand */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 30px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid var(--s)
+        }
+
+        .bmark {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--g2);
+            display: grid;
+            place-items: center;
+            color: var(--g);
+            font-size: 15px;
+            position: relative;
+            flex-shrink: 0;
+            transition: all .4s var(--ease)
+        }
+
+            .bmark::after {
                 content: '';
                 position: absolute;
-                top: -2px;
-                left: -2px;
-                right: -2px;
-                bottom: -2px;
-                background: linear-gradient(45deg, var(--cyber-blue), var(--cyber-purple), var(--cyber-pink), var(--cyber-blue));
-                background-size: 400% 400%;
-                border-radius: 27px;
-                z-index: -1;
-                opacity: 0;
-                animation: hologramPulse 6s linear infinite;
-                filter: blur(20px);
+                inset: -5px;
+                border: 1px solid rgba(201,169,110,.07);
+                transition: inset .5s var(--ease)
             }
 
-            .user-profile-header::after {
+        .brand:hover .bmark {
+            border-color: var(--g);
+            background: var(--g3);
+            box-shadow: 0 0 30px var(--g3)
+        }
+
+            .brand:hover .bmark::after {
+                inset: -10px
+            }
+
+        .btxt {
+            font-family: 'Syne',sans-serif;
+            font-weight: 800;
+            font-size: 10.5px;
+            letter-spacing: .3em;
+            text-transform: uppercase;
+            color: var(--g)
+        }
+
+        .bsub {
+            font-family: 'DM Mono',monospace;
+            font-size: 8.5px;
+            letter-spacing: .16em;
+            color: var(--c4);
+            margin-top: 3px
+        }
+
+        /* Section labels */
+        .sb-lbl {
+            font-family: 'DM Mono',monospace;
+            font-size: 8.5px;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: var(--g);
+            margin: 20px 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+            .sb-lbl::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: linear-gradient(90deg,var(--g2),transparent)
+            }
+
+        /* Nav links */
+        .navl {
+            display: grid;
+            gap: 3px
+        }
+
+        .navlink {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 10px 12px;
+            border: 1px solid transparent;
+            color: var(--c3);
+            font-family: 'DM Mono',monospace;
+            font-size: 9.5px;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            transition: color .3s,border-color .3s
+        }
+
+            .navlink::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 0;
+                background: linear-gradient(90deg,var(--g3),transparent);
+                transition: width .4s var(--ease)
+            }
+
+            .navlink:hover, .navlink.act {
+                color: var(--c);
+                border-color: var(--s)
+            }
+
+                .navlink:hover::before, .navlink.act::before {
+                    width: 100%
+                }
+
+            .navlink.act {
+                color: var(--g);
+                border-left-color: var(--g)
+            }
+
+        .nl-ic {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--s);
+            display: grid;
+            place-items: center;
+            color: var(--g);
+            font-size: 10px;
+            flex-shrink: 0;
+            transition: all .35s;
+            position: relative;
+            z-index: 1
+        }
+
+        .navlink:hover .nl-ic, .navlink.act .nl-ic {
+            border-color: var(--g2);
+            background: var(--g3);
+            box-shadow: 0 0 14px var(--g3)
+        }
+
+        .nl-t {
+            position: relative;
+            z-index: 1
+        }
+
+        /* Quick action buttons */
+        .qa {
+            display: grid;
+            gap: 5px
+        }
+
+        .qab {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border: 1px solid var(--s);
+            background: transparent;
+            color: var(--c3);
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+            cursor: none;
+            width: 100%;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            transition: color .3s,border-color .3s
+        }
+
+            .qab::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                opacity: 0;
+                transition: opacity .35s
+            }
+
+            .qab:hover {
+                color: var(--c)
+            }
+
+            .qab.qr::before {
+                background: rgba(255,68,102,.08)
+            }
+
+            .qab.qr:hover {
+                border-color: rgba(255,68,102,.5);
+                color: var(--red)
+            }
+
+                .qab.qr:hover::before {
+                    opacity: 1
+                }
+
+            .qab.qa2::before {
+                background: rgba(245,158,11,.08)
+            }
+
+            .qab.qa2:hover {
+                border-color: rgba(245,158,11,.45);
+                color: var(--warn)
+            }
+
+                .qab.qa2:hover::before {
+                    opacity: 1
+                }
+
+            .qab.qg::before {
+                background: rgba(34,197,94,.08)
+            }
+
+            .qab.qg:hover {
+                border-color: rgba(34,197,94,.45);
+                color: var(--ok)
+            }
+
+                .qab.qg:hover::before {
+                    opacity: 1
+                }
+
+            .qab i {
+                font-size: 11px;
+                position: relative;
+                z-index: 1
+            }
+
+            .qab span {
+                position: relative;
+                z-index: 1
+            }
+
+        /* Footer */
+        .sb-foot {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid var(--s)
+        }
+
+        .status-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'DM Mono',monospace;
+            font-size: 8.5px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--c4)
+        }
+
+        .sdot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--ok);
+            box-shadow: 0 0 10px rgba(34,197,94,.8);
+            animation: LP 1.8s infinite
+        }
+
+        @@keyframes LP {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .3;
+                transform: scale(.6)
+            }
+        }
+
+        .clkrow {
+            font-family: 'DM Mono',monospace;
+            font-size: 8.5px;
+            letter-spacing: .1em;
+            color: var(--c4);
+            margin-top: 8px
+        }
+
+        /* ══════════════════════════════════
+           MAIN
+        ══════════════════════════════════ */
+        .main {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            min-height: 100vh
+        }
+
+        /* Topbar */
+        .topbar {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: center;
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--s);
+            background: rgba(4,4,10,.6);
+            backdrop-filter: blur(18px);
+            position: sticky;
+            top: 0;
+            z-index: 100
+        }
+
+        .searchbox {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border: 1px solid var(--s);
+            background: rgba(0,0,0,.25);
+            cursor: none;
+            transition: border-color .3s
+        }
+
+            .searchbox:hover {
+                border-color: var(--g2)
+            }
+
+            .searchbox input {
+                background: transparent;
+                border: none;
+                outline: none;
+                color: var(--c3);
+                font-family: 'DM Mono',monospace;
+                font-size: 9.5px;
+                letter-spacing: .12em;
+                cursor: none;
+                width: 220px
+            }
+
+        .KBD {
+            font-family: 'DM Mono',monospace;
+            font-size: 8px;
+            letter-spacing: .1em;
+            color: var(--c4);
+            border: 1px solid var(--s);
+            padding: 3px 8px;
+            background: rgba(0,0,0,.3)
+        }
+
+        .tbacts {
+            display: flex;
+            gap: 8px
+        }
+
+        .icnbtn {
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--s);
+            display: grid;
+            place-items: center;
+            color: var(--c4);
+            font-size: 11px;
+            cursor: none;
+            background: transparent;
+            transition: all .3s var(--ease)
+        }
+
+            .icnbtn:hover {
+                border-color: var(--g2);
+                color: var(--g);
+                background: var(--g4);
+                box-shadow: 0 0 20px var(--g3)
+            }
+
+        /* ── HERO SECTION ── */
+        .hero-section {
+            position: relative;
+            height: 420px;
+            overflow: hidden;
+            border-bottom: 1px solid var(--s)
+        }
+
+        #HERO3D {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: end;
+            pointer-events: none
+        }
+
+        .hero-text {
+            padding: 38px 40px;
+            background: linear-gradient(to right,rgba(4,4,10,.92) 0%,rgba(4,4,10,.6) 70%,transparent 100%);
+            pointer-events: auto
+        }
+
+        .hero-eye {
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: var(--g);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px
+        }
+
+            .hero-eye::before {
+                content: '';
+                width: 22px;
+                height: 1px;
+                background: var(--g2)
+            }
+
+        .hero-h {
+            font-family: 'Instrument Serif',serif;
+            font-size: clamp(30px,4vw,56px);
+            font-weight: 400;
+            line-height: 1.02;
+            letter-spacing: -.035em
+        }
+
+            .hero-h em {
+                font-style: italic;
+                color: var(--g)
+            }
+
+        .hero-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 18px
+        }
+
+        .chip {
+            font-family: 'DM Mono',monospace;
+            font-size: 8.5px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            padding: 6px 11px;
+            border: 1px solid var(--s);
+            color: var(--c4);
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(4,4,10,.65)
+        }
+
+            .chip i {
+                color: var(--g)
+            }
+
+        .hero-stats {
+            padding: 38px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            gap: 14px;
+            background: linear-gradient(to left,rgba(4,4,10,.85) 0%,transparent 100%);
+            pointer-events: auto
+        }
+
+        .hstat {
+            display: flex;
+            align-items: baseline;
+            gap: 6px
+        }
+
+        .hstat-n {
+            font-family: 'Instrument Serif',serif;
+            font-size: 38px;
+            font-weight: 400;
+            letter-spacing: -.04em;
+            color: var(--c)
+        }
+
+            .hstat-n b {
+                color: var(--g)
+            }
+
+        .hstat-l {
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--c3)
+        }
+
+        /* HUD corners */
+        .hud-c {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-color: var(--g2);
+            border-style: solid;
+            z-index: 3;
+            pointer-events: none
+        }
+
+        .hud-tl {
+            top: 14px;
+            left: 14px;
+            border-width: 1px 0 0 1px
+        }
+
+        .hud-tr {
+            top: 14px;
+            right: 14px;
+            border-width: 1px 1px 0 0
+        }
+
+        .hud-bl {
+            bottom: 14px;
+            left: 14px;
+            border-width: 0 0 1px 1px
+        }
+
+        .hud-br {
+            bottom: 14px;
+            right: 14px;
+            border-width: 0 1px 1px 0
+        }
+
+        .hud-lbl {
+            position: absolute;
+            font-family: 'DM Mono',monospace;
+            font-size: 8.5px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--g);
+            border: 1px solid var(--g3);
+            background: rgba(4,4,10,.8);
+            backdrop-filter: blur(10px);
+            padding: 4px 10px;
+            z-index: 3;
+            pointer-events: none
+        }
+
+            .hud-lbl.tl {
+                top: 10px;
+                left: 38px
+            }
+
+            .hud-lbl.br {
+                bottom: 10px;
+                right: 38px
+            }
+
+        .scanL {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,transparent,var(--g2),transparent);
+            animation: SL 3.5s linear infinite;
+            z-index: 3;
+            pointer-events: none;
+            top: 0
+        }
+
+        @@keyframes SL {
+            from {
+                top: 0;
+                opacity: 0
+            }
+
+            6% {
+                opacity: 1
+            }
+
+            94% {
+                opacity: .6
+            }
+
+            to {
+                top: 100%;
+                opacity: 0
+            }
+        }
+
+        /* ── STAT STRIP ── */
+        .stat-strip {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            border-bottom: 1px solid var(--s)
+        }
+
+        .stcell {
+            padding: 24px 26px;
+            border-right: 1px solid var(--s);
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            transition: background .4s
+        }
+
+            .stcell:last-child {
+                border-right: none
+            }
+
+            .stcell::before {
                 content: '';
                 position: absolute;
                 top: 0;
                 left: 0;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
-                animation: shimmer 3s infinite;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg,transparent,var(--g),transparent);
+                transform: scaleX(0);
+                transition: transform .7s var(--ease)
             }
 
-        @@keyframes hologramPulse {
-            0% {
-                background-position: 0% 50%;
-                opacity: 0.3;
+            .stcell:hover {
+                background: rgba(201,169,110,.03)
             }
 
-            50% {
-                background-position: 100% 50%;
-                opacity: 0.6;
-            }
+                .stcell:hover::before {
+                    transform: scaleX(1)
+                }
 
-            100% {
-                background-position: 0% 50%;
-                opacity: 0.3;
-            }
-        }
-
-        @@keyframes shimmer {
-            0% {
-                transform: translateX(-100%);
-            }
-
-            100% {
-                transform: translateX(100%);
-            }
-        }
-
-        .user-info-grid {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .user-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-purple));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: white;
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 0 40px rgba(56, 189, 248, 0.5), inset 0 0 30px rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-            .user-avatar::before {
-                content: '';
-                position: absolute;
-                top: -50%;
-                left: -50%;
-                width: 200%;
-                height: 200%;
-                background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-                transform: rotate(45deg);
-                animation: avatarGlow 3s infinite linear;
-            }
-
-        @@keyframes avatarGlow {
-            0% {
-                transform: rotate(45deg) translateX(-100%);
-            }
-
-            100% {
-                transform: rotate(45deg) translateX(100%);
-            }
-        }
-
-        .dashboard-title {
-            font-family: 'Audiowide', cursive;
-            font-size: 3.2rem;
-            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-cyan), var(--cyber-purple));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-            letter-spacing: 3px;
-            text-shadow: 0 0 50px rgba(56, 189, 248, 0.5);
-            position: relative;
-        }
-
-        .user-status {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--cyber-green);
-            box-shadow: 0 0 20px var(--cyber-green);
-            animation: statusPulse 2s infinite;
-        }
-
-        @@keyframes statusPulse {
-            0%, 100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        .status-text {
-            font-family: 'Orbitron', monospace;
-            color: var(--cyber-green);
-            font-size: 1rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .user-meta {
-            display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .meta-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .meta-label {
-            font-size: 0.9rem;
-            color: rgba(229, 231, 235, 0.6);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .meta-value {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 1.1rem;
-            color: var(--cyber-cyan);
-            font-weight: 600;
-        }
-
-        /* === REAL-TIME STATS PANEL === */
-        .stats-panel {
-            background: rgba(15, 23, 42, 0.85);
-            border-radius: 20px;
-            border: 2px solid rgba(56, 189, 248, 0.3);
-            padding: 2rem;
-            margin-bottom: 2rem;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 80px rgba(56, 189, 248, 0.2), inset 0 0 40px rgba(56, 189, 248, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 1.5rem;
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-            .stat-card:hover {
-                transform: translateY(-5px);
-                border-color: var(--cyber-blue);
-                box-shadow: 0 15px 40px rgba(56, 189, 248, 0.3);
-            }
-
-        .stat-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-purple));
-            color: white;
-        }
-
-        .stat-content {
-            flex: 1;
-        }
-
-        .stat-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 0.9rem;
-            color: var(--cyber-blue);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.3rem;
-        }
-
-        .stat-value {
-            font-family: 'Audiowide', cursive;
-            font-size: 2rem;
-            color: white;
+        .stnum {
+            font-family: 'Instrument Serif',serif;
+            font-size: clamp(36px,4vw,58px);
+            font-weight: 400;
             line-height: 1;
+            letter-spacing: -.04em
         }
 
-        .stat-trend {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-        }
-
-        .trend-up {
-            color: var(--cyber-green);
-        }
-
-        .trend-down {
-            color: var(--cyber-red);
-        }
-
-        /* === QUANTUM MODULES GRID === */
-        .modules-section {
-            margin: 3rem 0;
-        }
-
-        .section-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.8rem;
-            color: var(--cyber-cyan);
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-            .section-title::after {
-                content: '';
-                flex: 1;
-                height: 2px;
-                background: linear-gradient(90deg, var(--cyber-cyan), transparent);
+            .stnum b {
+                color: var(--g)
             }
 
-        .quantum-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+        .stlbl {
+            font-family: 'DM Mono',monospace;
+            font-size: 8.5px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--c3);
+            margin-top: 8px;
+            line-height: 1.65
         }
 
-        .quantum-module {
-            background: rgba(15, 23, 42, 0.85);
-            border-radius: 20px;
-            border: 2px solid rgba(56, 189, 248, 0.3);
-            padding: 2.5rem;
+        .sttrend {
+            font-family: 'DM Mono',monospace;
+            font-size: 8.5px;
+            color: var(--ok);
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px
+        }
+
+        /* ── WIDGET GRID ── */
+        .wgrid {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 0;
+            border-bottom: 1px solid var(--s)
+        }
+
+            .wgrid .wcard:first-child {
+                border-right: 1px solid var(--s)
+            }
+
+        .w3col {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            border-bottom: 1px solid var(--s)
+        }
+
+            .w3col .wcard {
+                border-right: 1px solid var(--s)
+            }
+
+                .w3col .wcard:last-child {
+                    border-right: none
+                }
+
+        .w2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-bottom: 1px solid var(--s)
+        }
+
+            .w2col .wcard {
+                border-right: 1px solid var(--s)
+            }
+
+                .w2col .wcard:last-child {
+                    border-right: none
+                }
+
+        /* Widget card */
+        .wcard {
+            background: rgba(4,4,10,.7);
+            backdrop-filter: blur(18px);
+            overflow: hidden;
+            transition: background .4s
+        }
+
+            .wcard:hover {
+                background: rgba(10,8,20,.92)
+            }
+
+        .wcard-hdr {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--s)
+        }
+
+        .wcard-title {
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--g);
+            display: flex;
+            align-items: center;
+            gap: 9px
+        }
+
+            .wcard-title::before {
+                content: '';
+                width: 12px;
+                height: 1px;
+                background: var(--g2)
+            }
+
+        .hdr-acts {
+            display: flex;
+            gap: 6px
+        }
+
+        .wbody {
+            padding: 20px
+        }
+
+        /* ── 3D CANVAS AREAS (big & visible) ── */
+        .canvas3d-full {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            overflow: hidden
+        }
+
+            .canvas3d-full canvas {
+                width: 100% !important;
+                height: 100% !important;
+                display: block
+            }
+
+        .canvas3d-md {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            overflow: hidden
+        }
+
+            .canvas3d-md canvas {
+                width: 100% !important;
+                height: 100% !important;
+                display: block
+            }
+
+        .canvas3d-sm {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            overflow: hidden
+        }
+
+            .canvas3d-sm canvas {
+                width: 100% !important;
+                height: 100% !important;
+                display: block
+            }
+
+        /* Canvas HUD overlays */
+        .c3d-hud {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2
+        }
+
+        .c3d-label {
+            position: absolute;
+            font-family: 'DM Mono',monospace;
+            font-size: 8px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--g);
+            border: 1px solid var(--g3);
+            background: rgba(4,4,10,.8);
+            backdrop-filter: blur(8px);
+            padding: 4px 9px
+        }
+
+            .c3d-label.tl {
+                top: 10px;
+                left: 10px
+            }
+
+            .c3d-label.br {
+                bottom: 10px;
+                right: 10px
+            }
+
+        .c3d-scan {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,transparent,rgba(201,169,110,.5),transparent);
+            animation: SL 3s linear infinite;
+            top: 0
+        }
+
+        .c3d-corner {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-color: var(--g2);
+            border-style: solid
+        }
+
+            .c3d-corner.tl {
+                top: 8px;
+                left: 8px;
+                border-width: 1px 0 0 1px
+            }
+
+            .c3d-corner.tr {
+                top: 8px;
+                right: 8px;
+                border-width: 1px 1px 0 0
+            }
+
+            .c3d-corner.bl {
+                bottom: 8px;
+                left: 8px;
+                border-width: 0 0 1px 1px
+            }
+
+            .c3d-corner.br2 {
+                bottom: 8px;
+                right: 8px;
+                border-width: 0 1px 1px 0
+            }
+
+        /* ── Modules ── */
+        .mod-grid {
+            display: grid;
+            grid-template-columns: repeat(5,1fr);
+            background: var(--s)
+        }
+
+        .modcard {
+            background: var(--ink);
+            padding: 24px 20px;
+            border: 1px solid transparent;
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(20px);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            text-decoration: none !important;
-            transform-style: preserve-3d;
-            perspective: 1000px;
+            cursor: none;
+            transition: background .4s,border-color .4s
         }
 
-            .quantum-module::before {
-                content: '';
-                position: absolute;
-                top: -2px;
-                left: -2px;
-                right: -2px;
-                bottom: -2px;
-                background: linear-gradient(45deg, var(--cyber-blue), var(--cyber-purple), var(--cyber-pink), var(--cyber-blue));
-                background-size: 400% 400%;
-                border-radius: 22px;
-                z-index: -1;
-                opacity: 0;
-                transition: opacity 0.4s ease;
-                animation: moduleGlow 4s linear infinite;
+            .modcard:hover {
+                background: #0a0816
             }
 
-        @@keyframes moduleGlow {
-            0% {
-                background-position: 0% 50%;
+            .modcard::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg,transparent,var(--g),transparent);
+                transform: scaleX(0);
+                transition: transform .7s var(--ease)
+            }
+
+            .modcard:hover::after {
+                transform: scaleX(1)
+            }
+
+        .mod-ic {
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--g3);
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+            color: var(--g);
+            margin-bottom: 16px;
+            transition: all .4s var(--ease)
+        }
+
+        .modcard:hover .mod-ic {
+            border-color: var(--g2);
+            background: var(--g3);
+            box-shadow: 0 0 20px var(--g3)
+        }
+
+        .mod-h {
+            font-family: 'Syne',sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .03em;
+            margin-bottom: 7px
+        }
+
+        .mod-p {
+            font-size: 11px;
+            color: var(--c3);
+            line-height: 1.7;
+            margin-bottom: 12px
+        }
+
+        .mod-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px
+        }
+
+        .mod-tag {
+            font-family: 'DM Mono',monospace;
+            font-size: 8px;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            padding: 3px 7px;
+            border: 1px solid var(--s);
+            color: var(--c4)
+        }
+
+        .mod-arr {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            color: var(--c4);
+            font-size: 10px;
+            transition: all .4s;
+            transform: rotate(-45deg)
+        }
+
+        .modcard:hover .mod-arr {
+            transform: rotate(0);
+            color: var(--g)
+        }
+
+        /* ── Feed ── */
+        .feed-list {
+            display: grid;
+            gap: 0
+        }
+
+        .fevent {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 12px;
+            align-items: start;
+            padding: 13px 0;
+            border-top: 1px solid var(--s)
+        }
+
+            .fevent:first-child {
+                border-top: none
+            }
+
+        .fsev {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 5px;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px currentColor
+        }
+
+            .fsev.h {
+                background: var(--red);
+                color: var(--red)
+            }
+
+            .fsev.m {
+                background: var(--warn);
+                color: var(--warn)
+            }
+
+            .fsev.l {
+                background: var(--ok);
+                color: var(--ok)
+            }
+
+        .fev-h {
+            font-family: 'Syne',sans-serif;
+            font-size: 11.5px;
+            font-weight: 700;
+            margin-bottom: 3px
+        }
+
+        .fev-p {
+            font-size: 10.5px;
+            color: var(--c3);
+            line-height: 1.65
+        }
+
+        .fev-t {
+            font-family: 'DM Mono',monospace;
+            font-size: 8.5px;
+            color: var(--c4);
+            letter-spacing: .08em;
+            white-space: nowrap;
+            margin-top: 3px
+        }
+
+        /* ── Terminal ── */
+        .term {
+            background: rgba(0,0,0,.45);
+            border: 1px solid var(--s);
+            padding: 14px;
+            font-family: 'DM Mono',monospace;
+            font-size: 10.5px;
+            line-height: 2.1;
+            color: var(--c3);
+            max-height: 220px;
+            overflow-y: auto
+        }
+
+        .tline {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap
+        }
+
+        .tp {
+            color: var(--g)
+        }
+
+        .tok {
+            color: var(--teal)
+        }
+
+        .twarn {
+            color: var(--warn)
+        }
+
+        .tbad {
+            color: var(--red)
+        }
+
+        .tcur {
+            display: inline-block;
+            width: 7px;
+            height: 11px;
+            background: var(--g);
+            vertical-align: middle;
+            animation: blink 1s infinite;
+            margin-left: 3px
+        }
+
+        @@keyframes blink {
+            0%, 100% {
+                opacity: 1
             }
 
             50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
+                opacity: 0
             }
         }
 
-        .quantum-module:hover::before {
-            opacity: 1;
-        }
-
-        .quantum-module:hover {
-            transform: translateY(-15px) scale(1.05);
-            box-shadow: 0 30px 100px rgba(0, 0, 0, 0.8), 0 0 150px rgba(56, 189, 248, 0.4), inset 0 0 80px rgba(56, 189, 248, 0.2);
-            border-color: transparent;
-        }
-
-        .module-icon-wrapper {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
+        .term-row {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
-            background: rgba(56, 189, 248, 0.1);
-            border: 2px solid rgba(56, 189, 248, 0.3);
-            position: relative;
-            overflow: hidden;
+            gap: 8px;
+            margin-top: 10px
         }
 
-        .module-icon {
-            font-size: 2.5rem;
-            color: var(--cyber-blue);
-            position: relative;
-            z-index: 1;
-            transition: all 0.4s ease;
+        .term-in {
+            flex: 1;
+            background: rgba(0,0,0,.35);
+            border: 1px solid var(--s);
+            color: var(--c);
+            font-family: 'DM Mono',monospace;
+            font-size: 10px;
+            padding: 9px 13px;
+            outline: none;
+            transition: border-color .3s
         }
 
-        .quantum-module:hover .module-icon {
-            transform: scale(1.3) rotate(15deg);
-            filter: drop-shadow(0 0 20px currentColor);
-        }
-
-        .module-icon-wrapper::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(56, 189, 248, 0.2), transparent);
-            transform: rotate(45deg);
-            animation: iconGlow 3s infinite linear;
-        }
-
-        @@keyframes iconGlow {
-            0% {
-                transform: rotate(45deg) translateX(-100%);
+            .term-in:focus {
+                border-color: var(--g2);
+                box-shadow: 0 0 0 2px var(--g3)
             }
 
-            100% {
-                transform: rotate(45deg) translateX(100%);
+        /* ── Charts ── */
+        .chart-wrap {
+            border: 1px solid var(--s);
+            padding: 16px;
+            background: rgba(0,0,0,.2)
+        }
+
+        .chart-lbl {
+            font-family: 'DM Mono',monospace;
+            font-size: 8.5px;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--g);
+            margin-bottom: 12px
+        }
+
+        /* ── KPI cards ── */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 1px;
+            background: var(--s);
+            margin-top: 1px
+        }
+
+        .kpi-card {
+            background: var(--ink);
+            padding: 16px 18px;
+            transition: background .3s
+        }
+
+            .kpi-card:hover {
+                background: #0a0814
             }
+
+        .kpi-n {
+            font-family: 'Instrument Serif',serif;
+            font-size: 36px;
+            font-weight: 400;
+            letter-spacing: -.04em;
+            line-height: 1
         }
 
-        .module-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.5rem;
-            color: white;
-            text-align: center;
-            margin-bottom: 1rem;
+            .kpi-n b {
+                color: var(--g)
+            }
+
+        .kpi-l {
+            font-family: 'DM Mono',monospace;
+            font-size: 8.5px;
+            letter-spacing: .14em;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            color: var(--c3);
+            margin-top: 6px
         }
 
-        .module-description {
-            color: rgba(229, 231, 235, 0.8);
-            text-align: center;
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
+        .kpi-tr {
+            font-family: 'DM Mono',monospace;
+            font-size: 8px;
+            color: var(--ok);
+            margin-top: 4px
         }
 
-        .module-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            justify-content: center;
-            margin-bottom: 2rem;
+        /* ── Toasts ── */
+        .toast-wrap {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 3000;
+            display: grid;
+            gap: 8px;
+            width: min(360px,calc(100vw - 40px))
         }
 
-        .module-badge {
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: rgba(255, 255, 255, 0.9);
-            transition: all 0.3s ease;
-        }
-
-        .quantum-module:hover .module-badge {
-            background: rgba(56, 189, 248, 0.2);
-            border-color: var(--cyber-blue);
-            transform: translateY(-2px);
-        }
-
-        .module-action {
-            display: inline-flex;
+        .toastx {
+            border: 1px solid var(--s);
+            background: rgba(4,4,10,.95);
+            backdrop-filter: blur(24px);
+            padding: 13px 15px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 12px;
             align-items: center;
-            gap: 0.8rem;
-            padding: 1rem 2.5rem;
-            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-purple));
-            border: none;
-            border-radius: 30px;
-            color: white;
-            text-decoration: none;
-            font-family: 'Orbitron', monospace;
-            font-weight: 700;
-            letter-spacing: 2px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: TI .4s var(--ease);
             position: relative;
-            overflow: hidden;
-            margin: 0 auto;
-            display: block;
-            width: fit-content;
+            overflow: hidden
         }
 
-            .module-action::before {
+            .toastx::before {
                 content: '';
                 position: absolute;
                 top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-                transition: 0.8s ease;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg,transparent,var(--g),transparent)
             }
 
-        .quantum-module:hover .module-action::before {
-            left: 100%;
-        }
-
-        .quantum-module:hover .module-action {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 15px 50px rgba(56, 189, 248, 0.5);
-            letter-spacing: 3px;
-        }
-
-        /* === ACTIVE THREATS PANEL === */
-        .threats-panel {
-            background: rgba(15, 23, 42, 0.85);
-            border-radius: 20px;
-            border: 2px solid rgba(255, 0, 60, 0.3);
-            padding: 2rem;
-            margin: 3rem 0;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 80px rgba(255, 0, 60, 0.2), inset 0 0 40px rgba(255, 0, 60, 0.1);
-        }
-
-        .threats-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .threats-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.5rem;
-            color: var(--cyber-red);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .threat-indicator {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 0, 60, 0.2);
-            border: 1px solid rgba(255, 0, 60, 0.4);
-            border-radius: 20px;
-            animation: threatPulse 2s infinite;
-        }
-
-        @@keyframes threatPulse {
-            0%, 100% {
-                opacity: 1;
+        @@keyframes TI {
+            from {
+                transform: translateX(10px);
+                opacity: 0
             }
 
-            50% {
-                opacity: 0.7;
+            to {
+                transform: translateX(0);
+                opacity: 1
             }
         }
 
-        .threat-grid {
+        .t-ic {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--g3);
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+            place-items: center;
+            color: var(--g);
+            font-size: 11px;
+            flex-shrink: 0
         }
 
-        .threat-item {
-            background: rgba(255, 0, 60, 0.1);
-            border: 1px solid rgba(255, 0, 60, 0.3);
-            border-radius: 10px;
-            padding: 1rem;
-            transition: all 0.3s ease;
+        .t-h {
+            font-family: 'Syne',sans-serif;
+            font-size: 11px;
+            font-weight: 700
         }
 
-            .threat-item:hover {
-                background: rgba(255, 0, 60, 0.2);
-                transform: translateY(-3px);
-                box-shadow: 0 10px 30px rgba(255, 0, 60, 0.2);
+        .t-p {
+            font-family: 'DM Mono',monospace;
+            font-size: 8.5px;
+            color: var(--c3);
+            margin-top: 2px
+        }
+
+        .t-x {
+            color: var(--c4);
+            background: none;
+            border: none;
+            cursor: none;
+            font-size: 12px;
+            padding: 4px;
+            transition: color .2s;
+            line-height: 1
+        }
+
+            .t-x:hover {
+                color: var(--c)
             }
 
-        .threat-type {
-            font-family: 'Orbitron', monospace;
-            font-size: 0.9rem;
-            color: var(--cyber-red);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.5rem;
-        }
-
-        .threat-count {
-            font-family: 'Audiowide', cursive;
-            font-size: 2rem;
-            color: white;
-            line-height: 1;
-        }
-
-        /* === SYSTEM STATUS PANEL === */
-        .system-panel {
-            background: rgba(15, 23, 42, 0.85);
-            border-radius: 20px;
-            border: 2px solid rgba(0, 255, 157, 0.3);
-            padding: 2rem;
-            margin-top: 3rem;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 80px rgba(0, 255, 157, 0.2), inset 0 0 40px rgba(0, 255, 157, 0.1);
-        }
-
-        .system-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .system-item {
-            text-align: center;
-        }
-
-        .system-icon {
-            font-size: 2.5rem;
-            color: var(--cyber-green);
-            margin-bottom: 1rem;
-            filter: drop-shadow(0 0 20px rgba(0, 255, 157, 0.5));
-        }
-
-        .system-name {
-            font-family: 'Orbitron', monospace;
-            font-size: 0.9rem;
-            color: var(--cyber-green);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.5rem;
-        }
-
-        .system-status {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 1.1rem;
-            color: white;
-            font-weight: 600;
-        }
-
-        /* === RESPONSIVE DESIGN === */
-        @@media (max-width: 1200px) {
-            .quantum-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @@media (max-width: 768px) {
-            .quantum-container {
-                padding: 1rem;
-            }
-
-            .user-info-grid {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .user-avatar {
-                margin: 0 auto;
-            }
-
-            .quantum-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .threat-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @@media (max-width: 480px) {
-            .dashboard-title {
-                font-size: 2rem;
-            }
-
-            .quantum-module {
-                padding: 1.5rem;
-            }
-
-            .module-title {
-                font-size: 1.3rem;
-            }
-
-            .module-action {
-                padding: 0.8rem 2rem;
-                font-size: 0.9rem;
-            }
-        }
-
-        /* === DATA STREAM ANIMATION === */
-        .data-stream-container {
+        /* ── Palette ── */
+        .pal {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -95;
-            overflow: hidden;
+            inset: 0;
+            z-index: 4000;
+            display: none;
+            place-items: center;
+            background: rgba(4,4,10,.75);
+            backdrop-filter: blur(16px)
         }
 
-        .data-stream-item {
-            position: absolute;
-            top: -100px;
-            width: 1px;
-            height: 100px;
-            background: linear-gradient(180deg, transparent, var(--cyber-cyan), transparent);
-            animation: dataFlow 10s linear infinite;
-            opacity: 0.3;
+            .pal.open {
+                display: grid
+            }
+
+        .pal-card {
+            width: min(700px,calc(100vw - 32px));
+            border: 1px solid var(--g2);
+            background: rgba(4,4,10,.97);
+            overflow: hidden
         }
 
-        @@keyframes dataFlow {
-            0% {
-                transform: translateY(-100vh);
-                opacity: 0;
+        .pal-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--s)
+        }
+
+            .pal-top::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg,transparent,var(--g),transparent)
             }
 
-            10% {
-                opacity: 0.5;
+            .pal-top input {
+                background: transparent;
+                border: none;
+                outline: none;
+                color: var(--c);
+                font-family: 'DM Mono',monospace;
+                font-size: 11px;
+                letter-spacing: .07em;
+                flex: 1
             }
 
-            90% {
-                opacity: 0.5;
+        .pal-list {
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 8px
+        }
+
+        .pal-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 12px;
+            border: 1px solid transparent;
+            cursor: none;
+            transition: all .25s var(--ease)
+        }
+
+            .pal-item:hover {
+                border-color: var(--g3);
+                background: var(--g4)
             }
 
-            100% {
-                transform: translateY(100vh);
-                opacity: 0;
+        .pal-il {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .pal-ico {
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--s);
+            display: grid;
+            place-items: center;
+            color: var(--g);
+            font-size: 10px
+        }
+
+        .pal-h {
+            font-family: 'Syne',sans-serif;
+            font-size: 11px;
+            font-weight: 700
+        }
+
+        .pal-s {
+            font-family: 'DM Mono',monospace;
+            font-size: 8.5px;
+            color: var(--c3);
+            margin-top: 1px
+        }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar {
+            width: 5px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(4,4,10,.8)
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--g2);
+            border-radius: 99px
+        }
+
+        ::selection {
+            background: rgba(201,169,110,.2);
+            color: var(--c)
+        }
+
+        /* Responsive */
+        @@media(max-width:1100px) {
+            .shell {
+                grid-template-columns: 1fr
+            }
+
+            .sidebar {
+                position: relative;
+                height: auto
+            }
+
+            .canvas3d-full {
+                height: 220px
+            }
+
+            .w3col, .wgrid {
+                grid-template-columns: 1fr
+            }
+
+            .stat-strip {
+                grid-template-columns: repeat(2,1fr)
+            }
+
+            .mod-grid {
+                grid-template-columns: repeat(2,1fr)
+            }
+
+            #HERO3D {
+                opacity: .5
+            }
+        }
+
+        @@media(max-width:600px) {
+            .stat-strip {
+                grid-template-columns: 1fr
+            }
+
+            .mod-grid {
+                grid-template-columns: 1fr
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr
+            }
+
+            .hero-overlay {
+                grid-template-columns: 1fr
             }
         }
     </style>
 </head>
 <body>
-    <!-- QUANTUM BACKGROUND -->
-    <div class="quantum-bg"></div>
-    <div class="holographic-grid"></div>
-    <div class="cyber-scan-beam"></div>
 
-    <!-- DATA STREAMS -->
-    <div class="data-stream-container" id="dataStreams"></div>
+    <div id="CUR"></div>
+    <div id="CUR2"></div>
+    <canvas id="BG"></canvas>
+    <div class="noise"></div>
+    <div class="vig"></div>
+    <div class="gridL"></div>
+    <div class="scanBeam"></div>
 
-    <!-- QUANTUM DASHBOARD -->
-    <div class="quantum-container">
-        <!-- USER PROFILE HEADER -->
-        <div class="user-profile-header" data-aos="fade-down">
-            <div class="user-info-grid">
-                <div class="user-avatar">
-                    <i class="fas fa-user-astronaut"></i>
-                </div>
-                <div>
-                    <h1 class="dashboard-title">QUANTUM SECURITY DASHBOARD</h1>
-                    <div class="user-status">
-                        <div class="status-indicator"></div>
-                        <span class="status-text">SYSTEM STATUS: OPERATIONAL</span>
-                    </div>
-                    <p class="text-secondary mb-3">Welcome back, Agent Quantum. Real-time threat monitoring is active.</p>
-                    <div class="user-meta">
-                        <div class="meta-item">
-                            <span class="meta-label">Security Level</span>
-                            <span class="meta-value">MAXIMUM</span>
-                        </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Last Login</span>
-                            <span class="meta-value">02:45:19 UTC</span>
-                        </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Session ID</span>
-                            <span class="meta-value">#QUANTUM-7A9B3F</span>
-                        </div>
-                    </div>
-                </div>
+    <div class="toast-wrap" id="TW"></div>
+
+    <!-- Command Palette -->
+    <div class="pal" id="PAL">
+        <div class="pal-card" style="position:relative">
+            <div class="pal-top" style="position:relative">
+                <i class="fa-solid fa-terminal" style="color:var(--g);font-size:11px"></i>
+                <input id="PI" placeholder="Type a command… (email · lockdown · scan · purge)" autocomplete="off" />
+                <span class="KBD">ESC</span>
             </div>
-        </div>
-
-        <!-- REAL-TIME STATS PANEL -->
-        <div class="stats-panel" data-aos="fade-up">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-title">TOTAL SCANS TODAY</div>
-                            <div class="stat-value" id="totalScans">256</div>
-                            <div class="stat-trend trend-up">
-                                <i class="fas fa-arrow-up"></i>
-                                12% from yesterday
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-title">SYSTEM ACCURACY</div>
-                            <div class="stat-value" id="accuracyRate">99.8%</div>
-                            <div class="stat-trend trend-up">
-                                <i class="fas fa-arrow-up"></i>
-                                0.2% improvement
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-title">AVG RESPONSE TIME</div>
-                            <div class="stat-value" id="responseTime">1.8s</div>
-                            <div class="stat-trend trend-down">
-                                <i class="fas fa-arrow-down"></i>
-                                0.4s faster
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon">
-                            <i class="fas fa-database"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-title">THREAT DATABASE</div>
-                            <div class="stat-value" id="threatDatabase">7.4M+</div>
-                            <div class="stat-trend trend-up">
-                                <i class="fas fa-arrow-up"></i>
-                                240K new threats
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- QUANTUM MODULES -->
-        <div class="modules-section">
-            <h2 class="section-title" data-aos="fade-right">
-                <i class="fas fa-cubes"></i>
-                SECURITY MODULES
-            </h2>
-
-            <div class="quantum-grid">
-                <!-- Email Analysis -->
-                <a href="/Modules/Email" class="quantum-module" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="module-icon-wrapper">
-                        <i class="fas fa-envelope-open-text module-icon"></i>
-                    </div>
-                    <h3 class="module-title">EMAIL FORENSICS</h3>
-                    <p class="module-description">
-                        Advanced SPF/DKIM/DMARC analysis with header forensics,
-                        link scanning, and attachment malware detection.
-                    </p>
-                    <div class="module-badges">
-                        <span class="module-badge">SPF/DKIM</span>
-                        <span class="module-badge">HEADER ANALYSIS</span>
-                        <span class="module-badge">MALWARE SCAN</span>
-                    </div>
-                    <span class="module-action">
-                        <i class="fas fa-terminal"></i>
-                        LAUNCH MODULE
-                    </span>
-                </a>
-
-                <!-- Media Detection -->
-                <a href="/Modules/Media" class="quantum-module" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="module-icon-wrapper">
-                        <i class="fas fa-video module-icon"></i>
-                    </div>
-                    <h3 class="module-title">MEDIA FORENSICS</h3>
-                    <p class="module-description">
-                        Deepfake detection, AI-generated content analysis,
-                        metadata forensics, and neural network verification.
-                    </p>
-                    <div class="module-badges">
-                        <span class="module-badge">DEEPFAKE AI</span>
-                        <span class="module-badge">GAN DETECTION</span>
-                        <span class="module-badge">AUDIO ANALYSIS</span>
-                    </div>
-                    <span class="module-action">
-                        <i class="fas fa-terminal"></i>
-                        LAUNCH MODULE
-                    </span>
-                </a>
-
-                <!-- Website Verification -->
-                <a href="/Modules/Website" class="quantum-module" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="module-icon-wrapper">
-                        <i class="fas fa-globe-americas module-icon"></i>
-                    </div>
-                    <h3 class="module-title">WEBSITE VERIFICATION</h3>
-                    <p class="module-description">
-                        SSL/TLS certificate validation, domain reputation
-                        checks, blacklist monitoring, and phishing detection.
-                    </p>
-                    <div class="module-badges">
-                        <span class="module-badge">SSL/TLS</span>
-                        <span class="module-badge">DOMAIN CHECK</span>
-                        <span class="module-badge">PHISHING DETECTION</span>
-                    </div>
-                    <span class="module-action">
-                        <i class="fas fa-terminal"></i>
-                        LAUNCH MODULE
-                    </span>
-                </a>
-
-                <!-- Scam Detection -->
-                <a href="/Modules/Scam" class="quantum-module" data-aos="zoom-in" data-aos-delay="400">
-                    <div class="module-icon-wrapper">
-                        <i class="fas fa-user-secret module-icon"></i>
-                    </div>
-                    <h3 class="module-title">SCAM DETECTION</h3>
-                    <p class="module-description">
-                        Voice cloning detection, behavioral pattern analysis,
-                        social engineering identification, and threat assessment.
-                    </p>
-                    <div class="module-badges">
-                        <span class="module-badge">VOICE CLONE</span>
-                        <span class="module-badge">BEHAVIORAL AI</span>
-                        <span class="module-badge">PATTERN ANALYSIS</span>
-                    </div>
-                    <span class="module-action">
-                        <i class="fas fa-terminal"></i>
-                        LAUNCH MODULE
-                    </span>
-                </a>
-
-                <a href="/Modules/ImageGenerator" class="quantum-module" data-aos="zoom-in" data-aos-delay="500">
-                    <div class="module-icon-wrapper">
-                        <i class="fas fa-wand-magic-sparkles module-icon"></i>
-                    </div>
-                    <h3 class="module-title">AI IMAGE GENERATOR</h3>
-                    <p class="module-description">
-                        Transform text prompts into high-quality AI-generated visuals
-                        using advanced diffusion models and neural rendering.
-                    </p>
-                    <div class="module-badges">
-                        <span class="module-badge">TEXT TO IMAGE</span>
-                        <span class="module-badge">AI DIFFUSION</span>
-                        <span class="module-badge">HD OUTPUT</span>
-                    </div>
-                    <span class="module-action">
-                        <i class="fas fa-terminal"></i>
-                        LAUNCH MODULE
-                    </span>
-                </a>
-
-            </div>
-
-
-
-        </div>
-
-
-
-        <!-- ACTIVE THREATS PANEL -->
-        <div class="threats-panel" data-aos="fade-up">
-            <div class="threats-header">
-                <h3 class="threats-title">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    ACTIVE THREAT MONITORING
-                </h3>
-                <div class="threat-indicator">
-                    <i class="fas fa-circle" style="color: var(--cyber-red);"></i>
-                    <span style="color: var(--cyber-red); font-family: 'Orbitron', monospace; font-size: 0.9rem;">HIGH ALERT</span>
-                </div>
-            </div>
-
-            <div class="threat-grid">
-                <div class="threat-item">
-                    <div class="threat-type">PHISHING ATTEMPTS</div>
-                    <div class="threat-count">148</div>
-                </div>
-                <div class="threat-item">
-                    <div class="threat-type">DEEPFAKE DETECTIONS</div>
-                    <div class="threat-count">67</div>
-                </div>
-                <div class="threat-item">
-                    <div class="threat-type">SCAM REPORTS</div>
-                    <div class="threat-count">89</div>
-                </div>
-                <div class="threat-item">
-                    <div class="threat-type">MALWARE BLOCKS</div>
-                    <div class="threat-count">203</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SYSTEM STATUS -->
-        <div class="system-panel" data-aos="fade-up">
-            <h2 class="section-title" data-aos="fade-right">
-                <i class="fas fa-server"></i>
-                SYSTEM STATUS
-            </h2>
-
-            <div class="system-grid">
-                <div class="system-item">
-                    <i class="fas fa-brain system-icon"></i>
-                    <div class="system-name">NEURAL NETWORK</div>
-                    <div class="system-status">ONLINE</div>
-                </div>
-                <div class="system-item">
-                    <i class="fas fa-shield-alt system-icon"></i>
-                    <div class="system-name">SECURITY LAYER</div>
-                    <div class="system-status">ACTIVE</div>
-                </div>
-                <div class="system-item">
-                    <i class="fas fa-database system-icon"></i>
-                    <div class="system-name">THREAT DB</div>
-                    <div class="system-status">SYNCED</div>
-                </div>
-                <div class="system-item">
-                    <i class="fas fa-bolt system-icon"></i>
-                    <div class="system-name">AI PROCESSOR</div>
-                    <div class="system-status">OPTIMAL</div>
-                </div>
-            </div>
+            <div class="pal-list" id="PL"></div>
         </div>
     </div>
 
-    <!-- SCRIPTS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <div class="shell">
+
+        <!-- ═══════ SIDEBAR ═══════ -->
+        <aside class="sidebar">
+            <canvas id="SB3D"></canvas>
+            <div class="sb-inner">
+                <a class="brand" href="/">
+                    <span class="bmark"><i class="fa-solid fa-shield-halved"></i></span>
+                    <div>
+                        <div class="btxt">Deepfake Nexus</div>
+                        <div class="bsub">Command Center</div>
+                    </div>
+                </a>
+
+                <div class="sb-lbl">Navigation</div>
+                <nav class="navl">
+                    <a class="navlink act" href="#hero"><span class="nl-ic"><i class="fa-solid fa-crosshairs"></i></span><span class="nl-t">Overview</span></a>
+                    <a class="navlink" href="#mods"><span class="nl-ic"><i class="fa-solid fa-cubes"></i></span><span class="nl-t">Modules</span></a>
+                    <a class="navlink" href="#intel"><span class="nl-ic"><i class="fa-solid fa-satellite-dish"></i></span><span class="nl-t">Threat Intel</span></a>
+                    <a class="navlink" href="#telem"><span class="nl-ic"><i class="fa-solid fa-chart-line"></i></span><span class="nl-t">Telemetry</span></a>
+                    <a class="navlink" href="#term"><span class="nl-ic"><i class="fa-solid fa-terminal"></i></span><span class="nl-t">Neural Console</span></a>
+                </nav>
+
+                <div class="sb-lbl">Quick Actions</div>
+                <div class="qa">
+                    <button class="qab qr" id="qLock"><i class="fa-solid fa-lock"></i><span>Lockdown System</span></button>
+                    <button class="qab qa2" id="qPurge"><i class="fa-solid fa-broom"></i><span>Purge Cache</span></button>
+                    <button class="qab qg" id="qPing"><i class="fa-solid fa-tower-broadcast"></i><span>Network Ping</span></button>
+                </div>
+
+                <div class="sb-foot">
+                    <div class="status-row"><span class="sdot"></span><span id="ST">System: Operational</span></div>
+                    <div class="clkrow">UTC <span id="CLK">--:--:--</span> · #QNX-7A9B</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ═══════ MAIN ═══════ -->
+        <main class="main">
+
+            <!-- Topbar -->
+            <div class="topbar">
+                <div class="searchbox" id="openPal" style="cursor:none">
+                    <i class="fa-solid fa-terminal" style="color:var(--g);font-size:10px"></i>
+                    <input readonly value="Command Palette… (Ctrl + K)" />
+                    <span class="KBD">Ctrl K</span>
+                </div>
+                <div class="tbacts">
+                    <button class="icnbtn" id="qNotify"><i class="fa-solid fa-bell"></i></button>
+                    <button class="icnbtn" id="qSpike"><i class="fa-solid fa-bolt"></i></button>
+                    <button class="icnbtn" id="qFocus"><i class="fa-solid fa-eye"></i></button>
+                </div>
+            </div>
+
+            <!-- ── HERO 3D ── -->
+            <section class="hero-section" id="hero">
+                <canvas id="HERO3D"></canvas>
+                <div class="hud-c hud-tl"></div><div class="hud-c hud-tr"></div>
+                <div class="hud-c hud-bl"></div><div class="hud-c hud-br"></div>
+                <div class="hud-lbl tl">THREAT VISUALIZATION · REAL-TIME</div>
+                <div class="hud-lbl br">ACTIVE · <span id="uplinkTxt">STABLE</span></div>
+                <div class="scanL"></div>
+                <div class="hero-overlay">
+                    <div class="hero-text">
+                        <div class="hero-eye"><span class="sdot" style="width:5px;height:5px"></span>Real-time · API + Dashboard</div>
+                        <h1 class="hero-h">Quantum Security<br><em>Command Center</em></h1>
+                        <div class="hero-chips">
+                            <span class="chip"><i class="fa-solid fa-shield"></i>Level: MAXIMUM</span>
+                            <span class="chip"><i class="fa-solid fa-fingerprint"></i>QNTM-AX7F-19C2</span>
+                            <span class="chip"><i class="fa-solid fa-clock"></i>Login: <span id="LL">--:--</span> UTC</span>
+                        </div>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="hstat"><span class="hstat-n"><span class="cnt" data-v="99.7">0</span><b>%</b></span><span class="hstat-l">accuracy</span></div>
+                        <div class="hstat"><span class="hstat-n"><span class="cnt" data-v="256">0</span></span><span class="hstat-l">scans today</span></div>
+                        <div class="hstat"><span class="hstat-n"><span class="cnt" data-v="47">0</span><b style="color:var(--c3);font-size:.5em">ms</b></span><span class="hstat-l">latency</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stat strip -->
+            <div class="stat-strip">
+                <div class="stcell"><div class="stnum"><span class="cnt" data-v="99.7">0</span><b>%</b></div><div class="stlbl">Detection accuracy<br>benchmark datasets</div><div class="sttrend"><i class="fa-solid fa-arrow-trend-up"></i>+0.3% this week</div></div>
+                <div class="stcell"><div class="stnum"><span class="cnt" data-v="256">0</span></div><div class="stlbl">Scans processed<br>today</div><div class="sttrend"><i class="fa-solid fa-arrow-trend-up"></i>+12% yesterday</div></div>
+                <div class="stcell"><div class="stnum"><span class="cnt" data-v="2.4">0</span><b>M<span style="font-size:.35em;color:var(--c3)">+</span></b></div><div class="stlbl">Threat intel<br>entries indexed</div><div class="sttrend"><i class="fa-solid fa-plus"></i>+240K new</div></div>
+                <div class="stcell"><div class="stnum">47<b style="font-size:.38em;color:var(--c3)">ms</b></div><div class="stlbl">Average scoring<br>latency per request</div><div class="sttrend"><i class="fa-solid fa-arrow-trend-down"></i>3ms faster</div></div>
+            </div>
+
+            <!-- ── GLOBE + FEED ── -->
+            <div class="wgrid">
+                <!-- Globe widget -->
+                <div class="wcard">
+                    <div class="wcard-hdr">
+                        <span class="wcard-title">Global Threat Map · 3D</span>
+                        <span class="KBD">LIVE</span>
+                    </div>
+                    <div class="canvas3d-full">
+                        <canvas id="GLOBE"></canvas>
+                        <div class="c3d-hud">
+                            <div class="c3d-corner tl"></div><div class="c3d-corner tr"></div>
+                            <div class="c3d-corner bl"></div><div class="c3d-corner br2"></div>
+                            <div class="c3d-label tl">THREAT GLOBE · ACTIVE</div>
+                            <div class="c3d-label br">GEO-INTEL · SCANNING</div>
+                            <div class="c3d-scan"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI + Feed -->
+                <div class="wcard" id="intel">
+                    <div class="wcard-hdr">
+                        <span class="wcard-title">Live KPIs + Threat Feed</span>
+                        <div class="hdr-acts">
+                            <span class="KBD">LIVE</span>
+                            <button class="icnbtn" style="width:30px;height:30px;font-size:9px" id="addEv"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="wbody" style="padding:0">
+                        <!-- Mini 3D inside feed -->
+                        <div class="canvas3d-sm" style="border-bottom:1px solid var(--s)">
+                            <canvas id="MINI_A"></canvas>
+                            <div class="c3d-hud">
+                                <div class="c3d-corner tl"></div><div class="c3d-corner tr"></div>
+                                <div class="c3d-corner bl"></div><div class="c3d-corner br2"></div>
+                                <div class="c3d-label tl">NEURAL MESH · SYNC</div>
+                                <div class="c3d-scan"></div>
+                            </div>
+                        </div>
+                        <div class="kpi-grid">
+                            <div class="kpi-card"><div class="kpi-n"><span id="kA">99.8</span><b>%</b></div><div class="kpi-l">Accuracy</div><div class="kpi-tr">▲ model improved</div></div>
+                            <div class="kpi-card"><div class="kpi-n"><span id="kB">1.8</span><b style="color:var(--c3);font-size:.45em">s</b></div><div class="kpi-l">Response</div><div class="kpi-tr">▲ faster pipeline</div></div>
+                            <div class="kpi-card"><div class="kpi-n"><span id="kC">7.4</span><b>M</b></div><div class="kpi-l">Threat DB</div><div class="kpi-tr">+ 240K new</div></div>
+                            <div class="kpi-card"><div class="kpi-n"><span id="kD">256</span></div><div class="kpi-l">Scans Today</div><div class="kpi-tr">▲ +12%</div></div>
+                        </div>
+                        <div style="padding:16px 20px">
+                            <div class="wcard-title" style="margin-bottom:12px">Threat Intel Feed</div>
+                            <div class="feed-list" id="FEED"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── MODULES ── -->
+            <div style="border-bottom:1px solid var(--s)" id="mods">
+                <div class="wcard-hdr" style="border-bottom:1px solid var(--s)">
+                    <span class="wcard-title">Security Modules</span>
+                    <span class="KBD">Ctrl 1–5</span>
+                </div>
+                <div class="mod-grid">
+                    <a class="modcard" href="/Modules/Email"><div class="mod-ic"><i class="fa-solid fa-envelope-open-text"></i></div><div class="mod-h">Email Forensics</div><div class="mod-p">SPF/DKIM/DMARC · header forensics · attachment scanning</div><div class="mod-tags"><span class="mod-tag">SPF/DKIM</span><span class="mod-tag">URL SCAN</span></div><span class="mod-arr"><i class="fa-solid fa-arrow-right"></i></span></a>
+                    <a class="modcard" href="/Modules/Media"><div class="mod-ic"><i class="fa-solid fa-video"></i></div><div class="mod-h">Media Forensics</div><div class="mod-p">Deepfake detection · metadata verification · neural traces</div><div class="mod-tags"><span class="mod-tag">GAN</span><span class="mod-tag">A/V</span></div><span class="mod-arr"><i class="fa-solid fa-arrow-right"></i></span></a>
+                    <a class="modcard" href="/Modules/Website"><div class="mod-ic"><i class="fa-solid fa-globe"></i></div><div class="mod-h">Website Verification</div><div class="mod-p">SSL/TLS · domain reputation · phishing detection</div><div class="mod-tags"><span class="mod-tag">TLS</span><span class="mod-tag">PHISH</span></div><span class="mod-arr"><i class="fa-solid fa-arrow-right"></i></span></a>
+                    <a class="modcard" href="/Modules/Scam"><div class="mod-ic"><i class="fa-solid fa-user-secret"></i></div><div class="mod-h">Scam Detection</div><div class="mod-p">Voice clone · behavior graphs · social engineering scoring</div><div class="mod-tags"><span class="mod-tag">VOICE</span><span class="mod-tag">RISK</span></div><span class="mod-arr"><i class="fa-solid fa-arrow-right"></i></span></a>
+                    <a class="modcard" href="/Modules/ImageGenerator"><div class="mod-ic"><i class="fa-solid fa-wand-magic-sparkles"></i></div><div class="mod-h">AI Image Generator</div><div class="mod-p">Prompt → diffusion render · stylized outputs · HD</div><div class="mod-tags"><span class="mod-tag">DIFFUSION</span><span class="mod-tag">2K</span></div><span class="mod-arr"><i class="fa-solid fa-arrow-right"></i></span></a>
+                </div>
+            </div>
+
+            <!-- ── TELEMETRY 3-COL ── -->
+            <div class="w3col" id="telem">
+                <!-- Big 3D cube array -->
+                <div class="wcard" style="grid-column:span 1">
+                    <div class="wcard-hdr">
+                        <span class="wcard-title">Anomaly Field · 3D</span>
+                        <button class="icnbtn" style="width:30px;height:30px;font-size:9px" id="qRecal"><i class="fa-solid fa-sliders"></i></button>
+                    </div>
+                    <div class="canvas3d-md">
+                        <canvas id="MINI_B"></canvas>
+                        <div class="c3d-hud">
+                            <div class="c3d-corner tl"></div><div class="c3d-corner tr"></div>
+                            <div class="c3d-corner bl"></div><div class="c3d-corner br2"></div>
+                            <div class="c3d-label tl">ANOMALY FIELD</div>
+                            <div class="c3d-scan"></div>
+                        </div>
+                    </div>
+                    <div class="wbody" style="padding:16px 20px">
+                        <div class="chart-lbl">Scan Volume</div>
+                        <canvas id="CSC" height="80"></canvas>
+                    </div>
+                </div>
+
+                <!-- Detections chart -->
+                <div class="wcard">
+                    <div class="wcard-hdr">
+                        <span class="wcard-title">Detections</span>
+                        <span class="KBD">Auto</span>
+                    </div>
+                    <div class="canvas3d-md">
+                        <canvas id="MINI_C"></canvas>
+                        <div class="c3d-hud">
+                            <div class="c3d-corner tl"></div><div class="c3d-corner tr"></div>
+                            <div class="c3d-corner bl"></div><div class="c3d-corner br2"></div>
+                            <div class="c3d-label tl">DETECTION ARRAY</div>
+                            <div class="c3d-scan" style="animation-delay:1.2s"></div>
+                        </div>
+                    </div>
+                    <div class="wbody" style="padding:16px 20px">
+                        <div class="chart-lbl">Detection Rate</div>
+                        <canvas id="CDC" height="80"></canvas>
+                    </div>
+                </div>
+
+                <!-- Spark + console 3D -->
+                <div class="wcard">
+                    <div class="wcard-hdr">
+                        <span class="wcard-title">Signal Anomaly</span>
+                        <span class="KBD">STREAM</span>
+                    </div>
+                    <div class="canvas3d-md">
+                        <canvas id="MINI_D"></canvas>
+                        <div class="c3d-hud">
+                            <div class="c3d-corner tl"></div><div class="c3d-corner tr"></div>
+                            <div class="c3d-corner bl"></div><div class="c3d-corner br2"></div>
+                            <div class="c3d-label tl">SIGNAL MONITOR</div>
+                            <div class="c3d-scan" style="animation-delay:2.1s"></div>
+                        </div>
+                    </div>
+                    <div class="wbody" style="padding:16px 20px">
+                        <div class="chart-lbl">Anomaly Field</div>
+                        <canvas id="SPK" height="80"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── CONSOLE ── -->
+            <div class="w2col" id="term">
+                <div class="wcard">
+                    <div class="wcard-hdr">
+                        <span class="wcard-title">Neural Console</span>
+                        <div class="hdr-acts">
+                            <span class="KBD">STREAM</span>
+                            <button class="icnbtn" style="width:30px;height:30px;font-size:9px" id="qClear"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="wbody">
+                        <div class="term" id="TERM"></div>
+                        <div class="term-row">
+                            <input class="term-in" id="TI" placeholder="help · scan · trace · lockdown · purge · ping" />
+                            <button class="icnbtn" style="width:40px" id="TSEND"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Big extra 3D panel -->
+                <div class="wcard">
+                    <div class="wcard-hdr">
+                        <span class="wcard-title">Threat Core · 3D Visualization</span>
+                        <span class="KBD">LIVE</span>
+                    </div>
+                    <div class="canvas3d-full" style="height:100%;min-height:340px">
+                        <canvas id="CORE3D"></canvas>
+                        <div class="c3d-hud">
+                            <div class="c3d-corner tl"></div><div class="c3d-corner tr"></div>
+                            <div class="c3d-corner bl"></div><div class="c3d-corner br2"></div>
+                            <div class="c3d-label tl">THREAT CORE ACTIVE</div>
+                            <div class="c3d-label br">RISK: <span style="color:var(--red)">0.91</span> HIGH</div>
+                            <div class="c3d-scan"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding:16px 24px;border-top:1px solid var(--s);font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.13em;color:var(--c4);display:flex;justify-content:space-between">
+                <span>Deepfake Nexus © 2026 — For legitimate security research only</span>
+                <span>Press <span style="color:var(--g)">Ctrl+K</span> for Command Palette</span>
+            </div>
+        </main>
+    </div>
 
     <script>
-        // Initialize AOS animations
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof AOS !== 'undefined') {
-                AOS.init({
-                    duration: 1000,
-                    once: false,
-                    offset: 100,
-                    easing: 'ease-out-cubic',
-                    mirror: true
-                });
-            }
+        /* ═══════════════════════════════════════════════
+           BOOT
+        ═══════════════════════════════════════════════ */
+        (function(){
+        'use strict';
+        var G={
+          mx:0,my:0,rx:0,ry:0,
+          kpi:{scans:256,acc:99.8,resp:1.8,db:7.4},
+          focusOn:false
+        };
 
-            // Create data stream particles
-            function createDataStreams() {
-                const container = document.getElementById('dataStreams');
-                for (let i = 0; i < 20; i++) {
-                    const stream = document.createElement('div');
-                    stream.className = 'data-stream-item';
-                    stream.style.left = `${Math.random() * 100}%`;
-                    stream.style.animationDelay = `${Math.random() * 5}s`;
-                    stream.style.opacity = Math.random() * 0.3 + 0.1;
-                    container.appendChild(stream);
-                }
-            }
-
-            createDataStreams();
-
-            // Animate stat numbers
-            function animateStatCounter(element, start, end, duration) {
-                let startTimestamp = null;
-                const step = (timestamp) => {
-                    if (!startTimestamp) startTimestamp = timestamp;
-                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                    const value = Math.floor(progress * (end - start) + start);
-
-                    if (element.id === 'threatDatabase') {
-                        element.textContent = `${value.toLocaleString()}+`;
-                    } else if (element.id === 'responseTime') {
-                        element.textContent = `${(value / 100).toFixed(1)}s`;
-                    } else if (element.id === 'accuracyRate') {
-                        element.textContent = `${((start + progress * (end - start)) / 100).toFixed(1)}%`;
-                    } else {
-                        element.textContent = value;
-                    }
-
-                    if (progress < 1) {
-                        requestAnimationFrame(step);
-                    }
-                };
-                requestAnimationFrame(step);
-            }
-
-            // Animate all stats
-            setTimeout(() => {
-                animateStatCounter(document.getElementById('totalScans'), 0, 256, 2000);
-                animateStatCounter(document.getElementById('accuracyRate'), 99.0, 99.8, 2000);
-                animateStatCounter(document.getElementById('responseTime'), 0, 18, 2000);
-                animateStatCounter(document.getElementById('threatDatabase'), 0, 7400000, 2000);
-            }, 1000);
-
-            // Module hover effects
-            const modules = document.querySelectorAll('.quantum-module');
-            modules.forEach(module => {
-                module.addEventListener('mouseenter', function() {
-                    this.style.zIndex = '100';
-                    const icon = this.querySelector('.module-icon');
-                    icon.style.transform = 'scale(1.3) rotate(15deg)';
-                    icon.style.filter = 'drop-shadow(0 0 25px currentColor)';
-                });
-
-                module.addEventListener('mouseleave', function() {
-                    this.style.zIndex = '1';
-                    const icon = this.querySelector('.module-icon');
-                    icon.style.transform = 'scale(1) rotate(0)';
-                    icon.style.filter = 'drop-shadow(0 0 0px currentColor)';
-                });
-
-                // Click effect
-                module.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    // Create ripple effect
-                    const ripple = document.createElement('div');
-                    const rect = this.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height);
-
-                    ripple.style.width = ripple.style.height = `${size}px`;
-                    ripple.style.left = `${e.clientX - rect.left - size/2}px`;
-                    ripple.style.top = `${e.clientY - rect.top - size/2}px`;
-                    ripple.style.background = 'radial-gradient(circle, rgba(56, 189, 248, 0.4) 0%, transparent 70%)';
-                    ripple.style.position = 'absolute';
-                    ripple.style.borderRadius = '50%';
-                    ripple.style.animation = 'ripple 0.6s linear';
-                    ripple.style.pointerEvents = 'none';
-
-                    this.appendChild(ripple);
-
-                    // Update button text
-                    const actionBtn = this.querySelector('.module-action');
-                    const originalHTML = actionBtn.innerHTML;
-                    actionBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> INITIALIZING...';
-
-                    // Simulate loading
-                    setTimeout(() => {
-                        ripple.remove();
-                        actionBtn.innerHTML = originalHTML;
-
-                        // Navigate to module
-                        window.location.href = this.getAttribute('href');
-                    }, 1500);
-                });
-            });
-
-            // Add ripple animation
-            const style = document.createElement('style');
-            style.textContent = `
-                @@keyframes ripple {
-                    from { transform: scale(0); opacity: 1; }
-                    to { transform: scale(4); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
-
-            // Update threat counts periodically
-            setInterval(() => {
-                const threatItems = document.querySelectorAll('.threat-count');
-                threatItems.forEach(item => {
-                    const current = parseInt(item.textContent);
-                    const change = Math.floor(Math.random() * 10) - 2; // -2 to +8
-                    const newValue = Math.max(0, current + change);
-                    item.textContent = newValue;
-
-                    // Add animation
-                    item.style.transform = 'scale(1.1)';
-                    setTimeout(() => {
-                        item.style.transform = 'scale(1)';
-                    }, 300);
-                });
-            }, 5000);
-
-            // Add cyber terminal effect to header
-            const header = document.querySelector('.user-profile-header');
-            let hue = 0;
-            setInterval(() => {
-                hue = (hue + 1) % 360;
-                header.style.borderColor = `hsla(${hue}, 100%, 65%, 0.5)`;
-            }, 100);
-
-            // Add keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                if (e.ctrlKey && e.key === '1') modules[0].click();
-                if (e.ctrlKey && e.key === '2') modules[1].click();
-                if (e.ctrlKey && e.key === '3') modules[2].click();
-                if (e.ctrlKey && e.key === '4') modules[3].click();
-            });
+        /* ── Cursor ── */
+        var CUR=document.getElementById('CUR'),CUR2=document.getElementById('CUR2');
+        document.addEventListener('mousemove',function(e){G.mx=e.clientX;G.my=e.clientY;CUR.style.left=G.mx+'px';CUR.style.top=G.my+'px';});
+        (function L(){G.rx+=(G.mx-G.rx)*.1;G.ry+=(G.my-G.ry)*.1;CUR2.style.left=G.rx+'px';CUR2.style.top=G.ry+'px';requestAnimationFrame(L);})();
+        document.querySelectorAll('a,button,.modcard,.stcell,.kpi-card,.pal-item').forEach(function(el){
+          el.addEventListener('mouseenter',function(){CUR2.style.width='54px';CUR2.style.height='54px';CUR2.style.borderColor='rgba(201,169,110,.9)';CUR2.style.background='rgba(201,169,110,.05)';});
+          el.addEventListener('mouseleave',function(){CUR2.style.width='32px';CUR2.style.height='32px';CUR2.style.borderColor='rgba(201,169,110,.4)';CUR2.style.background='transparent';});
         });
+
+        /* ── Clock ── */
+        function P(n){return String(n).padStart(2,'0');}
+        function tick(){var d=new Date();document.getElementById('CLK').textContent=P(d.getUTCHours())+':'+P(d.getUTCMinutes())+':'+P(d.getUTCSeconds());}
+        tick();setInterval(tick,1000);
+        (function(){var n=new Date();var t=new Date(n.getTime()-(Math.floor(Math.random()*150)+10)*60000);document.getElementById('LL').textContent=P(t.getUTCHours())+':'+P(t.getUTCMinutes());})();
+
+        /* ── Counters ── */
+        function animCnt(el){
+          var v=parseFloat(el.dataset.v),isF=String(v).includes('.');
+          var dur=1800,s=performance.now();
+          (function t(now){var p=Math.min(1,(now-s)/dur),e=1-Math.pow(1-p,4);el.textContent=isF?(v*e).toFixed(1):Math.round(v*e);if(p<1)requestAnimationFrame(t);})(performance.now());
+        }
+        var cio=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){animCnt(x.target);cio.unobserve(x.target);}});},{threshold:.4});
+        document.querySelectorAll('.cnt').forEach(function(el){cio.observe(el);});
+
+        /* ── Toasts ── */
+        var TW=document.getElementById('TW');
+        function toast(h,p,ic){
+          var el=document.createElement('div');el.className='toastx';
+          el.innerHTML='<div class="t-ic"><i class="fa-solid '+(ic||'fa-circle-info')+'"></i></div><div><div class="t-h">'+h+'</div><div class="t-p">'+p+'</div></div><button class="t-x"><i class="fa-solid fa-xmark"></i></button>';
+          el.querySelector('.t-x').addEventListener('click',function(){el.remove();});
+          TW.appendChild(el);setTimeout(function(){if(el.isConnected)el.remove();},5000);
+        }
+
+        /* ── Feed ── */
+        var FEED=document.getElementById('FEED');
+        [{s:'h',h:'Deepfake Spike',p:'GAN artifacts detected in upload batch.',t:'just now'},
+         {s:'m',h:'Phishing Cluster',p:'Lookalike domains across 12 new TLD variants.',t:'2m ago'},
+         {s:'l',h:'Policy Update',p:'DMARC alignment rules refreshed.',t:'9m ago'},
+         {s:'m',h:'Voice Clone Flag',p:'Prosody mismatch — synthetic speaker detected.',t:'14m ago'}
+        ].reverse().forEach(addEv);
+        function addEv(e){var el=document.createElement('div');el.className='fevent';el.innerHTML='<div class="fsev '+e.s+'"></div><div><div class="fev-h">'+e.h+'</div><div class="fev-p">'+e.p+'</div></div><div class="fev-t">'+e.t+'</div>';FEED.prepend(el);if(FEED.children.length>5)FEED.lastChild.remove();}
+        var extraEvs=[
+          {s:'h',h:'Credential Stuffing',p:'Login anomaly wave across perimeter gateways.',t:'now'},
+          {s:'m',h:'Metadata Tamper',p:'EXIF signature mismatch detected.',t:'now'},
+          {s:'l',h:'Key Rotation',p:'Service keys rotated; drift within tolerance.',t:'now'},
+          {s:'m',h:'TLS Downgrade',p:'Handshake forced to legacy cipher — blocked.',t:'now'}
+        ];
+        document.getElementById('addEv').addEventListener('click',function(){var e=extraEvs[Math.floor(Math.random()*extraEvs.length)];addEv(e);toast('Threat Update',e.h+' registered.','fa-triangle-exclamation');});
+
+        /* ── Quick actions ── */
+        function setStatus(t){document.getElementById('ST').textContent='System: '+t;}
+        document.getElementById('qLock').addEventListener('click',function(){toast('Lockdown Initiated','Containment raised. Surfaces now gated.','fa-lock');setStatus('HIGH ALERT');pushLog('WARN','Lockdown engaged by operator.');});
+        document.getElementById('qPurge').addEventListener('click',function(){toast('Cache Purge','Telemetry buffers flushed.','fa-broom');pushLog('WARN','Cache purge: buffers cleared.');});
+        document.getElementById('qPing').addEventListener('click',function(){toast('Network Ping','Edge integrity sweep: nominal.','fa-tower-broadcast');pushLog('OK','Ping sweep complete: integrity nominal.');});
+        document.getElementById('qNotify').addEventListener('click',function(){toast('Incoming Signal','New indicator cluster on edge nodes.','fa-satellite');});
+        document.getElementById('qSpike').addEventListener('click',function(){G.kpi.scans+=Math.floor(Math.random()*80)+20;G.kpi.resp=Math.max(.8,G.kpi.resp+(Math.random()-.5)*.5);G.kpi.acc=Math.max(95,Math.min(99.9,G.kpi.acc+(Math.random()-.5)*.2));G.kpi.db=parseFloat((G.kpi.db+(Math.random()*.08)).toFixed(1));updateKpi();toast('Anomaly Spike','Traffic surge simulated; recalculating baselines.','fa-bolt');pushLog('WARN','Spike simulation triggered.');});
+        document.getElementById('qFocus').addEventListener('click',function(){G.focusOn=!G.focusOn;document.querySelector('.noise').style.display=G.focusOn?'none':'block';document.querySelector('.scanBeam').style.display=G.focusOn?'none':'block';toast('Focus Mode',G.focusOn?'Overlays reduced.':'Overlays restored.','fa-eye');});
+        document.getElementById('qClear').addEventListener('click',function(){document.getElementById('TERM').innerHTML='';pushLog('OK','Console cleared.');});
+        document.getElementById('qRecal').addEventListener('click',function(){for(var i=0;i<scC.data.datasets[0].data.length;i++){scC.data.datasets[0].data[i]=Math.floor(120+Math.random()*130);dtC.data.datasets[0].data[i]=Math.floor(8+Math.random()*28);}scC.update();dtC.update();toast('Recalibration','Telemetry curves re-fitted.','fa-sliders');pushLog('OK','Recalibration: charts updated.');});
+
+        /* ── KPI ── */
+        function updateKpi(){document.getElementById('kA').textContent=G.kpi.acc.toFixed(1);document.getElementById('kB').textContent=G.kpi.resp.toFixed(1);document.getElementById('kC').textContent=G.kpi.db.toFixed(1);document.getElementById('kD').textContent=G.kpi.scans;}
+        setInterval(function(){G.kpi.scans+=Math.floor(Math.random()*3);G.kpi.resp=Math.max(.8,Math.min(4,G.kpi.resp+(Math.random()-.5)*.07));updateKpi();},3200);
+
+        /* ── Terminal ── */
+        var TERM=document.getElementById('TERM');
+        function pushLog(lv,tx){
+          var m={OK:'tok',WARN:'twarn',BAD:'tbad',INFO:'tp'},d=new Date(),s=P(d.getUTCHours())+':'+P(d.getUTCMinutes())+':'+P(d.getUTCSeconds())+'Z';
+          var el=document.createElement('div');el.className='tline';
+          el.innerHTML='<span class="tp">qcc@ops</span><span style="color:var(--c4)">['+s+']</span><span class="'+(m[lv]||'tok')+'">'+lv+'</span><span>'+tx+'</span>';
+          TERM.appendChild(el);TERM.scrollTop=TERM.scrollHeight;
+          if(TERM.children.length>40)TERM.firstChild.remove();
+        }
+        pushLog('OK','Neural mesh online. Telemetry stream engaged.');
+        pushLog('INFO','Awaiting commands. Type help for verbs.');
+        pushLog('WARN','Edge nodes sector-7 jitter (auto-damped).');
+        var strM=[['OK','Scan worker pool stable. Throughput nominal.'],['OK','Threat DB delta synced.'],['WARN','Entropy spike in media batch queue.'],['OK','DMARC alignment check: 98.2% passed.'],['BAD','Phishing kit signature matched: blocked.'],['OK','Audio model verification pass: high confidence.']];
+        setInterval(function(){var m=strM[Math.floor(Math.random()*strM.length)];pushLog(m[0],m[1]);},2800);
+        var TI=document.getElementById('TI');
+        function sendCmd(){var c=TI.value.trim().toLowerCase();if(!c)return;pushLog('INFO','cmd> '+c);TI.value='';
+          if(c==='help')pushLog('OK','verbs: help | scan | trace | lockdown | purge | ping');
+          else if(c==='scan'){pushLog('OK','Launching synthetic scan…');toast('Scan Launched','Dispatched to worker mesh.','fa-shield');}
+          else if(c==='trace'){pushLog('OK','Tracing signal origin…');toast('Trace Running','Signal trace in progress.','fa-location-crosshairs');}
+          else if(c==='lockdown')document.getElementById('qLock').click();
+          else if(c==='purge')document.getElementById('qPurge').click();
+          else if(c==='ping')document.getElementById('qPing').click();
+          else pushLog('WARN','Unknown verb. Type help.');}
+        document.getElementById('TSEND').addEventListener('click',sendCmd);
+        TI.addEventListener('keydown',function(e){if(e.key==='Enter')sendCmd();});
+
+        /* ── Uplink flicker ── */
+        setInterval(function(){document.getElementById('uplinkTxt').textContent=['STABLE','ACTIVE','NOMINAL'][Math.floor(Math.random()*3)];},5000);
+
+        /* ── Charts ── */
+        var chartCfg={responsive:true,plugins:{legend:{display:false}},animation:{duration:300},scales:{x:{ticks:{color:'rgba(237,233,224,.28)',font:{family:"'DM Mono',monospace",size:8},maxTicksLimit:7},grid:{color:'rgba(237,233,224,.04)'}},y:{ticks:{color:'rgba(237,233,224,.28)',font:{family:"'DM Mono',monospace",size:8}},grid:{color:'rgba(237,233,224,.04)'}}}};
+        var labs=Array.from({length:14},function(_,i){return 'T-'+(13-i);});
+        var scC=new Chart(document.getElementById('CSC'),{type:'line',data:{labels:labs,datasets:[{data:labs.map(function(){return Math.floor(130+Math.random()*90);}),tension:.35,borderColor:'rgba(201,169,110,.9)',backgroundColor:'rgba(201,169,110,.09)',fill:true,pointRadius:2,pointBackgroundColor:'rgba(201,169,110,.9)'}]},options:chartCfg});
+        var dtC=new Chart(document.getElementById('CDC'),{type:'bar',data:{labels:labs,datasets:[{data:labs.map(function(){return Math.floor(8+Math.random()*24);}),borderColor:'rgba(255,68,102,.7)',backgroundColor:'rgba(255,68,102,.16)',borderWidth:1,borderRadius:3}]},options:chartCfg});
+        var spC=new Chart(document.getElementById('SPK'),{type:'line',data:{labels:Array.from({length:28},function(_,i){return i;}),datasets:[{data:Array.from({length:28},function(){return 12+Math.random()*28;}),borderColor:'rgba(78,205,196,.8)',backgroundColor:'rgba(78,205,196,.07)',fill:true,tension:.35,pointRadius:0}]},options:{responsive:true,animation:{duration:0},plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}}});
+        setInterval(function(){spC.data.datasets[0].data.shift();spC.data.datasets[0].data.push(12+Math.random()*28+(Math.random()<.07?25:0));spC.update('none');scC.data.datasets[0].data.shift();scC.data.datasets[0].data.push(Math.floor(110+Math.random()*140));scC.update('none');dtC.data.datasets[0].data.shift();dtC.data.datasets[0].data.push(Math.floor(5+Math.random()*32));dtC.update('none');},1100);
+
+        /* ── Palette ── */
+        var PAL=document.getElementById('PAL'),PI=document.getElementById('PI'),PL=document.getElementById('PL');
+        var cmds=[
+          {h:'Email Forensics',s:'Open /Modules/Email',ic:'fa-envelope-open-text',fn:function(){location.href='/Modules/Email';}},
+          {h:'Media Forensics',s:'Open /Modules/Media',ic:'fa-video',fn:function(){location.href='/Modules/Media';}},
+          {h:'Website Verification',s:'Open /Modules/Website',ic:'fa-globe',fn:function(){location.href='/Modules/Website';}},
+          {h:'Scam Detection',s:'Open /Modules/Scam',ic:'fa-user-secret',fn:function(){location.href='/Modules/Scam';}},
+          {h:'AI Image Generator',s:'Open /Modules/ImageGenerator',ic:'fa-wand-magic-sparkles',fn:function(){location.href='/Modules/ImageGenerator';}},
+          {h:'Lockdown',s:'Raise containment level',ic:'fa-lock',fn:function(){document.getElementById('qLock').click();}},
+          {h:'Purge Cache',s:'Flush telemetry buffers',ic:'fa-broom',fn:function(){document.getElementById('qPurge').click();}},
+          {h:'Network Ping',s:'Edge integrity sweep',ic:'fa-tower-broadcast',fn:function(){document.getElementById('qPing').click();}},
+          {h:'Recalibrate',s:'Refit telemetry baselines',ic:'fa-sliders',fn:function(){document.getElementById('qRecal').click();}},
+          {h:'Inject Threat',s:'Add feed incident',ic:'fa-plus',fn:function(){document.getElementById('addEv').click();}}
+        ];
+        function renderPal(q){PL.innerHTML='';cmds.filter(function(c){return(c.h+c.s).toLowerCase().includes(q.toLowerCase());}).slice(0,10).forEach(function(c){var el=document.createElement('div');el.className='pal-item';el.innerHTML='<div class="pal-il"><div class="pal-ico"><i class="fa-solid '+c.ic+'"></i></div><div><div class="pal-h">'+c.h+'</div><div class="pal-s">'+c.s+'</div></div></div><span class="KBD">↵</span>';el.addEventListener('click',function(){closePal();c.fn();});PL.appendChild(el);});}
+        function openPal(){PAL.classList.add('open');PI.value='';renderPal('');setTimeout(function(){PI.focus();},0);}
+        function closePal(){PAL.classList.remove('open');}
+        document.getElementById('openPal').addEventListener('click',openPal);
+        document.addEventListener('keydown',function(e){if(e.ctrlKey&&e.key.toLowerCase()==='k'){e.preventDefault();openPal();}if(e.key==='Escape')closePal();});
+        PAL.addEventListener('click',function(e){if(e.target===PAL)closePal();});
+        PI.addEventListener('input',function(){renderPal(PI.value);});
+        PI.addEventListener('keydown',function(e){if(e.key==='Enter'){var f=PL.querySelector('.pal-item');if(f)f.click();}});
+
+        /* ═══════════════════════════════════════════════
+           THREE.JS — ALL 3D SCENES
+        ═══════════════════════════════════════════════ */
+
+        /* ── UTILS ── */
+        function lerp(a,b,t){return a+(b-a)*t;}
+        function eL(c,op){return new THREE.LineBasicMaterial({color:c,transparent:true,opacity:op});}
+        function mPP(c,op,r){return new THREE.MeshPhysicalMaterial({color:c,metalness:.95,roughness:r||.04,transparent:true,opacity:op||.08,side:THREE.DoubleSide,transmission:.88,thickness:.6,ior:1.5});}
+        function mBB(c,op){return new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:op});}
+
+        /* Helper: make renderer */
+        function mkRenderer(canvas,alpha){
+          var r=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:alpha!==false,powerPreference:'high-performance'});
+          r.setPixelRatio(Math.min(window.devicePixelRatio,1.8));
+          r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.1;
+          return r;
+        }
+        function autoResize(renderer,camera,getW,getH){
+          window.addEventListener('resize',function(){renderer.setSize(getW(),getH());camera.aspect=getW()/getH();camera.updateProjectionMatrix();});
+        }
+
+        /* ══════════════════════════════
+           1. GLOBAL BACKGROUND SCENE
+        ══════════════════════════════ */
+        (function(){
+          var canvas=document.getElementById('BG');
+          var W=function(){return window.innerWidth;},H=function(){return window.innerHeight;};
+          var renderer=mkRenderer(canvas);renderer.setSize(W(),H());
+          canvas.style.cssText='position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;height:100%';
+          var scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x04040a,.016);
+          var camera=new THREE.PerspectiveCamera(56,W()/H(),.1,500);camera.position.set(0,0,24);
+
+          scene.add(new THREE.AmbientLight(0x04040e,2.5));
+          var kL=new THREE.SpotLight(0xc9a96e,22,110,Math.PI/6,.35,1.2);kL.position.set(20,24,18);scene.add(kL);
+          var fL=new THREE.SpotLight(0x4ecdc4,12,85,Math.PI/5,.4,1.5);fL.position.set(-22,12,14);scene.add(fL);
+          var bL=new THREE.SpotLight(0x8b5cf6,8,65,Math.PI/4,.5,2);bL.position.set(-14,-14,10);scene.add(bL);
+          var p1=new THREE.PointLight(0xc9a96e,7,45);scene.add(p1);
+          var p2=new THREE.PointLight(0x4ecdc4,5,35);scene.add(p2);
+          var p3=new THREE.PointLight(0x8b5cf6,4,28);scene.add(p3);
+
+          var objs=[];
+          function addCube(x,y,z,s,mat){
+            var g=new THREE.BoxGeometry(1,1,1,2,2,2),m=new THREE.Mesh(g,mat);
+            m.scale.setScalar(s);m.position.set(x,y,z);
+            m.rotation.set(Math.random()*6.28,Math.random()*6.28,Math.random()*6.28);
+            m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(0xc9a96e,.2)));
+            scene.add(m);
+            objs.push({m:m,ox:x,oy:y,oz:z,fp:Math.random()*6.28,fs:.2+Math.random()*.25,rs:{x:(Math.random()-.5)*.005,y:(Math.random()-.5)*.005,z:(Math.random()-.5)*.003},ly:Math.floor(Math.random()*3)});
+          }
+          addCube(7,3,-1,4.5,mPP(0xc9a96e,.07));addCube(-6,-2,-.5,4,mPP(0x8ed4d0,.06));
+          addCube(1,6,-5,6,mPP(0x0c0a14,.12,.08));addCube(-2,-6,-3,3.8,mPP(0xd4b87e,.06));
+          addCube(9,-4.5,-7,3.2,new THREE.MeshStandardMaterial({color:0x1a1428,metalness:1,roughness:.05}));
+          addCube(-9,6,-8,3.5,mPP(0xc9a96e,.05));
+          for(var i=0;i<24;i++){addCube((Math.random()-.5)*34,(Math.random()-.5)*20,-9-Math.random()*12,.7+Math.random()*2.2,i%3===0?new THREE.MeshBasicMaterial({color:0xc9a96e,wireframe:true,transparent:true,opacity:.07}):mPP(0xc9a96e,.04));}
+          for(var j=0;j<55;j++){addCube((Math.random()-.5)*55,(Math.random()-.5)*32,-18-Math.random()*28,.1+Math.random()*.55,new THREE.MeshBasicMaterial({color:0xc9a96e,wireframe:true,transparent:true,opacity:.04+Math.random()*.03}));}
+
+          var tori=[];
+          [{r:2.2,tb:.008,c:0xc9a96e,op:.26,x:5,y:3,z:-2,rx:1.05,rz:.2,rs:.004},{r:4,tb:.005,c:0x4ecdc4,op:.18,x:-7,y:-2,z:-4,rx:.78,rz:0,rs:.003},{r:2.8,tb:.006,c:0xc9a96e,op:.15,x:10,y:7,z:-9,rx:.62,rz:.3,rs:.0035},{r:6,tb:.004,c:0x8b5cf6,op:.12,x:-9,y:8,z:-8,rx:.52,rz:.2,rs:.0025},{r:2,tb:.009,c:0x8b5cf6,op:.2,x:0,y:-7,z:-4,rx:1.57,rz:.6,rs:.006},{r:8,tb:.003,c:0xc9a96e,op:.07,x:16,y:0,z:-14,rx:.2,rz:1.05,rs:.002},{r:3.5,tb:.005,c:0x4ecdc4,op:.14,x:-12,y:-9,z:-10,rx:1.05,rz:.78,rs:.004},{r:4.5,tb:.004,c:0xd4b87e,op:.12,x:-4,y:12,z:-11,rx:.5,rz:.2,rs:.003},{r:2.5,tb:.007,c:0xc9a96e,op:.2,x:12,y:-6,z:-6,rx:.4,rz:.6,rs:.005},{r:5.5,tb:.003,c:0x8b5cf6,op:.1,x:-14,y:4,z:-13,rx:.3,rz:.4,rs:.0028}].forEach(function(d){
+            var g=new THREE.TorusGeometry(d.r,d.tb,2,90),m=new THREE.Mesh(g,mBB(d.c,d.op));
+            m.rotation.set(d.rx,0,d.rz);m.position.set(d.x,d.y||0,d.z);scene.add(m);
+            tori.push({m:m,rs:d.rs,ox:d.x,oy:d.y||0,oz:d.z,fp:Math.random()*6.28,fs:.2+Math.random()*.25,ly:Math.floor(Math.random()*3)});
+          });
+
+          var wires=[];
+          for(var k=0;k<20;k++){
+            var wg=new THREE.IcosahedronGeometry(.4+Math.random()*1.1,0);
+            var wm=new THREE.LineSegments(new THREE.EdgesGeometry(wg),eL(k%3===0?0x8b5cf6:k%2===0?0xc9a96e:0x4ecdc4,.15));
+            wm.position.set((Math.random()-.5)*34,(Math.random()-.5)*20,-7-Math.random()*18);scene.add(wm);
+            wires.push({m:wm,rs:{x:.005+Math.random()*.006,y:.006+Math.random()*.005,z:.003},oy:wm.position.y,fp:Math.random()*6.28,fs:.18+Math.random()*.3,ly:Math.floor(Math.random()*3)});
+          }
+          for(var n=0;n<14;n++){
+            var dg=new THREE.DodecahedronGeometry(.3+Math.random()*.7,0);
+            var dm=new THREE.LineSegments(new THREE.EdgesGeometry(dg),eL(n%2===0?0xd4b87e:0x8b5cf6,.12));
+            dm.position.set((Math.random()-.5)*28,(Math.random()-.5)*17,-6-Math.random()*13);scene.add(dm);
+            wires.push({m:dm,rs:{x:.006,y:.005,z:.007},oy:dm.position.y,fp:Math.random()*6.28,fs:.2+Math.random()*.28,ly:Math.floor(Math.random()*3)});
+          }
+
+          /* Ring constellation */
+          var ring=[];
+          for(var r2=0;r2<20;r2++){var ang=r2/20*6.28,rad=12+Math.random()*2.5;var cs=.12+Math.random()*.5;var cg=new THREE.BoxGeometry(cs,cs,cs);var cm=new THREE.LineSegments(new THREE.EdgesGeometry(cg),eL(r2%3===0?0x8b5cf6:r2%2===0?0xc9a96e:0x4ecdc4,.16));cm.position.set(Math.cos(ang)*rad,Math.sin(ang)*rad*.38,-15-Math.random()*5);scene.add(cm);ring.push({m:cm,ang:ang,rad:rad,rs:{x:.007,y:.009},fp:Math.random()*6.28,fs:.25+Math.random()*.22});}
+
+          /* Particles */
+          function mkP(n,spr,zMin,zSpr,col,sz,op){var g=new THREE.BufferGeometry(),pos=new Float32Array(n*3);for(var ii=0;ii<n;ii++){pos[ii*3]=(Math.random()-.5)*spr;pos[ii*3+1]=(Math.random()-.5)*spr*.5;pos[ii*3+2]=zMin-Math.random()*zSpr;}g.setAttribute('position',new THREE.BufferAttribute(pos,3));var pts=new THREE.Points(g,new THREE.PointsMaterial({color:col,size:sz,transparent:true,opacity:op,sizeAttenuation:true}));scene.add(pts);return pts;}
+          var pA=mkP(1200,75,4,32,0xc9a96e,.035,.28),pB=mkP(200,32,2,15,0xd4b87e,.08,.42),pC=mkP(150,28,2,12,0x4ecdc4,.06,.36),pD=mkP(100,24,2,9,0x8b5cf6,.05,.3);
+
+          var tmx=0,tmy=0,cmx=0,cmy=0,sY=0,lstY=0,sV=0;
+          document.addEventListener('mousemove',function(e){tmx=(e.clientX/W()-.5)*2;tmy=-(e.clientY/H()-.5)*2;});
+          window.addEventListener('scroll',function(){sY=window.scrollY;},{passive:true});
+          window.addEventListener('resize',function(){renderer.setSize(W(),H());camera.aspect=W()/H();camera.updateProjectionMatrix();});
+          var clock=new THREE.Clock();
+
+          function tick(){
+            requestAnimationFrame(tick);var t=clock.getElapsedTime();
+            sV=sY-lstY;lstY=sY;cmx+=(tmx-cmx)*.016;cmy+=(tmy-cmy)*.016;
+            var sp=Math.min(1,sY/Math.max(1,document.body.scrollHeight-H()));
+            var xSpin=Math.abs(sV)*.011;
+
+            camera.position.x=lerp(camera.position.x,cmx*3,.055);
+            camera.position.y=lerp(camera.position.y,cmy*2+sp*-6,.055);
+            camera.position.z=lerp(camera.position.z,24-sp*15,.055);
+            camera.fov=lerp(camera.fov,56+sp*13,.04);camera.updateProjectionMatrix();
+            camera.lookAt(cmx*.55,cmy*.35+sY*.003,-sp*8);
+
+            p1.position.set(9+Math.sin(t*.38)*5,9+Math.cos(t*.28)*4,8);
+            p2.position.set(-10+Math.cos(t*.32)*3.5,-7+Math.sin(t*.26)*3,9);
+            p3.position.set(-6+Math.cos(t*.26)*4.5,5+Math.sin(t*.18)*4,-3);
+
+            objs.forEach(function(o){var lm=[1,1.6,2.8][o.ly];o.m.rotation.x+=o.rs.x*(1+xSpin*lm);o.m.rotation.y+=o.rs.y*(1+xSpin*lm);o.m.rotation.z+=o.rs.z;o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.44;o.m.position.x=o.ox+Math.cos(t*o.fs*.7+o.fp)*.22+cmx*(.3*lm);o.m.position.z=lerp(o.m.position.z,o.oz-sp*(3+o.ly*3),.04);});
+            tori.forEach(function(o){o.m.rotation.z+=o.rs*(1+xSpin*.5);o.m.rotation.y+=o.rs*.7;o.m.rotation.x+=o.rs*.3;o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.3;o.m.position.z=lerp(o.m.position.z,o.oz-sp*(2+o.ly*2),.04);});
+            wires.forEach(function(o){o.m.rotation.x+=o.rs.x*(1+xSpin);o.m.rotation.y+=o.rs.y*(1+xSpin);o.m.rotation.z+=o.rs.z;o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.22;o.m.position.z=lerp(o.m.position.z,o.oz-sp*(1+o.ly*1.4),.04);});
+            ring.forEach(function(o){o.ang+=.0016+xSpin*.004;o.m.position.x=Math.cos(o.ang)*o.rad;o.m.position.y=Math.sin(o.ang)*o.rad*.38;o.m.position.z=lerp(o.m.position.z,-15-sp*11,.04);o.m.rotation.x+=o.rs.x;o.m.rotation.y+=o.rs.y;});
+            pA.rotation.y=t*.007;pA.rotation.x=sp*.4;pB.rotation.y=-t*.011;pB.rotation.z=sp*.3;pC.rotation.y=t*.014;pC.position.z=lerp(pC.position.z,-sp*5,.04);pD.rotation.z=-t*.009;pD.rotation.x=sp*.44;
+            renderer.render(scene,camera);
+          }
+          tick();
+        })();
+
+        /* ══════════════════════════════
+           2. HERO CANVAS
+        ══════════════════════════════ */
+        (function(){
+          var canvas=document.getElementById('HERO3D');
+          var wrap=canvas.parentElement;
+          var W=function(){return wrap.offsetWidth;},H=function(){return wrap.offsetHeight;};
+          var renderer=mkRenderer(canvas);renderer.setSize(W(),H());
+          var scene=new THREE.Scene();
+          var camera=new THREE.PerspectiveCamera(52,W()/H(),.1,100);camera.position.set(0,0,10);
+
+          scene.add(new THREE.AmbientLight(0x04040e,2));
+          var kL=new THREE.SpotLight(0xc9a96e,28,50,Math.PI/5,.3,1.2);kL.position.set(10,15,12);scene.add(kL);
+          var fL=new THREE.SpotLight(0x4ecdc4,16,38,Math.PI/4,.35,1.5);fL.position.set(-10,7,10);scene.add(fL);
+          var bL=new THREE.SpotLight(0x8b5cf6,9,28,Math.PI/3,.5,1.8);bL.position.set(-5,-10,8);scene.add(bL);
+          var p1=new THREE.PointLight(0xc9a96e,8,24);scene.add(p1);
+          var p2=new THREE.PointLight(0x4ecdc4,5,18);scene.add(p2);
+          var p3=new THREE.PointLight(0x8b5cf6,4,14);scene.add(p3);
+
+          /* Central nested cubes */
+          var cubes=[];
+          [[4,.07,.04,0xc9a96e],[2.6,.08,.05,0xd4b87e],[1.6,.1,.03,0x4ecdc4],[.9,.12,.04,0xc9a96e]].forEach(function(d,i){
+            var g=new THREE.BoxGeometry(d[0],d[0],d[0],3,3,3);
+            var m=new THREE.Mesh(g,mPP(d[3],d[1],d[2]));
+            m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(d[3],i===0?.5:.6)));
+            scene.add(m);cubes.push({m:m,rx:(.003+i*.002)*(i%2===0?1:-1),ry:.004+i*.0025,rz:.0015+i*.001});
+          });
+
+          /* Orbiting cubes */
+          var orbs=[];
+          for(var oi=0;oi<14;oi++){
+            var sz=.25+Math.random()*.7;
+            var g2=new THREE.BoxGeometry(sz,sz,sz,2,2,2);
+            var om=new THREE.Mesh(g2,mPP(oi%3===0?0xc9a96e:oi%3===1?0x4ecdc4:0x8b5cf6,.1,.05));
+            om.add(new THREE.LineSegments(new THREE.EdgesGeometry(g2),eL(oi%3===0?0xc9a96e:oi%3===1?0x4ecdc4:0x8b5cf6,.55)));
+            scene.add(om);orbs.push({m:om,r:2.5+Math.random()*4,sp:.25+Math.random()*.55,ph:oi*.449,ti:.35+Math.random()*.5});
+          }
+
+          /* Rings */
+          var rings=[];
+          [{r:3.5,tb:.007,c:0xc9a96e,op:.3,rx:1.05,rz:0,rs:.006},{r:4.8,tb:.005,c:0x4ecdc4,op:.22,rx:.78,rz:.78,rs:.005},{r:6,tb:.003,c:0xc9a96e,op:.14,rx:.62,rz:.62,rs:.003},{r:3,tb:.008,c:0x4ecdc4,op:.22,rx:1.57,rz:.52,rs:.007},{r:7,tb:.002,c:0xd4b87e,op:.09,rx:.52,rz:1.05,rs:.002},{r:4.2,tb:.006,c:0x8b5cf6,op:.18,rx:.4,rz:.6,rs:.005},{r:5.5,tb:.003,c:0x8b5cf6,op:.12,rx:.7,rz:.78,rs:.0035},{r:2.5,tb:.009,c:0xd4b87e,op:.25,rx:.3,rz:1.2,rs:.006},{r:8,tb:.002,c:0xc9a96e,op:.07,rx:.15,rz:.5,rs:.0018}].forEach(function(d){
+            var g=new THREE.TorusGeometry(d.r,d.tb,2,100),m=new THREE.Mesh(g,mBB(d.c,d.op));
+            m.rotation.x=d.rx;m.rotation.z=d.rz;scene.add(m);rings.push({m:m,rs:d.rs});
+          });
+
+          /* Icosa shells */
+          [[3,.06,0xc9a96e],[4.5,.038,0x4ecdc4],[6,.022,0x8b5cf6],[7.5,.014,0xd4b87e]].forEach(function(d){
+            scene.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(d[0],1)),eL(d[2],d[1])));
+          });
+
+          /* Octahedra orbiters */
+          var soctas=[];
+          for(var si=0;si<8;si++){var sg=new THREE.OctahedronGeometry(.22+si*.1,0);var sm=new THREE.LineSegments(new THREE.EdgesGeometry(sg),eL(si%2===0?0xc9a96e:0x4ecdc4,.35));scene.add(sm);soctas.push({m:sm,r:3+si*.5,sp:.55+si*.1,ph:si*1.26,ti:.4+si*.1});}
+
+          /* Threat ping dots */
+          var pings=[];
+          for(var pi=0;pi<20;pi++){
+            var phi=Math.acos(2*Math.random()-1),theta=Math.random()*Math.PI*2,rr=3.55;
+            var pd=new THREE.Mesh(new THREE.SphereGeometry(.06,6,6),new THREE.MeshBasicMaterial({color:pi%4===0?0xff4466:pi%4===1?0xc9a96e:pi%4===2?0x22c55e:0x4ecdc4,transparent:true,opacity:.85}));
+            pd.position.set(rr*Math.sin(phi)*Math.cos(theta),rr*Math.cos(phi),rr*Math.sin(phi)*Math.sin(theta));
+            scene.add(pd);pings.push({m:pd,fp:Math.random()*6.28,fs:.3+Math.random()*.7});
+          }
+
+          /* Lat/lon globe grid */
+          var globeGroup=new THREE.Group();
+          for(var lat=0;lat<9;lat++){var ry2=Math.PI/8*lat-Math.PI/2;var ring2=new THREE.TorusGeometry(3.6*Math.cos(ry2),.003,2,80);var rm=new THREE.Mesh(ring2,mBB(0xc9a96e,.1));rm.rotation.x=Math.PI/2;rm.position.y=3.6*Math.sin(ry2);globeGroup.add(rm);}
+          for(var lon=0;lon<14;lon++){var lng2=new THREE.TorusGeometry(3.6,.003,2,80);var lm=new THREE.Mesh(lng2,mBB(0xc9a96e,.07));lm.rotation.y=Math.PI/7*lon;globeGroup.add(lm);}
+          scene.add(globeGroup);
+
+          /* Globe core */
+          var gcore=new THREE.Mesh(new THREE.IcosahedronGeometry(3.4,4),mPP(0xc9a96e,.06,.07));
+          var gcoreW=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(3.42,3)),eL(0xc9a96e,.1));
+          scene.add(gcore);scene.add(gcoreW);
+
+          /* Particles */
+          function mkSP(n,mn,mx2,col,sz,op){var g=new THREE.BufferGeometry(),pos=new Float32Array(n*3);for(var ii=0;ii<n;ii++){var r=mn+Math.random()*(mx2-mn),th=Math.random()*6.28,ph=Math.acos(2*Math.random()-1);pos[ii*3]=r*Math.sin(ph)*Math.cos(th);pos[ii*3+1]=r*Math.sin(ph)*Math.sin(th);pos[ii*3+2]=r*Math.cos(ph);}g.setAttribute('position',new THREE.BufferAttribute(pos,3));var pts=new THREE.Points(g,new THREE.PointsMaterial({color:col,size:sz,transparent:true,opacity:op,sizeAttenuation:true}));scene.add(pts);return pts;}
+          var sp1=mkSP(600,3.6,9,0xc9a96e,.04,.55),sp2=mkSP(200,5,7.5,0x4ecdc4,.05,.4),sp3=mkSP(120,4,6.5,0x8b5cf6,.045,.32);
+          var eqG=new THREE.BufferGeometry(),eqPos=new Float32Array(250*3);for(var ei=0;ei<250;ei++){var ea=ei/250*6.28,er=4.5+Math.random()*.8;eqPos[ei*3]=Math.cos(ea)*er;eqPos[ei*3+1]=(Math.random()-.5)*.4;eqPos[ei*3+2]=Math.sin(ea)*er;}
+          eqG.setAttribute('position',new THREE.BufferAttribute(eqPos,3));
+          scene.add(new THREE.Points(eqG,new THREE.PointsMaterial({color:0x4ecdc4,size:.055,transparent:true,opacity:.48,sizeAttenuation:true})));
+
+          var hmx=0,hmy=0,thmx=0,thmy=0;
+          document.addEventListener('mousemove',function(e){var rc=canvas.getBoundingClientRect();thmx=(e.clientX-rc.left-rc.width/2)/(rc.width/2);thmy=-(e.clientY-rc.top-rc.height/2)/(rc.height/2);});
+          autoResize(renderer,camera,W,H);
+          var clk=new THREE.Clock();
+
+          (function anim(){
+            requestAnimationFrame(anim);var t=clk.getElapsedTime();
+            hmx+=(thmx-hmx)*.055;hmy+=(thmy-hmy)*.055;
+            cubes.forEach(function(o){o.m.rotation.x+=o.rx;o.m.rotation.y+=o.ry;o.m.rotation.z+=o.rz;});
+            orbs.forEach(function(o){o.m.rotation.x+=.006;o.m.rotation.y+=.009;var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.45,Math.sin(a)*o.r*.72);});
+            rings.forEach(function(r,i){r.m.rotation.z+=r.rs*(i%2===0?1:-1);r.m.rotation.y+=r.rs*.6;r.m.rotation.x+=r.rs*.25;});
+            soctas.forEach(function(o){var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.4,Math.sin(a)*o.r*.6);o.m.rotation.x+=.01;o.m.rotation.y+=.013;});
+            pings.forEach(function(p){var s=.7+Math.sin(t*p.fs+p.fp)*.38;p.m.scale.setScalar(s);p.m.material.opacity=.5+Math.sin(t*p.fs+p.fp)*.38;});
+            globeGroup.rotation.y=t*.08;gcore.rotation.y=t*.08;gcoreW.rotation.y=t*.08;
+            sp1.rotation.y=t*.016;sp1.rotation.x=t*.008;sp2.rotation.y=-t*.013;sp3.rotation.y=t*.015;sp3.rotation.x=t*.007;
+            camera.position.x=hmx*2.2;camera.position.y=hmy*1.6;camera.lookAt(hmx*.28,hmy*.2,0);
+            p1.position.set(5+Math.sin(t*.45)*2.5,5+Math.cos(t*.35)*2,6);p2.position.set(-5+Math.cos(t*.38)*2,-3+Math.sin(t*.28)*2,5);p3.position.set(Math.sin(t*.26)*3,6+Math.cos(t*.2)*2,3);
+            kL.intensity=28+Math.sin(t*.28)*7;fL.intensity=16+Math.sin(t*.22+1)*4;
+            renderer.render(scene,camera);
+          })();
+        })();
+
+        /* ══════════════════════════════
+           3. SIDEBAR 3D
+        ══════════════════════════════ */
+        (function(){
+          var canvas=document.getElementById('SB3D');
+          var wrap=canvas.parentElement;
+          var W=function(){return wrap.offsetWidth;},H=function(){return wrap.offsetHeight;};
+          var renderer=mkRenderer(canvas);renderer.setSize(W(),H());
+          var scene=new THREE.Scene();
+          var camera=new THREE.PerspectiveCamera(58,W()/H(),.1,60);camera.position.set(0,0,10);
+
+          scene.add(new THREE.AmbientLight(0x04040a,1.5));
+          var kL=new THREE.SpotLight(0xc9a96e,10,28,Math.PI/5,.3,1.4);kL.position.set(5,9,7);scene.add(kL);
+          var fL=new THREE.SpotLight(0x8b5cf6,6,20,Math.PI/4,.4,1.7);fL.position.set(-5,3,5);scene.add(fL);
+          var p1=new THREE.PointLight(0xc9a96e,3,16);scene.add(p1);
+
+          var cubes=[];
+          for(var i=0;i<35;i++){
+            var s=.15+Math.random()*.55;
+            var g=new THREE.BoxGeometry(s,s,s,1,1,1);
+            var m=new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(i%3===0?0xc9a96e:i%3===1?0x4ecdc4:0x8b5cf6,.1+Math.random()*.14));
+            m.position.set((Math.random()-.5)*7,(Math.random()-.5)*16,-Math.random()*6);
+            m.rotation.set(Math.random()*6.28,Math.random()*6.28,Math.random()*6.28);
+            scene.add(m);cubes.push({m:m,rs:{x:(Math.random()-.5)*.009,y:(Math.random()-.5)*.01,z:(Math.random()-.5)*.007},fp:Math.random()*6.28,fs:.14+Math.random()*.22});
+          }
+          var clk=new THREE.Clock();
+          (function anim(){requestAnimationFrame(anim);var t=clk.getElapsedTime();cubes.forEach(function(o){o.m.rotation.x+=o.rs.x;o.m.rotation.y+=o.rs.y;o.m.rotation.z+=o.rs.z;o.m.position.y+=Math.sin(t*o.fs+o.fp)*.003;});p1.position.set(Math.sin(t*.3)*3.5,Math.cos(t*.22)*4,5);renderer.render(scene,camera);})();
+          autoResize(renderer,camera,W,H);
+        })();
+
+        /* ══════════════════════════════
+           4. GLOBE CANVAS (full widget)
+        ══════════════════════════════ */
+        (function(){
+          var canvas=document.getElementById('GLOBE');
+          var wrap=canvas.parentElement;
+          var W=function(){return wrap.offsetWidth;},H=function(){return wrap.offsetHeight;};
+          var renderer=mkRenderer(canvas);renderer.setSize(W(),H());
+          var scene=new THREE.Scene();
+          var camera=new THREE.PerspectiveCamera(48,W()/H(),.1,80);camera.position.set(0,0,9);
+
+          scene.add(new THREE.AmbientLight(0x04040e,2.2));
+          var kL=new THREE.SpotLight(0xc9a96e,24,42,Math.PI/5,.3,1.2);kL.position.set(8,12,10);scene.add(kL);
+          var fL=new THREE.SpotLight(0x4ecdc4,14,32,Math.PI/4,.35,1.5);fL.position.set(-8,5,8);scene.add(fL);
+          var bL=new THREE.SpotLight(0x8b5cf6,8,22,Math.PI/3,.5,1.8);bL.position.set(-4,-9,7);scene.add(bL);
+          var p1=new THREE.PointLight(0xc9a96e,8,20);scene.add(p1);var p2=new THREE.PointLight(0x4ecdc4,5,15);scene.add(p2);
+
+          /* Globe core */
+          var gGeo=new THREE.IcosahedronGeometry(2.6,4);
+          var globe=new THREE.Mesh(gGeo,mPP(0xc9a96e,.07,.07));
+          var globeW=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(2.63,3)),eL(0xc9a96e,.16));
+          scene.add(globe);scene.add(globeW);
+
+          /* Grid lines */
+          var gg=new THREE.Group();
+          for(var lat=0;lat<10;lat++){var ry=Math.PI/9*lat-Math.PI/2;var rn=new THREE.TorusGeometry(2.65*Math.cos(ry),.003,2,80);var rm=new THREE.Mesh(rn,mBB(0xc9a96e,.12));rm.rotation.x=Math.PI/2;rm.position.y=2.65*Math.sin(ry);gg.add(rm);}
+          for(var lon=0;lon<16;lon++){var ln=new THREE.TorusGeometry(2.65,.003,2,80);var lm=new THREE.Mesh(ln,mBB(0xc9a96e,.08));lm.rotation.y=Math.PI/8*lon;gg.add(lm);}
+          scene.add(gg);
+
+          /* Orbiting cubes */
+          var orbs=[];
+          for(var oi=0;oi<18;oi++){var sz=.22+Math.random()*.65;var g2=new THREE.BoxGeometry(sz,sz,sz,1,1,1);var om=new THREE.Mesh(g2,mPP(oi%3===0?0xc9a96e:oi%3===1?0x4ecdc4:0x8b5cf6,.11,.05));om.add(new THREE.LineSegments(new THREE.EdgesGeometry(g2),eL(oi%3===0?0xc9a96e:oi%3===1?0x4ecdc4:0x8b5cf6,.58)));scene.add(om);orbs.push({m:om,r:3.2+Math.random()*4.5,sp:.22+Math.random()*.52,ph:oi*.349,ti:.3+Math.random()*.55});}
+
+          /* Rings */
+          var rings=[];
+          [{r:3.6,tb:.007,c:0xc9a96e,op:.32,rx:1.05,rz:0,rs:.005},{r:5,tb:.005,c:0x4ecdc4,op:.22,rx:.78,rz:.78,rs:.004},{r:6.5,tb:.003,c:0xc9a96e,op:.13,rx:.62,rz:.62,rs:.003},{r:4.2,tb:.008,c:0x4ecdc4,op:.2,rx:1.57,rz:.52,rs:.007},{r:8,tb:.002,c:0xd4b87e,op:.08,rx:.52,rz:1.05,rs:.0018},{r:4.8,tb:.006,c:0x8b5cf6,op:.17,rx:.4,rz:.6,rs:.005},{r:7,tb:.003,c:0x8b5cf6,op:.11,rx:.7,rz:.78,rs:.0032}].forEach(function(d){var g=new THREE.TorusGeometry(d.r,d.tb,2,100),m=new THREE.Mesh(g,mBB(d.c,d.op));m.rotation.x=d.rx;m.rotation.z=d.rz;scene.add(m);rings.push({m:m,rs:d.rs});});
+
+          /* Threat pings */
+          var pings=[];
+          for(var pi=0;pi<24;pi++){var phi=Math.acos(2*Math.random()-1),theta=Math.random()*Math.PI*2,rr=2.8;var pd=new THREE.Mesh(new THREE.SphereGeometry(.06,5,5),new THREE.MeshBasicMaterial({color:pi%4===0?0xff4466:pi%4===1?0xc9a96e:pi%4===2?0x22c55e:0x4ecdc4,transparent:true,opacity:.85}));pd.position.set(rr*Math.sin(phi)*Math.cos(theta),rr*Math.cos(phi),rr*Math.sin(phi)*Math.sin(theta));scene.add(pd);pings.push({m:pd,fp:Math.random()*6.28,fs:.3+Math.random()*.7});}
+
+          /* Icosa shells */
+          [[3.8,.055,0xc9a96e],[5.2,.034,0x4ecdc4],[7,.02,0x8b5cf6]].forEach(function(d){scene.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(d[0],1)),eL(d[2],d[1])));});
+
+          /* Particles */
+          function mkSP2(n,mn,mx2,col,sz,op){var g=new THREE.BufferGeometry(),pos=new Float32Array(n*3);for(var ii=0;ii<n;ii++){var r=mn+Math.random()*(mx2-mn),th=Math.random()*6.28,ph=Math.acos(2*Math.random()-1);pos[ii*3]=r*Math.sin(ph)*Math.cos(th);pos[ii*3+1]=r*Math.sin(ph)*Math.sin(th);pos[ii*3+2]=r*Math.cos(ph);}g.setAttribute('position',new THREE.BufferAttribute(pos,3));return new THREE.Points(g,new THREE.PointsMaterial({color:col,size:sz,transparent:true,opacity:op,sizeAttenuation:true}));}
+          var sp1=mkSP2(700,2.8,8.5,0xc9a96e,.038,.5),sp2=mkSP2(220,4.5,7,0x4ecdc4,.048,.38),sp3=mkSP2(140,3.5,6,0x8b5cf6,.042,.3);
+          scene.add(sp1);scene.add(sp2);scene.add(sp3);
+
+          var hmx2=0,hmy2=0,thmx2=0,thmy2=0;
+          document.addEventListener('mousemove',function(e){var rc=canvas.getBoundingClientRect();thmx2=(e.clientX-rc.left-rc.width/2)/(rc.width/2);thmy2=-(e.clientY-rc.top-rc.height/2)/(rc.height/2);});
+          autoResize(renderer,camera,W,H);
+          var clk=new THREE.Clock();
+
+          (function anim(){requestAnimationFrame(anim);var t=clk.getElapsedTime();
+            hmx2+=(thmx2-hmx2)*.055;hmy2+=(thmy2-hmy2)*.055;
+            gg.rotation.y=t*.1;globe.rotation.y=t*.1;globeW.rotation.y=t*.1;
+            orbs.forEach(function(o){o.m.rotation.x+=.007;o.m.rotation.y+=.01;var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.42,Math.sin(a)*o.r*.68);});
+            rings.forEach(function(r,i){r.m.rotation.z+=r.rs*(i%2===0?1:-1);r.m.rotation.y+=r.rs*.55;r.m.rotation.x+=r.rs*.22;});
+            pings.forEach(function(p){var s=.6+Math.sin(t*p.fs+p.fp)*.4;p.m.scale.setScalar(s);p.m.material.opacity=.45+Math.sin(t*p.fs+p.fp)*.42;});
+            sp1.rotation.y=t*.018;sp1.rotation.x=t*.009;sp2.rotation.y=-t*.014;sp3.rotation.y=t*.016;
+            camera.position.x=hmx2*1.8;camera.position.y=hmy2*1.4;camera.lookAt(hmx2*.22,hmy2*.18,0);
+            p1.position.set(4+Math.sin(t*.45)*2.5,4+Math.cos(t*.35)*2,6);p2.position.set(-4+Math.cos(t*.38)*2,-3+Math.sin(t*.28)*2,5);
+            renderer.render(scene,camera);})();
+        })();
+
+        /* ══════════════════════════════
+           5-8. MINI WIDGET SCENES
+        ══════════════════════════════ */
+        function makeMini(id, accent1, accent2, style){
+          var canvas=document.getElementById(id);if(!canvas)return;
+          var wrap=canvas.parentElement;
+          var W=function(){return wrap.offsetWidth;},H=function(){return wrap.offsetHeight;};
+          var renderer=mkRenderer(canvas);renderer.setSize(W(),H());
+          var scene=new THREE.Scene();
+          var camera=new THREE.PerspectiveCamera(50,W()/H(),.1,50);camera.position.set(0,0,6);
+
+          scene.add(new THREE.AmbientLight(0x04040a,2));
+          var kL=new THREE.SpotLight(0xc9a96e,18,28,Math.PI/4,.3,1.4);kL.position.set(5,8,7);scene.add(kL);
+          var fL=new THREE.SpotLight(accent1,12,20,Math.PI/3,.4,1.6);fL.position.set(-5,3,5);scene.add(fL);
+          var p1=new THREE.PointLight(accent1,6,14);scene.add(p1);
+
+          var objects=[];
+
+          if(style==='nested'){
+            /* Nested rotating cubes + rings */
+            [[2.4,.07,.04,0xc9a96e],[1.5,.09,.05,accent1],[.85,.11,.04,accent2],[.42,.14,.03,0xc9a96e]].forEach(function(d,i){
+              var g=new THREE.BoxGeometry(d[0],d[0],d[0],2,2,2);
+              var m=new THREE.Mesh(g,mPP(d[3],d[1],d[2]));
+              m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(d[3],i===0?.6:.7)));
+              scene.add(m);objects.push({m:m,rx:(.004+i*.002)*(i%2===0?1:-1),ry:.005+i*.003,rz:.002+i*.001,type:'cube'});
+            });
+            /* Orbiting mini cubes */
+            for(var oi=0;oi<10;oi++){var sz=.18+Math.random()*.4;var g2=new THREE.BoxGeometry(sz,sz,sz,1,1,1);var om=new THREE.LineSegments(new THREE.EdgesGeometry(g2),eL(oi%2===0?accent1:accent2,.5));scene.add(om);objects.push({m:om,r:2+Math.random()*2.2,sp:.35+Math.random()*.55,ph:oi*.628,ti:.4+Math.random()*.45,type:'orb'});}
+            /* Rings */
+            [[2.8,.006,0xc9a96e,.28,1.05,0,.005],[3.6,.004,accent1,.18,.78,.78,.004],[4.2,.003,accent2,.12,.62,.62,.003]].forEach(function(d){var g=new THREE.TorusGeometry(d[0],d[1],2,80),m=new THREE.Mesh(g,mBB(d[2],d[3]));m.rotation.x=d[4];m.rotation.z=d[5];scene.add(m);objects.push({m:m,rs:d[6],type:'ring'});});
+
+          } else if(style==='orbs'){
+            /* Central icosa with many orbiters */
+            var ig=new THREE.IcosahedronGeometry(1.4,2);
+            var im=new THREE.Mesh(ig,mPP(accent1,.1,.06));
+            im.add(new THREE.LineSegments(new THREE.EdgesGeometry(ig),eL(accent1,.4)));
+            scene.add(im);objects.push({m:im,rx:.007,ry:.009,rz:.005,type:'cube'});
+            for(var oi2=0;oi2<12;oi2++){var sz2=.15+Math.random()*.45;var gg2=new THREE.BoxGeometry(sz2,sz2,sz2,1,1,1);var om2=new THREE.LineSegments(new THREE.EdgesGeometry(gg2),eL(oi2%3===0?0xc9a96e:oi2%3===1?accent1:accent2,.52));scene.add(om2);objects.push({m:om2,r:1.8+Math.random()*2.5,sp:.3+Math.random()*.6,ph:oi2*.523,ti:.35+Math.random()*.5,type:'orb'});}
+            [[2.4,.007,accent1,.3,1.05,0,.006],[3.2,.004,accent2,.18,.78,.78,.004],[4,.003,0xc9a96e,.12,.5,.5,.003]].forEach(function(d){var g=new THREE.TorusGeometry(d[0],d[1],2,80),m=new THREE.Mesh(g,mBB(d[2],d[3]));m.rotation.x=d[4];m.rotation.z=d[5];scene.add(m);objects.push({m:m,rs:d[6],type:'ring'});});
+
+          } else {
+            /* Scatter of various wireframe forms */
+            for(var i2=0;i2<18;i2++){
+              var t2=i2%3;var sz3=.2+Math.random()*.5;var g3;
+              if(t2===0)g3=new THREE.BoxGeometry(sz3,sz3,sz3,1,1,1);
+              else if(t2===1)g3=new THREE.OctahedronGeometry(sz3*.7,0);
+              else g3=new THREE.IcosahedronGeometry(sz3*.6,0);
+              var m3=new THREE.LineSegments(new THREE.EdgesGeometry(g3),eL(i2%3===0?0xc9a96e:i2%3===1?accent1:accent2,.12+Math.random()*.18));
+              m3.position.set((Math.random()-.5)*4.5,(Math.random()-.5)*3.5,-Math.random()*3);m3.rotation.set(Math.random()*6.28,Math.random()*6.28,Math.random()*6.28);
+              scene.add(m3);objects.push({m:m3,rs:{x:(Math.random()-.5)*.012,y:(Math.random()-.5)*.013,z:(Math.random()-.5)*.008},oy:m3.position.y,fp:Math.random()*6.28,fs:.18+Math.random()*.28,type:'scatter'});
+            }
+          }
+
+          autoResize(renderer,camera,W,H);
+          var clk=new THREE.Clock();
+          (function anim(){requestAnimationFrame(anim);var t=clk.getElapsedTime();
+            objects.forEach(function(o){
+              if(o.type==='cube'){o.m.rotation.x+=o.rx;o.m.rotation.y+=o.ry;o.m.rotation.z+=o.rz;}
+              else if(o.type==='orb'){var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.38,Math.sin(a)*o.r*.6);o.m.rotation.x+=.009;o.m.rotation.y+=.012;}
+              else if(o.type==='ring'){o.m.rotation.z+=o.rs;o.m.rotation.y+=o.rs*.6;o.m.rotation.x+=o.rs*.22;}
+              else{o.m.rotation.x+=o.rs.x;o.m.rotation.y+=o.rs.y;o.m.rotation.z+=o.rs.z;o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.2;}
+            });
+            p1.position.set(Math.sin(t*.45)*3,Math.cos(t*.38)*3,4.5);
+            renderer.render(scene,camera);})();
+        }
+
+        makeMini('MINI_A', 0xc9a96e, 0x4ecdc4, 'nested');
+        makeMini('MINI_B', 0xff4466, 0x8b5cf6, 'orbs');
+        makeMini('MINI_C', 0x4ecdc4, 0xc9a96e, 'scatter');
+        makeMini('MINI_D', 0x8b5cf6, 0xd4b87e, 'nested');
+
+        /* ══════════════════════════════
+           9. THREAT CORE (big bottom right)
+        ══════════════════════════════ */
+        (function(){
+          var canvas=document.getElementById('CORE3D');
+          var wrap=canvas.parentElement;
+          var W=function(){return wrap.offsetWidth;},H=function(){return wrap.offsetHeight;};
+          var renderer=mkRenderer(canvas);renderer.setSize(W(),H());
+          var scene=new THREE.Scene();
+          var camera=new THREE.PerspectiveCamera(48,W()/H(),.1,80);camera.position.set(0,0,8);
+
+          scene.add(new THREE.AmbientLight(0x04040e,2));
+          var kL=new THREE.SpotLight(0xc9a96e,22,38,Math.PI/5,.3,1.2);kL.position.set(8,12,10);scene.add(kL);
+          var fL=new THREE.SpotLight(0xff4466,18,30,Math.PI/4,.35,1.5);fL.position.set(-8,5,8);scene.add(fL);
+          var bL=new THREE.SpotLight(0x8b5cf6,10,22,Math.PI/3,.5,1.8);bL.position.set(-4,-9,7);scene.add(bL);
+          var p1=new THREE.PointLight(0xff4466,9,20);scene.add(p1);var p2=new THREE.PointLight(0xc9a96e,7,18);scene.add(p2);
+
+          /* Central threat cube mega-structure */
+          var coreObjs=[];
+          [[4.5,.06,.04,0xc9a96e],[3,.08,.05,0xff4466],[1.8,.1,.04,0x8b5cf6],[1,.13,.03,0x4ecdc4],[.5,.16,.04,0xc9a96e]].forEach(function(d,i){
+            var g=new THREE.BoxGeometry(d[0],d[0],d[0],3,3,3);
+            var m=new THREE.Mesh(g,mPP(d[2]===.04&&i===0?0xc9a96e:d[2]===.04&&i===2?0x8b5cf6:d[3],d[1],d[2]));
+            m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(d[3],i===0?.45:.65)));
+            scene.add(m);coreObjs.push({m:m,rx:(.003+i*.0025)*(i%2===0?1:-1),ry:.004+i*.003,rz:.002+i*.0015,type:'core'});
+          });
+
+          /* Many orbiting cubes at various distances */
+          for(var oi=0;oi<22;oi++){
+            var sz=.18+Math.random()*.62;
+            var g2=new THREE.BoxGeometry(sz,sz,sz,2,2,2);
+            var col=oi%4===0?0xc9a96e:oi%4===1?0xff4466:oi%4===2?0x4ecdc4:0x8b5cf6;
+            var om=new THREE.Mesh(g2,mPP(col,.1,.05));
+            om.add(new THREE.LineSegments(new THREE.EdgesGeometry(g2),eL(col,.6)));
+            scene.add(om);coreObjs.push({m:om,r:2.8+Math.random()*5,sp:.2+Math.random()*.55,ph:oi*.285,ti:.3+Math.random()*.6,type:'orb'});
+          }
+
+          /* Outer rings — many */
+          [{r:3.2,tb:.007,c:0xc9a96e,op:.28,rx:1.05,rz:0,rs:.006},{r:4.5,tb:.005,c:0xff4466,op:.22,rx:.78,rz:.78,rs:.005},{r:5.8,tb:.004,c:0xc9a96e,op:.15,rx:.62,rz:.62,rs:.004},{r:3.8,tb:.008,c:0x4ecdc4,op:.2,rx:1.57,rz:.52,rs:.007},{r:7,tb:.003,c:0xd4b87e,op:.1,rx:.52,rz:1.05,rs:.002},{r:4.8,tb:.006,c:0x8b5cf6,op:.18,rx:.4,rz:.6,rs:.005},{r:6.5,tb:.003,c:0x8b5cf6,op:.12,rx:.7,rz:.78,rs:.0035},{r:2.8,tb:.009,c:0xff4466,op:.25,rx:.3,rz:1.2,rs:.006},{r:8.5,tb:.002,c:0xc9a96e,op:.07,rx:.15,rz:.5,rs:.0016}].forEach(function(d){
+            var g=new THREE.TorusGeometry(d.r,d.tb,2,100),m=new THREE.Mesh(g,mBB(d.c,d.op));
+            m.rotation.x=d.rx;m.rotation.z=d.rz;scene.add(m);coreObjs.push({m:m,rs:d.rs,type:'ring'});
+          });
+
+          /* Icosa shells */
+          [[2.4,.06,0xc9a96e],[3.6,.04,0xff4466],[5,.025,0x8b5cf6],[6.5,.016,0x4ecdc4]].forEach(function(d){scene.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(d[0],1)),eL(d[2],d[1])));});
+
+          /* Threat pings — red dominant */
+          var tpings=[];
+          for(var pi=0;pi<18;pi++){var phi=Math.acos(2*Math.random()-1),theta=Math.random()*Math.PI*2,rr=2.5+Math.random()*.5;var pd=new THREE.Mesh(new THREE.SphereGeometry(.07,5,5),new THREE.MeshBasicMaterial({color:pi%3===0?0xff4466:pi%3===1?0xc9a96e:0x22c55e,transparent:true,opacity:.9}));pd.position.set(rr*Math.sin(phi)*Math.cos(theta),rr*Math.cos(phi),rr*Math.sin(phi)*Math.sin(theta));scene.add(pd);tpings.push({m:pd,fp:Math.random()*6.28,fs:.3+Math.random()*.7});}
+
+          /* Particles */
+          var spg=new THREE.BufferGeometry(),spPos=new Float32Array(800*3);
+          for(var si=0;si<800;si++){var sr=2+Math.random()*8,st=Math.random()*6.28,sphi=Math.acos(2*Math.random()-1);spPos[si*3]=sr*Math.sin(sphi)*Math.cos(st);spPos[si*3+1]=sr*Math.sin(sphi)*Math.sin(st);spPos[si*3+2]=sr*Math.cos(sphi);}
+          spg.setAttribute('position',new THREE.BufferAttribute(spPos,3));
+          var spPts=new THREE.Points(spg,new THREE.PointsMaterial({color:0xc9a96e,size:.038,transparent:true,opacity:.45,sizeAttenuation:true}));scene.add(spPts);
+          var rspg=new THREE.BufferGeometry(),rspPos=new Float32Array(300*3);
+          for(var si2=0;si2<300;si2++){var sr2=3+Math.random()*5,st2=Math.random()*6.28,sphi2=Math.acos(2*Math.random()-1);rspPos[si2*3]=sr2*Math.sin(sphi2)*Math.cos(st2);rspPos[si2*3+1]=sr2*Math.sin(sphi2)*Math.sin(st2);rspPos[si2*3+2]=sr2*Math.cos(sphi2);}
+          rspg.setAttribute('position',new THREE.BufferAttribute(rspPos,3));
+          var rPts=new THREE.Points(rspg,new THREE.PointsMaterial({color:0xff4466,size:.042,transparent:true,opacity:.35,sizeAttenuation:true}));scene.add(rPts);
+
+          var hmx3=0,hmy3=0,thmx3=0,thmy3=0;
+          document.addEventListener('mousemove',function(e){var rc=canvas.getBoundingClientRect();thmx3=(e.clientX-rc.left-rc.width/2)/(rc.width/2);thmy3=-(e.clientY-rc.top-rc.height/2)/(rc.height/2);});
+          autoResize(renderer,camera,W,H);
+          var clk=new THREE.Clock();
+
+          (function anim(){requestAnimationFrame(anim);var t=clk.getElapsedTime();
+            hmx3+=(thmx3-hmx3)*.055;hmy3+=(thmy3-hmy3)*.055;
+            coreObjs.forEach(function(o){
+              if(o.type==='core'){o.m.rotation.x+=o.rx;o.m.rotation.y+=o.ry;o.m.rotation.z+=o.rz;}
+              else if(o.type==='orb'){var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.42,Math.sin(a)*o.r*.68);o.m.rotation.x+=.007;o.m.rotation.y+=.01;}
+              else if(o.type==='ring'){o.m.rotation.z+=o.rs*(coreObjs.indexOf(o)%2===0?1:-1);o.m.rotation.y+=o.rs*.6;o.m.rotation.x+=o.rs*.22;}
+            });
+            tpings.forEach(function(p){var s=.6+Math.sin(t*p.fs+p.fp)*.42;p.m.scale.setScalar(s);p.m.material.opacity=.45+Math.sin(t*p.fs+p.fp)*.44;});
+            spPts.rotation.y=t*.014;spPts.rotation.x=t*.007;rPts.rotation.y=-t*.011;rPts.rotation.z=t*.008;
+            camera.position.x=hmx3*2;camera.position.y=hmy3*1.6;camera.lookAt(hmx3*.25,hmy3*.2,0);
+            p1.position.set(4+Math.sin(t*.45)*2.5,4+Math.cos(t*.35)*2,6);p2.position.set(-4+Math.cos(t*.38)*2,-3+Math.sin(t*.28)*2,5);
+            kL.intensity=22+Math.sin(t*.28)*7;fL.intensity=18+Math.sin(t*.22+1)*5;
+            renderer.render(scene,camera);})();
+        })();
+
+        })(); // end IIFE
     </script>
 </body>
 </html>
