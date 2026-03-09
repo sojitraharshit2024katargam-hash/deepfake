@@ -37,22 +37,6 @@
         /* ── Page ── */
         .page{position:relative;z-index:10}
 
-        /* ── Topbar ── */
-        .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid var(--s);background:rgba(4,4,10,.88);backdrop-filter:blur(28px);position:sticky;top:0;z-index:100}
-        .brand-row{display:flex;align-items:center;gap:14px}
-        .bmark{width:38px;height:38px;border:1px solid var(--g2);display:grid;place-items:center;color:var(--g);font-size:14px;transition:all .4s var(--ease)}
-        .bmark:hover{background:var(--g3);box-shadow:0 0 24px var(--g3)}
-        .btxt{font-family:'Syne',sans-serif;font-weight:800;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--g)}
-        .bsub{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--c4);margin-top:2px}
-        .nav{display:flex;align-items:center;gap:2px}
-        .nav a{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:9px 16px;color:var(--c3);transition:all .3s var(--ease);border:1px solid transparent}
-        .nav a:hover,.nav a.active{color:var(--g);border-color:var(--g3);background:var(--g4)}
-        .topbar-right{display:flex;align-items:center;gap:10px}
-        .tbtn{display:flex;align-items:center;gap:9px;padding:9px 18px;border:1px solid var(--s);color:var(--c3);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;background:transparent;cursor:none;transition:all .3s var(--ease)}
-        .tbtn:hover{border-color:var(--g2);color:var(--g);background:var(--g4)}
-        .tbtn.fill{background:var(--g);color:var(--ink);border-color:var(--g);font-weight:700}
-        .tbtn.fill:hover{background:#d4b87e}
-
         /* ── Hero ── */
         .hero-band{position:relative;height:560px;overflow:hidden;border-bottom:1px solid var(--s)}
         #HERO3D{position:absolute;inset:0;width:100%;height:100%}
@@ -253,23 +237,7 @@
 
     <div class="page">
 
-        <!-- TOPBAR -->
-        <div class="topbar">
-            <div class="brand-row">
-                <a href="/Home/Index" class="bmark"><i class="fa-solid fa-shield-halved"></i></a>
-                <div><div class="btxt">Deepfake Nexus</div><div class="bsub">Platform Features</div></div>
-            </div>
-            <nav class="nav">
-                <a href="/Home/Index">Home</a>
-                <a href="/Home/Features" class="active">Features</a>
-                <a href="/Home/Pricing">Pricing</a>
-                <a href="/Home/Dashboard">Dashboard</a>
-            </nav>
-            <div class="topbar-right">
-                <a class="tbtn" href="/Account/Login">Sign In</a>
-                <a class="tbtn fill" href="/Account/Register">Get Started</a>
-            </div>
-        </div>
+ 
 
         <!-- ── HERO ── -->
         <div class="hero-band">
