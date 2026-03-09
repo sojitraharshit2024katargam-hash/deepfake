@@ -1,0 +1,864 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Features — Deepfake Nexus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        html{overflow-x:hidden;scroll-behavior:smooth}
+        :root{
+          --g:#c9a96e;--g2:rgba(201,169,110,.45);--g3:rgba(201,169,110,.12);--g4:rgba(201,169,110,.07);
+          --c:#ede9e0;--c2:rgba(237,233,224,.65);--c3:rgba(237,233,224,.38);--c4:rgba(237,233,224,.14);
+          --ink:#04040a;--s:rgba(237,233,224,.08);--teal:#4ecdc4;--pur:#8b5cf6;--red:#ff4466;--ok:#22c55e;--warn:#f59e0b;
+          --ease:cubic-bezier(.16,1,.3,1);
+        }
+        body{background:var(--ink);color:var(--c);font-family:'Syne',sans-serif;overflow-x:hidden;cursor:none}
+        a{color:inherit;text-decoration:none}
+
+        /* ── Cursor ── */
+        #CUR{position:fixed;width:8px;height:8px;border-radius:50%;background:var(--g);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen}
+        #CUR2{position:fixed;width:32px;height:32px;border-radius:50%;border:1.5px solid var(--g2);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .5s var(--ease),height .5s var(--ease),border-color .4s,background .4s}
+
+        /* ── Global BG ── */
+        #BG{position:fixed;inset:0;z-index:0;pointer-events:none}
+        .noise{position:fixed;inset:-200px;z-index:1;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23n)'/%3E%3C/svg%3E");background-size:220px;animation:nn 9s steps(4) infinite}
+        @@keyframes nn{to{transform:translate(-4%,3%)}}
+        .vig{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 80% 70% at 50% 40%,transparent 30%,rgba(4,4,10,.75) 100%)}
+        .gridL{position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(201,169,110,.013) 1px,transparent 1px),linear-gradient(90deg,rgba(201,169,110,.013) 1px,transparent 1px);background-size:76px 76px}
+        .scanBeam{position:fixed;left:0;top:-2px;width:100%;height:2px;z-index:2;pointer-events:none;background:linear-gradient(90deg,transparent 0%,var(--g2) 40%,rgba(201,169,110,.7) 50%,var(--g2) 60%,transparent 100%);box-shadow:0 0 40px 2px var(--g2);animation:SB 14s linear infinite}
+        @@keyframes SB{0%{top:-4px;opacity:0}4%{opacity:1}96%{opacity:.5}100%{top:100vh;opacity:0}}
+
+        /* ── Page ── */
+        .page{position:relative;z-index:10}
+
+        /* ── Topbar ── */
+        .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid var(--s);background:rgba(4,4,10,.88);backdrop-filter:blur(28px);position:sticky;top:0;z-index:100}
+        .brand-row{display:flex;align-items:center;gap:14px}
+        .bmark{width:38px;height:38px;border:1px solid var(--g2);display:grid;place-items:center;color:var(--g);font-size:14px;transition:all .4s var(--ease)}
+        .bmark:hover{background:var(--g3);box-shadow:0 0 24px var(--g3)}
+        .btxt{font-family:'Syne',sans-serif;font-weight:800;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--g)}
+        .bsub{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--c4);margin-top:2px}
+        .nav{display:flex;align-items:center;gap:2px}
+        .nav a{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:9px 16px;color:var(--c3);transition:all .3s var(--ease);border:1px solid transparent}
+        .nav a:hover,.nav a.active{color:var(--g);border-color:var(--g3);background:var(--g4)}
+        .topbar-right{display:flex;align-items:center;gap:10px}
+        .tbtn{display:flex;align-items:center;gap:9px;padding:9px 18px;border:1px solid var(--s);color:var(--c3);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;background:transparent;cursor:none;transition:all .3s var(--ease)}
+        .tbtn:hover{border-color:var(--g2);color:var(--g);background:var(--g4)}
+        .tbtn.fill{background:var(--g);color:var(--ink);border-color:var(--g);font-weight:700}
+        .tbtn.fill:hover{background:#d4b87e}
+
+        /* ── Hero ── */
+        .hero-band{position:relative;height:560px;overflow:hidden;border-bottom:1px solid var(--s)}
+        #HERO3D{position:absolute;inset:0;width:100%;height:100%}
+        .hud-c{position:absolute;width:20px;height:20px;border-color:var(--g2);border-style:solid;z-index:3;pointer-events:none}
+        .hud-tl{top:14px;left:14px;border-width:1px 0 0 1px}
+        .hud-tr{top:14px;right:14px;border-width:1px 1px 0 0}
+        .hud-bl{bottom:14px;left:14px;border-width:0 0 1px 1px}
+        .hud-br{bottom:14px;right:14px;border-width:0 1px 1px 0}
+        .hud-lbl{position:absolute;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--g);border:1px solid var(--g3);background:rgba(4,4,10,.8);backdrop-filter:blur(10px);padding:4px 10px;z-index:3;pointer-events:none}
+        .hud-lbl.tl{top:10px;left:38px}
+        .hud-lbl.br{bottom:10px;right:38px}
+        .hud-lbl.tr{top:10px;right:38px}
+        .scanL{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--g2),transparent);animation:SL 3.5s linear infinite;z-index:3;pointer-events:none;top:0}
+        @@keyframes SL{from{top:0;opacity:0}6%{opacity:1}94%{opacity:.6}to{top:100%;opacity:0}}
+        .hero-overlay{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top,rgba(4,4,10,.96) 0%,rgba(4,4,10,.35) 60%,transparent 100%);pointer-events:none}
+        .hero-center{text-align:center;pointer-events:auto;max-width:780px;padding:0 40px}
+        .hero-badge{display:inline-flex;align-items:center;gap:10px;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--g);border:1px solid var(--g3);background:rgba(201,169,110,.06);padding:8px 16px;margin-bottom:24px}
+        .sdot{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px rgba(34,197,94,.8);animation:LP 1.8s infinite;display:inline-block}
+        @@keyframes LP{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+        .hero-h{font-family:'Instrument Serif',serif;font-size:clamp(52px,7vw,96px);font-weight:400;line-height:.94;letter-spacing:-.04em;margin-bottom:20px}
+        .hero-h em{font-style:italic;color:var(--g)}
+        .hero-sub{font-size:15px;color:var(--c3);line-height:1.75;max-width:58ch;margin:0 auto 28px}
+        .hero-cta-row{display:flex;align-items:center;justify-content:center;gap:12px}
+
+        /* ── Stat ticker ── */
+        .ticker-strip{border-bottom:1px solid var(--s);overflow:hidden;height:42px;display:flex;align-items:center}
+        .ticker-inner{display:flex;gap:0;animation:TK 32s linear infinite;width:max-content}
+        @@keyframes TK{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+        .tick-item{display:flex;align-items:center;gap:14px;padding:0 32px;border-right:1px solid var(--s);white-space:nowrap;height:42px}
+        .tick-num{font-family:'Instrument Serif',serif;font-size:17px;letter-spacing:-.03em;color:var(--g)}
+        .tick-lbl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--c4)}
+
+        /* ── Section layout ── */
+        .sec{padding:100px 40px;position:relative}
+        .sec-inner{max-width:1280px;margin:0 auto}
+        .sec-eyebrow{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--g);display:flex;align-items:center;gap:12px;margin-bottom:16px}
+        .sec-eyebrow::before{content:'';width:28px;height:1px;background:var(--g2)}
+        .sec-h{font-family:'Instrument Serif',serif;font-size:clamp(38px,5vw,68px);font-weight:400;line-height:1.02;letter-spacing:-.04em;margin-bottom:16px}
+        .sec-h em{font-style:italic;color:var(--g)}
+        .sec-sub{font-size:14px;color:var(--c3);line-height:1.8;max-width:54ch}
+
+        /* ── Feature grid — modules ── */
+        .modules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--s);margin-top:64px;border:1px solid var(--s)}
+        .mod-card{background:var(--ink);padding:36px;position:relative;overflow:hidden;transition:background .4s var(--ease);cursor:default}
+        .mod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--g3),transparent);transform:scaleX(0);transition:transform .6s var(--ease)}
+        .mod-card:hover{background:#060710}
+        .mod-card:hover::before{transform:scaleX(1)}
+        .mod-canvas{width:100%;height:140px;margin-bottom:22px;position:relative;overflow:hidden}
+        .mod-canvas canvas{width:100%!important;height:100%!important;display:block}
+        .mod-canvas-hud{position:absolute;inset:0;pointer-events:none}
+        .mod-canvas-corner{position:absolute;width:10px;height:10px;border-color:var(--g3);border-style:solid}
+        .mod-canvas-corner.tl{top:6px;left:6px;border-width:1px 0 0 1px}
+        .mod-canvas-corner.tr{top:6px;right:6px;border-width:1px 1px 0 0}
+        .mod-canvas-corner.bl{bottom:6px;left:6px;border-width:0 0 1px 1px}
+        .mod-canvas-corner.br2{bottom:6px;right:6px;border-width:0 1px 1px 0}
+        .mod-icon-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+        .mod-icon{width:36px;height:36px;border:1px solid var(--g3);display:grid;place-items:center;font-size:13px;color:var(--g);flex-shrink:0}
+        .mod-num{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.18em;color:var(--c4)}
+        .mod-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:10px;letter-spacing:-.01em}
+        .mod-desc{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--c3);line-height:1.85;letter-spacing:.04em;margin-bottom:18px}
+        .mod-tags{display:flex;flex-wrap:wrap;gap:6px}
+        .tag{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border:1px solid var(--s);color:var(--c4)}
+        .mod-link{display:inline-flex;align-items:center;gap:7px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--g);margin-top:14px;transition:gap .3s var(--ease)}
+        .mod-link:hover{gap:12px}
+
+        /* ── 3D divider band ── */
+        .band3d{position:relative;height:320px;overflow:hidden;border-top:1px solid var(--s);border-bottom:1px solid var(--s)}
+        .band3d canvas{width:100%!important;height:100%!important;display:block}
+        .band3d-over{position:absolute;inset:0;z-index:2;pointer-events:none;display:flex;align-items:center;justify-content:center;background:linear-gradient(to right,rgba(4,4,10,.85) 0%,transparent 25%,transparent 75%,rgba(4,4,10,.85) 100%)}
+        .band3d-text{text-align:center}
+        .band3d-n{font-family:'Instrument Serif',serif;font-size:clamp(48px,6vw,80px);font-weight:400;letter-spacing:-.05em;line-height:1;color:var(--c)}
+        .band3d-n b{color:var(--g)}
+        .band3d-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--c4);margin-top:8px}
+
+        /* ── Detail feature rows ── */
+        .feat-row{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--s);border:1px solid var(--s);margin-top:80px}
+        .feat-cell{background:var(--ink);padding:48px;display:flex;flex-direction:column;gap:20px;transition:background .4s}
+        .feat-cell:hover{background:#060710}
+        .feat-cell.c3d-cell{padding:0;overflow:hidden;height:340px}
+        .feat-cell.c3d-cell canvas{width:100%!important;height:100%!important;display:block}
+        .feat-num{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--g);opacity:.5}
+        .feat-icon{font-size:1.5rem;color:var(--g)}
+        .feat-title{font-family:'Instrument Serif',serif;font-size:clamp(26px,3vw,38px);font-weight:400;line-height:1.08;letter-spacing:-.03em}
+        .feat-title em{font-style:italic;color:var(--g)}
+        .feat-body{font-family:'DM Mono',monospace;font-size:10px;color:var(--c3);line-height:1.9;letter-spacing:.04em}
+        .feat-list{display:flex;flex-direction:column;gap:0}
+        .feat-list-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--s);font-family:'DM Mono',monospace;font-size:9.5px;color:var(--c3);letter-spacing:.06em}
+        .feat-list-item i{color:var(--ok);font-size:11px;flex-shrink:0}
+        .feat-list-item:first-child{border-top:none}
+
+        /* ── Stats bar ── */
+        .stats-bar{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--s);border-bottom:1px solid var(--s)}
+        .stat-c{padding:36px 28px;border-right:1px solid var(--s);position:relative;overflow:hidden;transition:background .4s;cursor:default}
+        .stat-c:last-child{border-right:none}
+        .stat-c::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--g);transform:scaleX(0);transform-origin:left;transition:transform .8s var(--ease)}
+        .stat-c:hover{background:rgba(201,169,110,.03)}
+        .stat-c:hover::after{transform:scaleX(1)}
+        .stat-num{font-family:'Instrument Serif',serif;font-size:clamp(28px,3.5vw,52px);font-weight:400;line-height:1;letter-spacing:-.04em}
+        .stat-num b{color:var(--g)}
+        .stat-lbl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--c4);margin-top:8px;line-height:1.6}
+
+        /* ── Comparison table ── */
+        .compare-wrap{margin-top:80px;overflow-x:auto}
+        .compare-table{width:100%;border-collapse:collapse;border:1px solid var(--s)}
+        .compare-table th{padding:16px 22px;text-align:left;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;border-bottom:1px solid var(--s);background:rgba(201,169,110,.04)}
+        .compare-table th.feature-col{color:var(--c4)}
+        .compare-table th.plan-col{color:var(--g)}
+        .compare-table td{padding:14px 22px;font-family:'DM Mono',monospace;font-size:9px;color:var(--c3);border-bottom:1px solid rgba(237,233,224,.04);letter-spacing:.06em}
+        .compare-table td.feature-name{color:var(--c2);font-size:9.5px}
+        .compare-table tr:hover td{background:rgba(201,169,110,.025)}
+        .check{color:var(--ok);font-size:12px}
+        .cross{color:var(--c4);font-size:12px}
+        .partial{color:var(--warn);font-size:10px;letter-spacing:.1em;font-family:'DM Mono',monospace}
+
+        /* ── How it works ── */
+        .how-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px;background:var(--s);border:1px solid var(--s);margin-top:64px}
+        .how-step{background:var(--ink);padding:32px;position:relative;overflow:hidden;transition:background .4s}
+        .how-step:hover{background:#060710}
+        .how-step::before{content:attr(data-n);position:absolute;top:-16px;right:14px;font-family:'Instrument Serif',serif;font-size:110px;font-style:italic;color:rgba(201,169,110,.04);line-height:1;pointer-events:none;transition:color .5s}
+        .how-step:hover::before{color:rgba(201,169,110,.07)}
+        .how-step-num{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--g);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+        .how-step-num::before{content:'';width:14px;height:1px;background:var(--g2)}
+        .how-step-icon{font-size:1.6rem;color:var(--g);margin-bottom:14px;display:block}
+        .how-step-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:10px;letter-spacing:-.01em}
+        .how-step-body{font-family:'DM Mono',monospace;font-size:9px;color:var(--c4);line-height:1.85;letter-spacing:.04em}
+
+        /* ── API section ── */
+        .api-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--s);border:1px solid var(--s);margin-top:64px}
+        .api-cell{background:var(--ink);padding:40px}
+        .api-terminal{background:rgba(0,0,0,.5);border:1px solid var(--s);padding:22px;font-family:'DM Mono',monospace;font-size:10px;line-height:2;letter-spacing:.05em;position:relative;overflow:hidden}
+        .api-terminal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--g3),transparent)}
+        .t-comment{color:var(--c4)}
+        .t-key{color:var(--pur)}
+        .t-val{color:var(--teal)}
+        .t-str{color:var(--g)}
+        .t-ok{color:var(--ok)}
+        .t-kw{color:#ff4466}
+        .t-cursor{display:inline-block;width:8px;height:12px;background:var(--g);vertical-align:middle;animation:BC .9s step-end infinite}
+        @@keyframes BC{0%,100%{opacity:1}50%{opacity:0}}
+        .endpoint-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--s);font-family:'DM Mono',monospace;font-size:9.5px}
+        .endpoint-row:first-child{border-top:none}
+        .method{padding:3px 9px;font-size:8px;letter-spacing:.12em;font-weight:700;border:1px solid transparent}
+        .method.post{color:var(--ok);border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.06)}
+        .method.get{color:var(--teal);border-color:rgba(78,205,196,.3);background:rgba(78,205,196,.06)}
+        .method.del{color:var(--red);border-color:rgba(255,68,102,.3);background:rgba(255,68,102,.06)}
+        .ep-path{color:var(--c2);flex:1}
+        .ep-desc{color:var(--c4);font-size:8.5px}
+
+        /* ── CTA ── */
+        .cta-band{position:relative;overflow:hidden;border-top:1px solid var(--s)}
+        .cta-3d{position:absolute;inset:0}
+        .cta-3d canvas{width:100%!important;height:100%!important;display:block}
+        .cta-over{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top,rgba(4,4,10,.96) 0%,rgba(4,4,10,.55) 55%,rgba(4,4,10,.85) 100%)}
+        .cta-content{text-align:center;max-width:700px;padding:100px 40px}
+        .cta-h{font-family:'Instrument Serif',serif;font-size:clamp(42px,5.5vw,78px);font-weight:400;line-height:.96;letter-spacing:-.045em;margin-bottom:18px}
+        .cta-h em{font-style:italic;color:var(--g)}
+        .cta-sub{font-size:14px;color:var(--c3);line-height:1.75;margin-bottom:28px}
+        .cta-btns{display:flex;align-items:center;justify-content:center;gap:12px}
+
+        /* ── Footer ── */
+        .footer{padding:20px 40px;border-top:1px solid var(--s);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--c4);display:flex;justify-content:space-between;align-items:center}
+
+        /* ── Scroll reveal ── */
+        .reveal{opacity:0;transform:translateY(28px);transition:opacity .85s var(--ease),transform .85s var(--ease)}
+        .reveal.vis{opacity:1;transform:none}
+
+        /* ── KBD ── */
+        .KBD{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--c4);border:1px solid var(--s);padding:3px 8px;background:rgba(0,0,0,.3)}
+
+        /* ── Toast ── */
+        .toast-wrap{position:fixed;right:20px;bottom:20px;z-index:3000;display:grid;gap:8px;width:min(340px,calc(100vw - 40px))}
+        .toastx{border:1px solid var(--s);background:rgba(4,4,10,.96);backdrop-filter:blur(24px);padding:13px 15px;display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;animation:TI .4s var(--ease);position:relative;overflow:hidden}
+        .toastx::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--g),transparent)}
+        @@keyframes TI{from{transform:translateX(10px);opacity:0}to{transform:translateX(0);opacity:1}}
+        .t-ic{width:30px;height:30px;border:1px solid var(--g3);display:grid;place-items:center;font-size:11px}
+        .t-h{font-size:11px;font-weight:700}
+        .t-p{font-family:'DM Mono',monospace;font-size:8px;color:var(--c3);margin-top:2px}
+        .t-x{background:none;border:none;cursor:none;color:var(--c4);font-size:12px;padding:4px;transition:color .2s}
+        .t-x:hover{color:var(--c)}
+
+        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:rgba(4,4,10,.8)}::-webkit-scrollbar-thumb{background:var(--g2)}
+        ::selection{background:rgba(201,169,110,.2);color:var(--c)}
+
+        @@media(max - width:1100px){.modules-grid{grid-template-columns:1fr 1fr}.how-grid{grid-template-columns:1fr 1fr}.stats-bar{grid-template-columns:1fr 1fr}.feat-row{grid-template-columns:1fr}}
+        @@media(max - width:720px){.modules-grid{grid-template-columns:1fr}.api-grid{grid-template-columns:1fr}.nav{display:none}.topbar{padding:14px 20px}.sec{padding:64px 20px}.hero-band{height:460px}}
+    </style>
+</head>
+<body>
+
+    <div id="CUR"></div>
+    <div id="CUR2"></div>
+    <canvas id="BG"></canvas>
+    <div class="noise"></div>
+    <div class="vig"></div>
+    <div class="gridL"></div>
+    <div class="scanBeam"></div>
+    <div class="toast-wrap" id="TW"></div>
+
+    <div class="page">
+
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="brand-row">
+                <a href="/Home/Index" class="bmark"><i class="fa-solid fa-shield-halved"></i></a>
+                <div><div class="btxt">Deepfake Nexus</div><div class="bsub">Platform Features</div></div>
+            </div>
+            <nav class="nav">
+                <a href="/Home/Index">Home</a>
+                <a href="/Home/Features" class="active">Features</a>
+                <a href="/Home/Pricing">Pricing</a>
+                <a href="/Home/Dashboard">Dashboard</a>
+            </nav>
+            <div class="topbar-right">
+                <a class="tbtn" href="/Account/Login">Sign In</a>
+                <a class="tbtn fill" href="/Account/Register">Get Started</a>
+            </div>
+        </div>
+
+        <!-- ── HERO ── -->
+        <div class="hero-band">
+            <canvas id="HERO3D"></canvas>
+            <div class="hud-c hud-tl"></div><div class="hud-c hud-tr"></div>
+            <div class="hud-c hud-bl"></div><div class="hud-c hud-br"></div>
+            <div class="hud-lbl tl">PLATFORM CAPABILITIES · FULL FEATURE INDEX</div>
+            <div class="hud-lbl tr">v3.1 · <span id="statusTxt">ALL SYSTEMS LIVE</span></div>
+            <div class="hud-lbl br">5 DETECTION MODULES · REST API · ENTERPRISE</div>
+            <div class="scanL"></div>
+            <div class="hero-overlay">
+                <div class="hero-center">
+                    <div class="hero-badge"><span class="sdot"></span>Full-Spectrum AI Detection Suite</div>
+                    <h1 class="hero-h">Every <em>tool</em> you<br>need to fight<br><em>deepfakes</em></h1>
+                    <p class="hero-sub">Five specialized detection modules, a powerful REST API, enterprise-grade security, and real-time threat intelligence — all in one unified platform.</p>
+                    <div class="hero-cta-row">
+                        <a class="tbtn fill" href="/Account/Register" style="padding:13px 28px;font-size:10px"><i class="fa-solid fa-bolt"></i> Start Free Trial</a>
+                        <a class="tbtn" href="/Home/Dashboard" style="padding:13px 28px;font-size:10px"><i class="fa-solid fa-gauge-high"></i> View Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── TICKER ── -->
+        <div class="ticker-strip">
+            <div class="ticker-inner" id="ticker"></div>
+        </div>
+
+        <!-- ── STATS BAR ── -->
+        <div class="stats-bar">
+            <div class="stat-c reveal"><div class="stat-num"><span class="cnt" data-v="99.7">0</span><b>%</b></div><div class="stat-lbl">Detection<br>accuracy</div></div>
+            <div class="stat-c reveal" style="transition-delay:.08s"><div class="stat-num"><span class="cnt" data-v="5">0</span><b style="color:var(--c3);font-size:.5em"> modules</b></div><div class="stat-lbl">Specialized<br>detection engines</div></div>
+            <div class="stat-c reveal" style="transition-delay:.16s"><div class="stat-num"><span class="cnt" data-v="1.2">0</span><b style="color:var(--c3);font-size:.45em">s</b></div><div class="stat-lbl">Avg analysis<br>response time</div></div>
+            <div class="stat-c reveal" style="transition-delay:.24s"><div class="stat-num"><span class="cnt" data-v="2.4">0</span><b style="color:var(--c3);font-size:.45em">M+</b></div><div class="stat-lbl">Threats<br>detected</div></div>
+            <div class="stat-c reveal" style="transition-delay:.32s"><div class="stat-num"><span class="cnt" data-v="99.9">0</span><b>%</b></div><div class="stat-lbl">API<br>uptime SLA</div></div>
+        </div>
+
+        <!-- ── MODULES SECTION ── -->
+        <div class="sec">
+            <div class="sec-inner">
+                <div class="sec-eyebrow reveal">Detection Modules</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end">
+                    <div>
+                        <h2 class="sec-h reveal">Five <em>specialist</em><br>engines</h2>
+                    </div>
+                    <div>
+                        <p class="sec-sub reveal" style="transition-delay:.1s">Each module is trained on domain-specific datasets and optimised for its attack surface — from phishing emails to synthetic media and everything between.</p>
+                    </div>
+                </div>
+
+                <div class="modules-grid reveal" style="transition-delay:.18s">
+
+                    <!-- Email -->
+                    <div class="mod-card">
+                        <div class="mod-canvas">
+                            <canvas id="MC_0"></canvas>
+                            <div class="mod-canvas-hud"><div class="mod-canvas-corner tl"></div><div class="mod-canvas-corner tr"></div><div class="mod-canvas-corner bl"></div><div class="mod-canvas-corner br2"></div></div>
+                        </div>
+                        <div class="mod-icon-row">
+                            <div class="mod-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+                            <span class="mod-num">MODULE 01</span>
+                        </div>
+                        <div class="mod-title">Email Analysis</div>
+                        <div class="mod-desc">Deep behavioural and syntactic analysis of email content. Detects spoofing, phishing templates, malicious payloads, and compromised sender identities with multi-layer scoring.</div>
+                        <div class="mod-tags">
+                            <span class="tag">Spoofing</span><span class="tag">Phishing</span><span class="tag">Malware</span><span class="tag">Auth Check</span>
+                        </div>
+                        <a class="mod-link" href="/Modules/Email">Explore module <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Media -->
+                    <div class="mod-card">
+                        <div class="mod-canvas">
+                            <canvas id="MC_1"></canvas>
+                            <div class="mod-canvas-hud"><div class="mod-canvas-corner tl"></div><div class="mod-canvas-corner tr"></div><div class="mod-canvas-corner bl"></div><div class="mod-canvas-corner br2"></div></div>
+                        </div>
+                        <div class="mod-icon-row">
+                            <div class="mod-icon"><i class="fa-solid fa-photo-film"></i></div>
+                            <span class="mod-num">MODULE 02</span>
+                        </div>
+                        <div class="mod-title">Media Detection</div>
+                        <div class="mod-desc">Forensic analysis of images and video for GAN artifacts, facial manipulation, temporal inconsistencies, and metadata tampering across all major formats.</div>
+                        <div class="mod-tags">
+                            <span class="tag">GAN Detect</span><span class="tag">Face Swap</span><span class="tag">EXIF Forge</span><span class="tag">Video</span>
+                        </div>
+                        <a class="mod-link" href="/Modules/Media">Explore module <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Website -->
+                    <div class="mod-card">
+                        <div class="mod-canvas">
+                            <canvas id="MC_2"></canvas>
+                            <div class="mod-canvas-hud"><div class="mod-canvas-corner tl"></div><div class="mod-canvas-corner tr"></div><div class="mod-canvas-corner bl"></div><div class="mod-canvas-corner br2"></div></div>
+                        </div>
+                        <div class="mod-icon-row">
+                            <div class="mod-icon"><i class="fa-solid fa-globe"></i></div>
+                            <span class="mod-num">MODULE 03</span>
+                        </div>
+                        <div class="mod-title">Website Scanner</div>
+                        <div class="mod-desc">Full-page crawl and DOM analysis to identify spoofed brands, malicious scripts, typosquatting domains, and credential harvesting infrastructure.</div>
+                        <div class="mod-tags">
+                            <span class="tag">Typosquat</span><span class="tag">DOM Inject</span><span class="tag">Brand Spoof</span><span class="tag">TLS Check</span>
+                        </div>
+                        <a class="mod-link" href="/Modules/Website">Explore module <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Scam -->
+                    <div class="mod-card">
+                        <div class="mod-canvas">
+                            <canvas id="MC_3"></canvas>
+                            <div class="mod-canvas-hud"><div class="mod-canvas-corner tl"></div><div class="mod-canvas-corner tr"></div><div class="mod-canvas-corner bl"></div><div class="mod-canvas-corner br2"></div></div>
+                        </div>
+                        <div class="mod-icon-row">
+                            <div class="mod-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <span class="mod-num">MODULE 04</span>
+                        </div>
+                        <div class="mod-title">Scam Detector</div>
+                        <div class="mod-desc">NLP-powered scam classification across social engineering, advance-fee fraud, romance scams, and investment fraud. Integrates with messaging platforms via webhook.</div>
+                        <div class="mod-tags">
+                            <span class="tag">Social Eng.</span><span class="tag">Advance Fee</span><span class="tag">Romance</span><span class="tag">Investment</span>
+                        </div>
+                        <a class="mod-link" href="/Modules/Scam">Explore module <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Image Gen -->
+                    <div class="mod-card">
+                        <div class="mod-canvas">
+                            <canvas id="MC_4"></canvas>
+                            <div class="mod-canvas-hud"><div class="mod-canvas-corner tl"></div><div class="mod-canvas-corner tr"></div><div class="mod-canvas-corner bl"></div><div class="mod-canvas-corner br2"></div></div>
+                        </div>
+                        <div class="mod-icon-row">
+                            <div class="mod-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                            <span class="mod-num">MODULE 05</span>
+                        </div>
+                        <div class="mod-title">AI Image Generator</div>
+                        <div class="mod-desc">Latent diffusion synthesis engine for generating reference media, training adversarial examples, and building red-team test datasets for your own detection pipelines.</div>
+                        <div class="mod-tags">
+                            <span class="tag">Diffusion</span><span class="tag">Red Team</span><span class="tag">2K Output</span><span class="tag">API Ready</span>
+                        </div>
+                        <a class="mod-link" href="/Modules/ImageGenerator">Explore module <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Platform card -->
+                    <div class="mod-card" style="background:rgba(201,169,110,.04);border:none">
+                        <div style="height:100%;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:16px 0">
+                            <div style="font-family:'Instrument Serif',serif;font-size:32px;font-weight:400;line-height:1.1;letter-spacing:-.03em">All modules<br>accessible<br>via <em style="color:var(--g)">one API</em></div>
+                            <p style="font-family:'DM Mono',monospace;font-size:9.5px;color:var(--c3);line-height:1.85;letter-spacing:.04em">A single endpoint with unified authentication. Batch requests, webhooks, rate limiting, and full audit logs included at every tier.</p>
+                            <a class="tbtn fill" href="/Account/Register" style="width:fit-content;font-size:9px"><i class="fa-solid fa-key"></i> Get API Key</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ── DIVIDER 3D BAND ── -->
+        <div class="band3d">
+            <canvas id="BAND3D"></canvas>
+            <div class="band3d-over">
+                <div class="band3d-text reveal">
+                    <div class="band3d-n"><b>2.4M+</b><br>threats detected</div>
+                    <div class="band3d-lbl">and counting · updated in real time</div>
+                </div>
+            </div>
+            <div class="hud-lbl tl" style="position:absolute;z-index:3">THREAT INTELLIGENCE FEED</div>
+            <div class="hud-lbl br" style="position:absolute;z-index:3">LIVE</div>
+        </div>
+
+        <!-- ── FEATURE DEEP DIVES ── -->
+        <div class="sec">
+            <div class="sec-inner">
+                <div class="sec-eyebrow reveal">Platform Architecture</div>
+                <h2 class="sec-h reveal">Built for<br><em>precision</em></h2>
+
+                <!-- Row 1 -->
+                <div class="feat-row">
+                    <div class="feat-cell c3d-cell">
+                        <canvas id="FT3D_0"></canvas>
+                        <div style="position:absolute;inset:0;pointer-events:none;z-index:2">
+                            <div class="hud-c hud-tl" style="width:14px;height:14px;top:10px;left:10px"></div>
+                            <div class="hud-c hud-br" style="width:14px;height:14px;bottom:10px;right:10px;border-width:0 1px 1px 0"></div>
+                            <div class="hud-lbl tl" style="font-size:7.5px">NEURAL ANALYSIS CORE</div>
+                        </div>
+                    </div>
+                    <div class="feat-cell reveal">
+                        <div class="feat-num">01 · Detection Engine</div>
+                        <i class="feat-icon fa-solid fa-brain"></i>
+                        <h3 class="feat-title">Multi-layer <em>neural</em><br>analysis pipeline</h3>
+                        <p class="feat-body">Each submission passes through a cascade of specialist models — syntactic, semantic, behavioural, and forensic — before being scored against a dynamic threat database updated hourly from global honeypots.</p>
+                        <div class="feat-list">
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>Transformer-based semantic classifier</div>
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>GAN fingerprint forensic layer</div>
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>Temporal consistency validator</div>
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>Cross-modal corroboration engine</div>
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>Live threat database (updated hourly)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="feat-row" style="margin-top:1px">
+                    <div class="feat-cell reveal">
+                        <div class="feat-num">02 · Security</div>
+                        <i class="feat-icon fa-solid fa-lock"></i>
+                        <h3 class="feat-title">Enterprise-grade<br><em>zero-trust</em> security</h3>
+                        <p class="feat-body">All data in transit is encrypted with TLS 1.3. Submissions are processed in isolated sandboxes and purged post-analysis. No training data is retained without explicit consent. SOC 2 Type II compliant.</p>
+                        <div class="feat-list">
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>TLS 1.3 end-to-end encryption</div>
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>Isolated processing sandboxes</div>
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>Zero data retention by default</div>
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>SOC 2 Type II certified</div>
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>GDPR & CCPA compliant</div>
+                        </div>
+                    </div>
+                    <div class="feat-cell c3d-cell">
+                        <canvas id="FT3D_1"></canvas>
+                        <div style="position:absolute;inset:0;pointer-events:none;z-index:2">
+                            <div class="hud-c hud-tl" style="width:14px;height:14px;top:10px;left:10px"></div>
+                            <div class="hud-c hud-br" style="width:14px;height:14px;bottom:10px;right:10px;border-width:0 1px 1px 0"></div>
+                            <div class="hud-lbl tl" style="font-size:7.5px">ZERO-TRUST SECURITY MESH</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3 -->
+                <div class="feat-row" style="margin-top:1px">
+                    <div class="feat-cell c3d-cell">
+                        <canvas id="FT3D_2"></canvas>
+                        <div style="position:absolute;inset:0;pointer-events:none;z-index:2">
+                            <div class="hud-c hud-tl" style="width:14px;height:14px;top:10px;left:10px"></div>
+                            <div class="hud-c hud-br" style="width:14px;height:14px;bottom:10px;right:10px;border-width:0 1px 1px 0"></div>
+                            <div class="hud-lbl tl" style="font-size:7.5px">GLOBAL THREAT INTELLIGENCE</div>
+                        </div>
+                    </div>
+                    <div class="feat-cell reveal">
+                        <div class="feat-num">03 · Intelligence</div>
+                        <i class="feat-icon fa-solid fa-satellite-dish"></i>
+                        <h3 class="feat-title">Real-time <em>global</em><br>threat intelligence</h3>
+                        <p class="feat-body">Our distributed sensor network ingests data from 190+ countries, correlating attack patterns, campaign signatures, and emerging threat actors. Intelligence feeds are pushed to all modules automatically.</p>
+                        <div class="feat-list">
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>190+ country sensor coverage</div>
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>Campaign signature correlation</div>
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>Threat actor attribution</div>
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>Automated IOC enrichment</div>
+                            <div class="feat-list-item"><i class="fa-solid fa-check-circle"></i>STIX/TAXII feed export</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── HOW IT WORKS ── -->
+        <div class="sec" style="padding-top:0">
+            <div class="sec-inner">
+                <div class="sec-eyebrow reveal">How It Works</div>
+                <h2 class="sec-h reveal">Analysis in <em>four</em><br>steps</h2>
+                <div class="how-grid reveal" style="transition-delay:.1s">
+                    <div class="how-step" data-n="1">
+                        <div class="how-step-num">Step 01</div>
+                        <i class="how-step-icon fa-solid fa-upload"></i>
+                        <div class="how-step-title">Submit Content</div>
+                        <div class="how-step-body">Upload an email, media file, URL, or text payload via the dashboard UI or REST API. Supports all common formats including EML, PDF, MP4, PNG, HTML, and plain text.</div>
+                    </div>
+                    <div class="how-step" data-n="2">
+                        <div class="how-step-num">Step 02</div>
+                        <i class="how-step-icon fa-solid fa-magnifying-glass-chart"></i>
+                        <div class="how-step-title">Multi-Layer Analysis</div>
+                        <div class="how-step-body">Content is routed to the appropriate detection module, then processed through our cascade pipeline — syntactic, semantic, forensic, and live-threat cross-reference layers.</div>
+                    </div>
+                    <div class="how-step" data-n="3">
+                        <div class="how-step-num">Step 03</div>
+                        <i class="how-step-icon fa-solid fa-chart-bar"></i>
+                        <div class="how-step-title">Scored & Classified</div>
+                        <div class="how-step-body">A security score (0–100), risk level (Safe / Moderate / Critical), and structured findings breakdown is generated. Each finding maps to a threat category and confidence percentage.</div>
+                    </div>
+                    <div class="how-step" data-n="4">
+                        <div class="how-step-num">Step 04</div>
+                        <i class="how-step-icon fa-solid fa-bell"></i>
+                        <div class="how-step-title">Alert & Respond</div>
+                        <div class="how-step-body">Critical findings trigger configurable webhooks, email alerts, or Slack notifications. Results are stored in the audit log with full chain-of-evidence for compliance and legal review.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── API SECTION ── -->
+        <div class="sec" style="padding-top:0">
+            <div class="sec-inner">
+                <div class="sec-eyebrow reveal">Developer API</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end">
+                    <h2 class="sec-h reveal">Integrate in<br><em>minutes</em></h2>
+                    <p class="sec-sub reveal" style="transition-delay:.1s">A clean, predictable REST API with JSON responses, comprehensive documentation, and SDKs for Python, Node.js, and PHP.</p>
+                </div>
+                <div class="api-grid reveal" style="transition-delay:.2s">
+                    <div class="api-cell">
+                        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--g);display:flex;align-items:center;gap:8px;margin-bottom:18px"><span style="width:12px;height:1px;background:var(--g2);display:inline-block"></span>Example · Email Analysis</div>
+                        <div class="api-terminal">
+                            <span class="t-comment">// POST /api/email/analyze</span><br>
+                            <span class="t-key">const</span> <span class="t-val">response</span> = <span class="t-kw">await</span> <span class="t-val">fetch</span>(<span class="t-str">"/api/email/analyze"</span>, {<br>
+                            &nbsp;&nbsp;<span class="t-val">method</span>: <span class="t-str">"POST"</span>,<br>
+                            &nbsp;&nbsp;<span class="t-val">headers</span>: {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"X-API-Key"</span>: <span class="t-str">"nx_live_..."</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"Content-Type"</span>: <span class="t-str">"application/json"</span><br>
+                            &nbsp;&nbsp;},<br>
+                            &nbsp;&nbsp;<span class="t-val">body</span>: <span class="t-val">JSON</span>.<span class="t-kw">stringify</span>({<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-val">emailContent</span>: <span class="t-str">"&lt;raw email&gt;"</span><br>
+                            &nbsp;&nbsp;})<br>
+                            });<br><br>
+                            <span class="t-comment">// Response</span><br>
+                            {<br>
+                            &nbsp;&nbsp;<span class="t-val">"securityScore"</span>: <span class="t-ok">82</span>,<br>
+                            &nbsp;&nbsp;<span class="t-val">"riskLevel"</span>: <span class="t-str">"Low"</span>,<br>
+                            &nbsp;&nbsp;<span class="t-val">"findings"</span>: [],<br>
+                            &nbsp;&nbsp;<span class="t-val">"processingMs"</span>: <span class="t-ok">412</span><br>
+                            } <span class="t-cursor"></span>
+                        </div>
+                    </div>
+                    <div class="api-cell">
+                        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--g);display:flex;align-items:center;gap:8px;margin-bottom:18px"><span style="width:12px;height:1px;background:var(--g2);display:inline-block"></span>API Endpoints</div>
+                        <div class="endpoint-row"><span class="method post">POST</span><span class="ep-path">/api/email/analyze</span><span class="ep-desc">Email analysis</span></div>
+                        <div class="endpoint-row"><span class="method post">POST</span><span class="ep-path">/api/media/analyze</span><span class="ep-desc">Image / video</span></div>
+                        <div class="endpoint-row"><span class="method post">POST</span><span class="ep-path">/api/website/scan</span><span class="ep-desc">URL scan</span></div>
+                        <div class="endpoint-row"><span class="method post">POST</span><span class="ep-path">/api/scam/detect</span><span class="ep-desc">Scam text</span></div>
+                        <div class="endpoint-row"><span class="method post">POST</span><span class="ep-path">/api/image/generate</span><span class="ep-desc">AI image gen</span></div>
+                        <div class="endpoint-row"><span class="method get">GET</span><span class="ep-path">/api/*/history</span><span class="ep-desc">Analysis log</span></div>
+                        <div class="endpoint-row"><span class="method del">DEL</span><span class="ep-path">/api/*/history</span><span class="ep-desc">Purge records</span></div>
+                        <div class="endpoint-row"><span class="method get">GET</span><span class="ep-path">/api/status</span><span class="ep-desc">System health</span></div>
+                        <div style="margin-top:20px">
+                            <a class="tbtn fill" href="/docs/api" style="font-size:9px"><i class="fa-solid fa-book"></i> Full API Docs</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── COMPARISON TABLE ── -->
+        <div class="sec" style="padding-top:0">
+            <div class="sec-inner">
+                <div class="sec-eyebrow reveal">Plan Comparison</div>
+                <h2 class="sec-h reveal">Choose your<br><em>tier</em></h2>
+                <div class="compare-wrap reveal" style="transition-delay:.1s">
+                    <table class="compare-table">
+                        <thead>
+                            <tr>
+                                <th class="feature-col" style="width:34%">Feature</th>
+                                <th class="plan-col">Free</th>
+                                <th class="plan-col">Pro</th>
+                                <th class="plan-col">Enterprise</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="feature-name">Email analysis</td><td><i class="fa-solid fa-check check"></i></td><td><i class="fa-solid fa-check check"></i></td><td><i class="fa-solid fa-check check"></i></td></tr>
+                            <tr><td class="feature-name">Media detection</td><td><span class="partial">50/mo</span></td><td><i class="fa-solid fa-check check"></i></td><td><i class="fa-solid fa-check check"></i></td></tr>
+                            <tr><td class="feature-name">Website scanner</td><td><i class="fa-solid fa-xmark cross"></i></td><td><i class="fa-solid fa-check check"></i></td><td><i class="fa-solid fa-check check"></i></td></tr>
+                            <tr><td class="feature-name">Scam detector</td><td><span class="partial">100/mo</span></td><td><i class="fa-solid fa-check check"></i></td><td><i class="fa-solid fa-check check"></i></td></tr>
+                            <tr><td class="feature-name">AI image generator</td><td><span class="partial">10/mo</span></td><td><span class="partial">500/mo</span></td><td><i class="fa-solid fa-check check"></i></td></tr>
+                            <tr><td class="feature-name">REST API access</td><td><i class="fa-solid fa-xmark cross"></i></td><td><i class="fa-solid fa-check check"></i></td><td><i class="fa-solid fa-check check"></i></td></tr>
+                            <tr><td class="feature-name">Webhook alerts</td><td><i class="fa-solid fa-xmark cross"></i></td><td><i class="fa-solid fa-check check"></i></td><td><i class="fa-solid fa-check check"></i></td></tr>
+                            <tr><td class="feature-name">Audit log retention</td><td><span class="partial">7 days</span></td><td><span class="partial">90 days</span></td><td><i class="fa-solid fa-check check"></i> Unlimited</td></tr>
+                            <tr><td class="feature-name">STIX/TAXII feeds</td><td><i class="fa-solid fa-xmark cross"></i></td><td><i class="fa-solid fa-xmark cross"></i></td><td><i class="fa-solid fa-check check"></i></td></tr>
+                            <tr><td class="feature-name">SLA uptime guarantee</td><td><i class="fa-solid fa-xmark cross"></i></td><td><span class="partial">99.5%</span></td><td><i class="fa-solid fa-check check"></i> 99.9%</td></tr>
+                            <tr><td class="feature-name">Dedicated support</td><td><i class="fa-solid fa-xmark cross"></i></td><td><i class="fa-solid fa-xmark cross"></i></td><td><i class="fa-solid fa-check check"></i></td></tr>
+                            <tr><td class="feature-name">Custom model training</td><td><i class="fa-solid fa-xmark cross"></i></td><td><i class="fa-solid fa-xmark cross"></i></td><td><i class="fa-solid fa-check check"></i></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── CTA BAND ── -->
+        <div class="cta-band" style="height:520px;position:relative">
+            <div class="cta-3d"><canvas id="CTA3D"></canvas></div>
+            <div class="cta-over">
+                <div class="cta-content reveal">
+                    <div class="hero-badge" style="margin:0 auto 24px"><span class="sdot"></span>Start protecting today</div>
+                    <h2 class="cta-h">Ready to detect<br>every <em>threat</em>?</h2>
+                    <p class="cta-sub">Get full platform access in minutes. No credit card required for the free tier. Enterprise plans include a dedicated onboarding engineer.</p>
+                    <div class="cta-btns">
+                        <a class="tbtn fill" href="/Account/Register" style="padding:14px 32px;font-size:10px"><i class="fa-solid fa-rocket"></i> Start Free Trial</a>
+                        <a class="tbtn" href="/Home/Pricing" style="padding:14px 32px;font-size:10px"><i class="fa-solid fa-tag"></i> View Pricing</a>
+                    </div>
+                </div>
+            </div>
+            <div class="hud-c hud-tl" style="z-index:3"></div>
+            <div class="hud-c hud-br" style="z-index:3"></div>
+        </div>
+
+        <!-- ── FOOTER ── -->
+        <div class="footer">
+            <span>Deepfake Nexus © 2026 — Full-Spectrum AI Detection Platform</span>
+            <span>Features · API · Security · Privacy</span>
+        </div>
+
+    </div>
+
+    <script>
+        (function(){
+        'use strict';
+
+        /* ── Cursor ── */
+        var CUR=document.getElementById('CUR'),CUR2=document.getElementById('CUR2'),mx=0,my=0,rx=0,ry=0;
+        document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;CUR.style.left=mx+'px';CUR.style.top=my+'px';});
+        (function L(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;CUR2.style.left=rx+'px';CUR2.style.top=ry+'px';requestAnimationFrame(L);})();
+        document.querySelectorAll('a,button,.mod-card,.how-step,.stat-c,.feat-cell').forEach(function(el){
+          el.addEventListener('mouseenter',function(){CUR2.style.width='50px';CUR2.style.height='50px';CUR2.style.borderColor='rgba(201,169,110,.9)';CUR2.style.background='rgba(201,169,110,.05)';});
+          el.addEventListener('mouseleave',function(){CUR2.style.width='32px';CUR2.style.height='32px';CUR2.style.borderColor='rgba(201,169,110,.4)';CUR2.style.background='transparent';});
+        });
+
+        /* ── Status flicker ── */
+        setInterval(function(){document.getElementById('statusTxt').textContent=['ALL SYSTEMS LIVE','THREAT WATCH','MONITORING'][Math.floor(Math.random()*3)];},5500);
+
+        /* ── Ticker ── */
+        var tickData=[
+          {num:'99.7%',lbl:'Detection Accuracy'},{num:'2.4M+',lbl:'Threats Blocked'},{num:'1.2s',lbl:'Avg Analysis Time'},
+          {num:'5',lbl:'Detection Modules'},{num:'190+',lbl:'Countries Monitored'},{num:'99.9%',lbl:'API Uptime'},
+          {num:'<0.1%',lbl:'False Positive Rate'},{num:'24/7',lbl:'Live Monitoring'},{num:'SOC 2',lbl:'Certified'},
+        ];
+        var tk=document.getElementById('ticker');
+        var all=[...tickData,...tickData];
+        all.forEach(function(d){var el=document.createElement('div');el.className='tick-item';el.innerHTML='<span class="tick-num">'+d.num+'</span><span class="tick-lbl">'+d.lbl+'</span>';tk.appendChild(el);});
+
+        /* ── Counters ── */
+        function animCnt(el){
+          var v=parseFloat(el.dataset.v),isF=v!==Math.floor(v);
+          var dur=1600,s=performance.now();
+          (function t(now){var p=Math.min(1,(now-s)/dur),e=1-Math.pow(1-p,4);el.textContent=isF?(v*e).toFixed(1):Math.round(v*e);if(p<1)requestAnimationFrame(t);})(performance.now());
+        }
+        var cio=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){animCnt(x.target);cio.unobserve(x.target);}});},{threshold:.4});
+        document.querySelectorAll('.cnt').forEach(function(el){cio.observe(el);});
+
+        /* ── Scroll reveal ── */
+        var rio=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('vis');rio.unobserve(x.target);}});},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+        document.querySelectorAll('.reveal').forEach(function(el){rio.observe(el);});
+
+        /* ── Toast ── */
+        var TW=document.getElementById('TW');
+        function toast(h,p,ic,col){var el=document.createElement('div');el.className='toastx';el.innerHTML='<div class="t-ic" style="color:'+(col||'var(--g)')+'"><i class="fa-solid '+(ic||'fa-circle-info')+'"></i></div><div><div class="t-h">'+h+'</div><div class="t-p">'+p+'</div></div><button class="t-x"><i class="fa-solid fa-xmark"></i></button>';el.querySelector('.t-x').addEventListener('click',function(){el.remove();});TW.appendChild(el);setTimeout(function(){if(el.isConnected)el.remove();},5000);}
+        setTimeout(function(){toast('Platform ready','All 5 detection modules online.','fa-shield-halved');},1200);
+
+        /* ═══════════════════════════
+           THREE.JS
+        ═══════════════════════════ */
+        function lerp(a,b,t){return a+(b-a)*t;}
+        function eL(c,op){return new THREE.LineBasicMaterial({color:c,transparent:true,opacity:op});}
+        function mPP(c,op,r){return new THREE.MeshPhysicalMaterial({color:c,metalness:.95,roughness:r||.04,transparent:true,opacity:op||.08,side:THREE.DoubleSide,transmission:.88,thickness:.6,ior:1.5});}
+        function mBB(c,op){return new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:op});}
+        function mkR(canvas){var r=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:true,powerPreference:'high-performance'});r.setPixelRatio(Math.min(window.devicePixelRatio,1.8));r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.1;return r;}
+
+        /* ── BG ── */
+        (function(){
+          var canvas=document.getElementById('BG');
+          var W=function(){return window.innerWidth;},H=function(){return window.innerHeight;};
+          var renderer=mkR(canvas);renderer.setSize(W(),H());
+          canvas.style.cssText='position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;height:100%';
+          var scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x04040a,.018);
+          var camera=new THREE.PerspectiveCamera(56,W()/H(),.1,500);camera.position.set(0,0,22);
+          scene.add(new THREE.AmbientLight(0x04040e,2.5));
+          var kL=new THREE.SpotLight(0xc9a96e,20,100,Math.PI/6,.35,1.2);kL.position.set(18,22,16);scene.add(kL);
+          var fL=new THREE.SpotLight(0x8b5cf6,10,80,Math.PI/5,.4,1.5);fL.position.set(-20,10,12);scene.add(fL);
+          var p1=new THREE.PointLight(0xc9a96e,6,42);scene.add(p1);var p2=new THREE.PointLight(0x8b5cf6,4,30);scene.add(p2);
+          var objs=[];
+          for(var i=0;i<30;i++){var g=new THREE.BoxGeometry(1,1,1,2,2,2),m=new THREE.Mesh(g,i%3===0?new THREE.MeshBasicMaterial({color:0xc9a96e,wireframe:true,transparent:true,opacity:.055}):mPP(0xc9a96e,.04));var s=.5+Math.random()*2.5;m.scale.setScalar(s);var ox=(Math.random()-.5)*40,oy=(Math.random()-.5)*22,oz=-8-Math.random()*16;m.position.set(ox,oy,oz);m.rotation.set(Math.random()*6.28,Math.random()*6.28,Math.random()*6.28);m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(0xc9a96e,.14)));scene.add(m);objs.push({m:m,ox:ox,oy:oy,oz:oz,fp:Math.random()*6.28,fs:.2+Math.random()*.25,rs:{x:(Math.random()-.5)*.005,y:(Math.random()-.5)*.005,z:(Math.random()-.5)*.003}});}
+          var tori=[];
+          [{r:3,tb:.006,c:0xc9a96e,op:.2,rx:1.05,rz:.2,rs:.004},{r:5,tb:.004,c:0x8b5cf6,op:.14,rx:.78,rz:0,rs:.003},{r:7,tb:.003,c:0x4ecdc4,op:.08,rx:.52,rz:.52,rs:.002}].forEach(function(d){var g=new THREE.TorusGeometry(d.r,d.tb,2,90),m=new THREE.Mesh(g,mBB(d.c,d.op));m.rotation.set(d.rx,0,d.rz);scene.add(m);tori.push({m:m,rs:d.rs});});
+          function mkP(n,spr,zMin,zSpr,col,sz,op){var g=new THREE.BufferGeometry(),pos=new Float32Array(n*3);for(var ii=0;ii<n;ii++){pos[ii*3]=(Math.random()-.5)*spr;pos[ii*3+1]=(Math.random()-.5)*spr*.5;pos[ii*3+2]=zMin-Math.random()*zSpr;}g.setAttribute('position',new THREE.BufferAttribute(pos,3));var pts=new THREE.Points(g,new THREE.PointsMaterial({color:col,size:sz,transparent:true,opacity:op,sizeAttenuation:true}));scene.add(pts);return pts;}
+          var pA=mkP(900,70,4,28,0xc9a96e,.032,.24),pB=mkP(160,28,2,12,0x8b5cf6,.055,.32);
+          var tmx=0,tmy=0,cmx=0,cmy=0,sY=0,lstY=0;
+          document.addEventListener('mousemove',function(e){tmx=(e.clientX/W()-.5)*2;tmy=-(e.clientY/H()-.5)*2;});
+          window.addEventListener('scroll',function(){sY=window.scrollY;},{passive:true});
+          window.addEventListener('resize',function(){renderer.setSize(W(),H());camera.aspect=W()/H();camera.updateProjectionMatrix();});
+          var clock=new THREE.Clock();
+          (function tick(){requestAnimationFrame(tick);var t=clock.getElapsedTime();cmx+=(tmx-cmx)*.016;cmy+=(tmy-cmy)*.016;var sp=Math.min(1,sY/Math.max(1,document.body.scrollHeight-H()));camera.position.x=lerp(camera.position.x,cmx*3,.055);camera.position.y=lerp(camera.position.y,cmy*2+sp*-4,.055);camera.position.z=lerp(camera.position.z,22-sp*12,.055);camera.fov=lerp(camera.fov,56+sp*10,.04);camera.updateProjectionMatrix();p1.position.set(9+Math.sin(t*.38)*5,9+Math.cos(t*.28)*4,8);p2.position.set(-10+Math.cos(t*.32)*3,-7+Math.sin(t*.26)*2.5,9);objs.forEach(function(o){o.m.rotation.x+=o.rs.x;o.m.rotation.y+=o.rs.y;o.m.rotation.z+=o.rs.z;o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.4;});tori.forEach(function(o){o.m.rotation.z+=o.rs;o.m.rotation.y+=o.rs*.6;});pA.rotation.y=t*.007;pB.rotation.y=-t*.011;renderer.render(scene,camera);})();
+        })();
+
+        /* ── HERO 3D ── */
+        (function(){
+          var canvas=document.getElementById('HERO3D');
+          var wrap=canvas.parentElement;
+          var W=function(){return wrap.offsetWidth;},H=function(){return wrap.offsetHeight;};
+          var renderer=mkR(canvas);renderer.setSize(W(),H());
+          var scene=new THREE.Scene();var camera=new THREE.PerspectiveCamera(52,W()/H(),.1,100);camera.position.set(0,0,10);
+          scene.add(new THREE.AmbientLight(0x04040e,2));
+          var kL=new THREE.SpotLight(0xc9a96e,24,50,Math.PI/5,.3,1.2);kL.position.set(10,14,12);scene.add(kL);
+          var fL=new THREE.SpotLight(0x8b5cf6,16,38,Math.PI/4,.35,1.5);fL.position.set(-9,6,9);scene.add(fL);
+          var bL=new THREE.SpotLight(0x4ecdc4,10,28,Math.PI/3,.5,1.8);bL.position.set(-4,-9,7);scene.add(bL);
+          var p1=new THREE.PointLight(0xc9a96e,8,22);scene.add(p1);var p2=new THREE.PointLight(0x8b5cf6,5,17);scene.add(p2);var p3=new THREE.PointLight(0x4ecdc4,4,14);scene.add(p3);
+          var cubes=[];
+          [[5.5,.06,.04,0xc9a96e],[3.5,.08,.05,0x8b5cf6],[2.1,.1,.04,0x4ecdc4],[1.1,.12,.03,0xc9a96e],[.56,.15,.04,0xd4b87e]].forEach(function(d,i){var g=new THREE.BoxGeometry(d[0],d[0],d[0],3,3,3);var m=new THREE.Mesh(g,mPP(d[3],d[1],d[2]));m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(d[3],i===0?.44:.64)));scene.add(m);cubes.push({m:m,rx:(.003+i*.0022)*(i%2===0?1:-1),ry:.0038+i*.0025,rz:.0014+i*.001});});
+          var orbs=[];
+          for(var oi=0;oi<20;oi++){var sz=.18+Math.random()*.65;var g2=new THREE.BoxGeometry(sz,sz,sz,2,2,2);var col=oi%4===0?0xc9a96e:oi%4===1?0x8b5cf6:oi%4===2?0x4ecdc4:0xd4b87e;var om=new THREE.Mesh(g2,mPP(col,.1,.05));om.add(new THREE.LineSegments(new THREE.EdgesGeometry(g2),eL(col,.58)));scene.add(om);orbs.push({m:om,r:2.6+Math.random()*4.8,sp:.22+Math.random()*.56,ph:oi*.314,ti:.32+Math.random()*.56,type:'orb'});}
+          [{r:3.5,tb:.007,c:0xc9a96e,op:.26,rx:1.05,rz:0,rs:.006},{r:5,tb:.005,c:0x8b5cf6,op:.18,rx:.78,rz:.78,rs:.005},{r:7,tb:.003,c:0x4ecdc4,op:.12,rx:.52,rz:.52,rs:.003},{r:4.5,tb:.006,c:0xd4b87e,op:.19,rx:1.57,rz:.52,rs:.007},{r:9,tb:.002,c:0xc9a96e,op:.07,rx:.3,rz:1.05,rs:.0018}].forEach(function(d){var g=new THREE.TorusGeometry(d.r,d.tb,2,100),m=new THREE.Mesh(g,mBB(d.c,d.op));m.rotation.x=d.rx;m.rotation.z=d.rz;scene.add(m);orbs.push({m:m,type:'ring',rs:d.rs});});
+          [[3,.056,0xc9a96e],[4.8,.034,0x8b5cf6],[6.4,.02,0x4ecdc4],[8.2,.012,0xd4b87e]].forEach(function(d){scene.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(d[0],1)),eL(d[2],d[1])));});
+          var pings=[];for(var pi=0;pi<26;pi++){var phi=Math.acos(2*Math.random()-1),theta=Math.random()*Math.PI*2,rr=3.4;var pd=new THREE.Mesh(new THREE.SphereGeometry(.06,5,5),new THREE.MeshBasicMaterial({color:pi%4===0?0xc9a96e:pi%4===1?0x8b5cf6:pi%4===2?0x4ecdc4:0x22c55e,transparent:true,opacity:.86}));pd.position.set(rr*Math.sin(phi)*Math.cos(theta),rr*Math.cos(phi),rr*Math.sin(phi)*Math.sin(theta));scene.add(pd);pings.push({m:pd,fp:Math.random()*6.28,fs:.3+Math.random()*.7});}
+          function mkSP(n,mn,mx,col,sz,op){var g=new THREE.BufferGeometry(),pos=new Float32Array(n*3);for(var ii=0;ii<n;ii++){var r=mn+Math.random()*(mx-mn),th=Math.random()*6.28,ph=Math.acos(2*Math.random()-1);pos[ii*3]=r*Math.sin(ph)*Math.cos(th);pos[ii*3+1]=r*Math.sin(ph)*Math.sin(th);pos[ii*3+2]=r*Math.cos(ph);}g.setAttribute('position',new THREE.BufferAttribute(pos,3));var pts=new THREE.Points(g,new THREE.PointsMaterial({color:col,size:sz,transparent:true,opacity:op,sizeAttenuation:true}));scene.add(pts);return pts;}
+          var sp1=mkSP(700,3.8,10,0xc9a96e,.04,.5),sp2=mkSP(240,6,8.5,0x8b5cf6,.048,.36),sp3=mkSP(160,4.5,7.5,0x4ecdc4,.044,.28);
+          var hmx=0,hmy=0,thmx=0,thmy=0;
+          document.addEventListener('mousemove',function(e){var rc=canvas.getBoundingClientRect();thmx=(e.clientX-rc.left-rc.width/2)/(rc.width/2);thmy=-(e.clientY-rc.top-rc.height/2)/(rc.height/2);});
+          window.addEventListener('resize',function(){renderer.setSize(W(),H());camera.aspect=W()/H();camera.updateProjectionMatrix();});
+          var clk=new THREE.Clock();
+          (function anim(){requestAnimationFrame(anim);var t=clk.getElapsedTime();hmx+=(thmx-hmx)*.055;hmy+=(thmy-hmy)*.055;cubes.forEach(function(o){o.m.rotation.x+=o.rx;o.m.rotation.y+=o.ry;o.m.rotation.z+=o.rz;});orbs.forEach(function(o){if(o.type==='ring'){o.m.rotation.z+=o.rs;o.m.rotation.y+=o.rs*.6;}else{var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.44,Math.sin(a)*o.r*.72);o.m.rotation.x+=.006;o.m.rotation.y+=.009;}});pings.forEach(function(p){var s=.7+Math.sin(t*p.fs+p.fp)*.36;p.m.scale.setScalar(s);p.m.material.opacity=.5+Math.sin(t*p.fs+p.fp)*.36;});sp1.rotation.y=t*.016;sp1.rotation.x=t*.008;sp2.rotation.y=-t*.013;sp3.rotation.y=t*.015;camera.position.x=hmx*2;camera.position.y=hmy*1.5;camera.lookAt(hmx*.28,hmy*.2,0);p1.position.set(5+Math.sin(t*.45)*2.5,5+Math.cos(t*.35)*2,6);p2.position.set(-5+Math.cos(t*.38)*2,-3+Math.sin(t*.28)*2,5);kL.intensity=24+Math.sin(t*.28)*7;fL.intensity=16+Math.sin(t*.22+1)*4;renderer.render(scene,camera);})();
+        })();
+
+        /* ── MINI FACTORY ── */
+        function initMini(id,accent1,accent2,style,interactive){
+          var canvas=document.getElementById(id);if(!canvas)return;
+          var wrap=canvas.parentElement;
+          var W=function(){return wrap.offsetWidth;},H=function(){return wrap.offsetHeight;};
+          var renderer=mkR(canvas);renderer.setSize(W(),H());
+          var scene=new THREE.Scene();var camera=new THREE.PerspectiveCamera(50,W()/H(),.1,50);camera.position.set(0,0,6);
+          scene.add(new THREE.AmbientLight(0x04040a,2));
+          var kL=new THREE.SpotLight(0xc9a96e,16,28,Math.PI/4,.3,1.4);kL.position.set(5,8,7);scene.add(kL);
+          var fL=new THREE.SpotLight(accent1,12,20,Math.PI/3,.4,1.6);fL.position.set(-5,3,5);scene.add(fL);
+          var p1=new THREE.PointLight(accent1,5,13);scene.add(p1);
+          var objs=[];
+          if(style==='nested'){
+            [[2.5,.07,.04,0xc9a96e],[1.55,.09,.05,accent1],[.88,.11,.04,accent2],[.44,.14,.03,0xc9a96e]].forEach(function(d,i){var g=new THREE.BoxGeometry(d[0],d[0],d[0],2,2,2);var m=new THREE.Mesh(g,mPP(d[3],d[1],d[2]));m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(d[3],.6)));scene.add(m);objs.push({m:m,rx:(.004+i*.002)*(i%2===0?1:-1),ry:.005+i*.003,rz:.002+i*.001,type:'cube'});});
+            for(var oi=0;oi<10;oi++){var sz=.15+Math.random()*.38;var g2=new THREE.BoxGeometry(sz,sz,sz,1,1,1);var om=new THREE.LineSegments(new THREE.EdgesGeometry(g2),eL(oi%2===0?accent1:accent2,.48));scene.add(om);objs.push({m:om,r:1.7+Math.random()*1.9,sp:.35+Math.random()*.55,ph:oi*.628,ti:.4+Math.random()*.45,type:'orb'});}
+            [[3,.005,0xc9a96e,.24,1.05,0,.005],[3.8,.004,accent1,.15,.78,.78,.004]].forEach(function(d){var g=new THREE.TorusGeometry(d[0],d[1],2,80),m=new THREE.Mesh(g,mBB(d[2],d[3]));m.rotation.x=d[4];m.rotation.z=d[5];scene.add(m);objs.push({m:m,rs:d[6],type:'ring'});});
+          } else if(style==='orbs'){
+            var ig=new THREE.IcosahedronGeometry(1.3,2);var im=new THREE.Mesh(ig,mPP(accent1,.1,.06));im.add(new THREE.LineSegments(new THREE.EdgesGeometry(ig),eL(accent1,.4)));scene.add(im);objs.push({m:im,rx:.007,ry:.009,rz:.005,type:'cube'});
+            for(var oi2=0;oi2<10;oi2++){var sz2=.13+Math.random()*.38;var gg2=new THREE.BoxGeometry(sz2,sz2,sz2,1,1,1);var om2=new THREE.LineSegments(new THREE.EdgesGeometry(gg2),eL(oi2%3===0?0xc9a96e:oi2%3===1?accent1:accent2,.5));scene.add(om2);objs.push({m:om2,r:1.6+Math.random()*2.2,sp:.3+Math.random()*.6,ph:oi2*.628,ti:.35+Math.random()*.5,type:'orb'});}
+            [[2.5,.006,accent1,.24,1.05,0,.006],[3.2,.004,accent2,.15,.78,.78,.004]].forEach(function(d){var g=new THREE.TorusGeometry(d[0],d[1],2,80),m=new THREE.Mesh(g,mBB(d[2],d[3]));m.rotation.x=d[4];m.rotation.z=d[5];scene.add(m);objs.push({m:m,rs:d[6],type:'ring'});});
+          } else {
+            for(var i2=0;i2<15;i2++){var t2=i2%3;var sz3=.18+Math.random()*.48;var g3=t2===0?new THREE.BoxGeometry(sz3,sz3,sz3,1,1,1):t2===1?new THREE.OctahedronGeometry(sz3*.7,0):new THREE.IcosahedronGeometry(sz3*.6,0);var m3=new THREE.LineSegments(new THREE.EdgesGeometry(g3),eL(i2%3===0?0xc9a96e:i2%3===1?accent1:accent2,.14+Math.random()*.14));m3.position.set((Math.random()-.5)*4.2,(Math.random()-.5)*3.2,-Math.random()*2.5);m3.rotation.set(Math.random()*6.28,Math.random()*6.28,Math.random()*6.28);scene.add(m3);objs.push({m:m3,rs:{x:(Math.random()-.5)*.013,y:(Math.random()-.5)*.014,z:(Math.random()-.5)*.009},oy:m3.position.y,fp:Math.random()*6.28,fs:.18+Math.random()*.28,type:'scatter'});}
+          }
+          var hmx=0,hmy=0,thmx=0,thmy=0;
+          if(interactive){document.addEventListener('mousemove',function(e){var rc=canvas.getBoundingClientRect();thmx=(e.clientX-rc.left-rc.width/2)/(rc.width/2);thmy=-(e.clientY-rc.top-rc.height/2)/(rc.height/2);});}
+          window.addEventListener('resize',function(){renderer.setSize(W(),H());camera.aspect=W()/H();camera.updateProjectionMatrix();});
+          var clk=new THREE.Clock();
+          (function anim(){requestAnimationFrame(anim);var t=clk.getElapsedTime();if(interactive){hmx+=(thmx-hmx)*.055;hmy+=(thmy-hmy)*.055;}objs.forEach(function(o){if(o.type==='cube'){o.m.rotation.x+=o.rx;o.m.rotation.y+=o.ry;o.m.rotation.z+=o.rz;}else if(o.type==='orb'){var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.38,Math.sin(a)*o.r*.6);o.m.rotation.x+=.009;o.m.rotation.y+=.012;}else if(o.type==='ring'){o.m.rotation.z+=o.rs;o.m.rotation.y+=o.rs*.6;o.m.rotation.x+=o.rs*.22;}else{o.m.rotation.x+=o.rs.x;o.m.rotation.y+=o.rs.y;o.m.rotation.z+=o.rs.z;o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.2;}});p1.position.set(Math.sin(t*.45)*3,Math.cos(t*.38)*3,4.5);if(interactive){camera.position.x=hmx*1.5;camera.position.y=hmy*1.2;camera.lookAt(hmx*.2,hmy*.16,0);}renderer.render(scene,camera);})();
+        }
+
+        /* Module cards */
+        var modAccents=[[0xc9a96e,0x8b5cf6,'nested'],[0x8b5cf6,0x4ecdc4,'orbs'],[0x4ecdc4,0xd4b87e,'nested'],[0xd4b87e,0xc9a96e,'scatter'],[0x8b5cf6,0xc9a96e,'orbs']];
+        for(var mi=0;mi<5;mi++){(function(i){initMini('MC_'+i,modAccents[i][0],modAccents[i][1],modAccents[i][2],false);})(mi);}
+
+        /* Band 3D */
+        initMini('BAND3D',0xc9a96e,0x4ecdc4,'nested',false);
+        /* Override band3D canvas setup for full height */
+        (function(){
+          var c=document.getElementById('BAND3D');if(!c)return;
+          var wrap=c.parentElement;
+          var W=function(){return wrap.offsetWidth;},H=function(){return wrap.offsetHeight;};
+          var renderer=mkR(c);renderer.setSize(W(),H());
+          var scene=new THREE.Scene();var camera=new THREE.PerspectiveCamera(55,W()/H(),.1,80);camera.position.set(0,0,8);
+          scene.add(new THREE.AmbientLight(0x04040a,2));
+          var kL=new THREE.SpotLight(0xc9a96e,20,36,Math.PI/4,.3,1.4);kL.position.set(8,10,10);scene.add(kL);
+          var fL=new THREE.SpotLight(0x4ecdc4,14,26,Math.PI/3,.4,1.6);fL.position.set(-7,4,7);scene.add(fL);
+          var p1=new THREE.PointLight(0xc9a96e,7,18);scene.add(p1);
+          var objs2=[];
+          [[5,.06,.04,0xc9a96e],[3.2,.08,.05,0x4ecdc4],[1.9,.1,.04,0x8b5cf6],[1,.12,.03,0xc9a96e]].forEach(function(d,i){var g=new THREE.BoxGeometry(d[0],d[0],d[0],3,3,3);var m=new THREE.Mesh(g,mPP(d[3],d[1],d[2]));m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(d[3],i===0?.42:.62)));scene.add(m);objs2.push({m:m,rx:(.003+i*.002)*(i%2===0?1:-1),ry:.004+i*.003,rz:.002,type:'cube'});});
+          for(var k=0;k<18;k++){var sz4=.16+Math.random()*.6;var g4=new THREE.BoxGeometry(sz4,sz4,sz4,2,2,2);var col4=k%3===0?0xc9a96e:k%3===1?0x4ecdc4:0x8b5cf6;var om4=new THREE.Mesh(g4,mPP(col4,.1,.05));om4.add(new THREE.LineSegments(new THREE.EdgesGeometry(g4),eL(col4,.58)));scene.add(om4);objs2.push({m:om4,r:2.5+Math.random()*5,sp:.22+Math.random()*.55,ph:k*.349,ti:.32+Math.random()*.56,type:'orb'});}
+          [{r:3.5,tb:.007,c:0xc9a96e,op:.24,rx:1.05,rz:0,rs:.006},{r:5,tb:.005,c:0x4ecdc4,op:.17,rx:.78,rz:.78,rs:.005},{r:7,tb:.003,c:0x8b5cf6,op:.1,rx:.52,rz:.52,rs:.003}].forEach(function(d){var g=new THREE.TorusGeometry(d.r,d.tb,2,100),m=new THREE.Mesh(g,mBB(d.c,d.op));m.rotation.x=d.rx;m.rotation.z=d.rz;scene.add(m);objs2.push({m:m,rs:d.rs,type:'ring'});});
+          function mkSP2(n,mn,mx2,col,sz,op){var g=new THREE.BufferGeometry(),pos=new Float32Array(n*3);for(var ii=0;ii<n;ii++){var r=mn+Math.random()*(mx2-mn),th=Math.random()*6.28,ph=Math.acos(2*Math.random()-1);pos[ii*3]=r*Math.sin(ph)*Math.cos(th);pos[ii*3+1]=r*Math.sin(ph)*Math.sin(th);pos[ii*3+2]=r*Math.cos(ph);}g.setAttribute('position',new THREE.BufferAttribute(pos,3));var pts=new THREE.Points(g,new THREE.PointsMaterial({color:col,size:sz,transparent:true,opacity:op,sizeAttenuation:true}));scene.add(pts);return pts;}
+          var bsp1=mkSP2(500,3,9,0xc9a96e,.04,.5),bsp2=mkSP2(180,5,7.5,0x4ecdc4,.048,.36);
+          window.addEventListener('resize',function(){renderer.setSize(W(),H());camera.aspect=W()/H();camera.updateProjectionMatrix();});
+          var clk2=new THREE.Clock();
+          (function anim(){requestAnimationFrame(anim);var t=clk2.getElapsedTime();objs2.forEach(function(o){if(o.type==='cube'){o.m.rotation.x+=o.rx;o.m.rotation.y+=o.ry;o.m.rotation.z+=o.rz;}else if(o.type==='orb'){var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.42,Math.sin(a)*o.r*.68);o.m.rotation.x+=.007;o.m.rotation.y+=.01;}else if(o.type==='ring'){o.m.rotation.z+=o.rs;o.m.rotation.y+=o.rs*.6;}});bsp1.rotation.y=t*.014;bsp2.rotation.y=-t*.011;p1.position.set(4+Math.sin(t*.45)*2.5,4+Math.cos(t*.35)*2,6);kL.intensity=20+Math.sin(t*.28)*6;renderer.render(scene,camera);})();
+        })();
+
+        /* Feature detail 3D cells */
+        initMini('FT3D_0',0x8b5cf6,0x4ecdc4,'nested',true);
+        initMini('FT3D_1',0xc9a96e,0x22c55e,'orbs',true);
+        initMini('FT3D_2',0x4ecdc4,0xd4b87e,'nested',true);
+
+        /* CTA 3D */
+        (function(){
+          var canvas=document.getElementById('CTA3D');if(!canvas)return;
+          var wrap=canvas.parentElement;
+          var W=function(){return wrap.offsetWidth;},H=function(){return wrap.offsetHeight;};
+          var renderer=mkR(canvas);renderer.setSize(W(),H());
+          var scene=new THREE.Scene();var camera=new THREE.PerspectiveCamera(55,W()/H(),.1,80);camera.position.set(0,0,9);
+          scene.add(new THREE.AmbientLight(0x04040e,2));
+          var kL=new THREE.SpotLight(0xc9a96e,22,42,Math.PI/5,.3,1.2);kL.position.set(9,13,11);scene.add(kL);
+          var fL=new THREE.SpotLight(0x8b5cf6,17,32,Math.PI/4,.35,1.5);fL.position.set(-8,5,9);scene.add(fL);
+          var p1=new THREE.PointLight(0x8b5cf6,8,20);scene.add(p1);var p2=new THREE.PointLight(0xc9a96e,7,18);scene.add(p2);
+          var co=[];
+          [[4.5,.06,.04,0xc9a96e],[2.9,.08,.05,0x8b5cf6],[1.75,.1,.04,0x4ecdc4],[.9,.12,.03,0xd4b87e],[.46,.15,.04,0xc9a96e]].forEach(function(d,i){var g=new THREE.BoxGeometry(d[0],d[0],d[0],3,3,3);var m=new THREE.Mesh(g,mPP(d[3],d[1],d[2]));m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(d[3],i===0?.42:.62)));scene.add(m);co.push({m:m,rx:(.003+i*.0022)*(i%2===0?1:-1),ry:.004+i*.003,rz:.002+i*.0014,type:'core'});});
+          for(var pi2=0;pi2<22;pi2++){var szz=.18+Math.random()*.58;var ggg=new THREE.BoxGeometry(szz,szz,szz,2,2,2);var col2=pi2%4===0?0xc9a96e:pi2%4===1?0x8b5cf6:pi2%4===2?0x4ecdc4:0xd4b87e;var omm=new THREE.Mesh(ggg,mPP(col2,.1,.05));omm.add(new THREE.LineSegments(new THREE.EdgesGeometry(ggg),eL(col2,.58)));scene.add(omm);co.push({m:omm,r:2.7+Math.random()*5,sp:.2+Math.random()*.54,ph:pi2*.286,ti:.3+Math.random()*.6,type:'orb'});}
+          [{r:3.2,tb:.007,c:0xc9a96e,op:.24,rx:1.05,rz:0,rs:.006},{r:4.5,tb:.005,c:0x8b5cf6,op:.18,rx:.78,rz:.78,rs:.005},{r:6,tb:.003,c:0x4ecdc4,op:.12,rx:.52,rz:.52,rs:.003},{r:7.8,tb:.002,c:0xd4b87e,op:.07,rx:.3,rz:1.05,rs:.0018}].forEach(function(d){var g=new THREE.TorusGeometry(d.r,d.tb,2,100),m=new THREE.Mesh(g,mBB(d.c,d.op));m.rotation.x=d.rx;m.rotation.z=d.rz;scene.add(m);co.push({m:m,rs:d.rs,type:'ring'});});
+          [[2.4,.06,0xc9a96e],[3.6,.04,0x8b5cf6],[5,.024,0x4ecdc4]].forEach(function(d){scene.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(d[0],1)),eL(d[2],d[1])));});
+          var spgg=new THREE.BufferGeometry(),spPP=new Float32Array(600*3);for(var si=0;si<600;si++){var sr=2+Math.random()*7,st=Math.random()*6.28,sph=Math.acos(2*Math.random()-1);spPP[si*3]=sr*Math.sin(sph)*Math.cos(st);spPP[si*3+1]=sr*Math.sin(sph)*Math.sin(st);spPP[si*3+2]=sr*Math.cos(sph);}spgg.setAttribute('position',new THREE.BufferAttribute(spPP,3));var spPts2=new THREE.Points(spgg,new THREE.PointsMaterial({color:0xc9a96e,size:.036,transparent:true,opacity:.42,sizeAttenuation:true}));scene.add(spPts2);
+          var cx=0,cy=0,tx2=0,ty2=0;document.addEventListener('mousemove',function(e){var rc=canvas.getBoundingClientRect();if(e.clientY>rc.top&&e.clientY<rc.bottom){tx2=(e.clientX-rc.left-rc.width/2)/(rc.width/2);ty2=-(e.clientY-rc.top-rc.height/2)/(rc.height/2);}});
+          window.addEventListener('resize',function(){renderer.setSize(W(),H());camera.aspect=W()/H();camera.updateProjectionMatrix();});
+          var clk3=new THREE.Clock();var ri3=0;
+          (function anim(){requestAnimationFrame(anim);var t=clk3.getElapsedTime();cx+=(tx2-cx)*.055;cy+=(ty2-cy)*.055;co.forEach(function(o){if(o.type==='core'){o.m.rotation.x+=o.rx;o.m.rotation.y+=o.ry;o.m.rotation.z+=o.rz;}else if(o.type==='orb'){var a=t*o.sp+o.ph;o.m.position.set(Math.cos(a)*o.r,Math.sin(a*o.ti)*o.r*.42,Math.sin(a)*o.r*.68);o.m.rotation.x+=.007;o.m.rotation.y+=.01;}else if(o.type==='ring'){ri3++;o.m.rotation.z+=o.rs*(ri3%2===0?1:-1);o.m.rotation.y+=o.rs*.6;o.m.rotation.x+=o.rs*.22;}});ri3=0;spPts2.rotation.y=t*.014;spPts2.rotation.x=t*.007;camera.position.x=cx*2;camera.position.y=cy*1.6;camera.lookAt(cx*.25,cy*.2,0);p1.position.set(4+Math.sin(t*.45)*2.5,4+Math.cos(t*.35)*2,6);p2.position.set(-4+Math.cos(t*.38)*2,-3+Math.sin(t*.28)*2,5);kL.intensity=22+Math.sin(t*.28)*7;fL.intensity=17+Math.sin(t*.22+1)*4;renderer.render(scene,camera);})();
+        })();
+
+        })();
+    </script>
+</body>
+</html>

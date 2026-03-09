@@ -24,6 +24,8 @@ namespace DEEPFAKE.Controllers
             return View();
         }
 
+
+
         public IActionResult ImageGenerator()
         {
             return View();
