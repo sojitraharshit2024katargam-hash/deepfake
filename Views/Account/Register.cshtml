@@ -824,7 +824,8 @@
                     <div class="server-err"><i class="fa-solid fa-triangle-exclamation"></i>@ViewBag.Error</div>
                 }
 
-                <form id="REG" method="post" action="/Account/Register">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <form id="REG" asp-controller="Account" asp-action="Register" method="post">
 
                     <!-- Full Name -->
                     <div class="fgrp">
@@ -857,7 +858,7 @@
                     <!-- Confirm Password -->
                     <div class="fgrp">
                         <label class="flbl"><i class="fa-solid fa-lock"></i>Confirm Password</label>
-                        <input class="finp" type="password" id="CPW" placeholder="Repeat your password" required autocomplete="new-password" />
+                        <input class="finp" type="password" name="ConfirmPassword" id="CPW" placeholder="Repeat your password" required>
                         <div class="finp-line"></div>
                         <div class="pw-match" id="PWM"></div>
                     </div>

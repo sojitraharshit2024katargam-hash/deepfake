@@ -3,7 +3,6 @@ using DEEPFAKE.Services.EmailAnalysis;
 using DEEPFAKE.Services.ImageGeneration;
 using DEEPFAKE.Services.Implementations;
 using DEEPFAKE.Services.Interfaces;
-using DEEPFAKE.Services.UrlAnalysis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,9 +23,6 @@ builder.Services.AddSession(options =>
 builder.Services.AddScoped<IEmailAnalysisService, EmailAnalysisService>();
 builder.Services.AddScoped<EmailAnalysisRepository>();
 
-// URL Services
-builder.Services.AddScoped<IUrlAnalysisService, UrlAnalysisService>();
-builder.Services.AddScoped<UrlAnalysisRepository>();
 
 builder.Services.AddHttpClient<ImageGeneratorService>();
 

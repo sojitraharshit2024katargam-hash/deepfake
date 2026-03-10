@@ -3,499 +3,1310 @@
 }
 
 <!DOCTYPE html>
-<html lang="en" class="cyberpunk-2077">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>DEEPFAKE NEXUS | Quantum OTP Verification</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-
-    <!-- DEPENDENCIES -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&family=Audiowide&family=Black+Ops+One&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Deepfake Nexus — Verify OTP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        /* === CYBERPUNK THEME === */
-        :root {
-            --cyber-void: #0b0f19;
-            --cyber-dark: #0f172a;
-            --cyber-darker: #090d1a;
-            --cyber-blue: #38bdf8;
-            --cyber-cyan: #00f3ff;
-            --cyber-purple: #9d00ff;
-            --cyber-pink: #ff00ff;
-            --cyber-green: #00ff9d;
-            --cyber-red: #ff003c;
-            --cyber-yellow: #fff700;
-            --cyber-orange: #ff7700;
-        }
-
-        /* === BASE STYLES === */
-        * {
-            margin: 0;
-            padding: 0;
+        *, *::before, *::after {
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            margin: 0;
+            padding: 0
         }
 
         html {
-            scroll-behavior: smooth;
             overflow-x: hidden;
-            background: var(--cyber-void);
+            min-height: 100vh
+        }
+
+        :root {
+            --g: #c9a96e;
+            --g2: rgba(201,169,110,.45);
+            --g3: rgba(201,169,110,.12);
+            --g4: rgba(201,169,110,.06);
+            --c: #ede9e0;
+            --c2: rgba(237,233,224,.65);
+            --c3: rgba(237,233,224,.38);
+            --c4: rgba(237,233,224,.14);
+            --ink: #04040a;
+            --s: rgba(237,233,224,.08);
+            --teal: #4ecdc4;
+            --pur: #8b5cf6;
+            --red: #ff4466;
+            --ok: #22c55e;
+            --warn: #f59e0b;
+            --ease: cubic-bezier(.16,1,.3,1);
         }
 
         body {
-            font-family: 'Exo 2', sans-serif;
-            background: var(--cyber-void);
-            color: #e5e7eb;
+            background: var(--ink);
+            color: var(--c);
+            font-family: 'Syne',sans-serif;
             overflow-x: hidden;
+            cursor: none;
             min-height: 100vh;
-            /* display: flex; */
-            /* justify-content: center; */
-            /* flex-direction:column; */
-            /* align-items: center; */
-            /* padding: 2rem; */
-            position: relative;
         }
 
-        /* === BACKGROUND EFFECTS === */
-        .cyber-bg-overlay {
+        /* ── Cursor ── */
+        #CUR {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(157, 0, 255, 0.05) 0%, transparent 50%);
-            z-index: -100;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--g);
             pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%,-50%);
+            mix-blend-mode: screen;
+            transition: transform .1s
         }
 
-        .cyber-grid-lines {
+        #CUR2 {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: linear-gradient(90deg, rgba(56, 189, 248, 0.02) 1px, transparent 1px), linear-gradient(0deg, rgba(56, 189, 248, 0.02) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -99;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1.5px solid var(--g2);
             pointer-events: none;
-            opacity: 0.3;
+            z-index: 9998;
+            transform: translate(-50%,-50%);
+            transition: width .5s var(--ease),height .5s var(--ease),border-color .4s,background .4s
         }
 
-        .cyber-scan-line {
+        /* ── BG ── */
+        #BG3D {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--cyber-green), var(--cyber-blue), var(--cyber-purple), transparent);
-            z-index: 999;
+            inset: 0;
+            z-index: 0;
             pointer-events: none;
-            animation: securityScan 3s ease-in-out infinite;
-            box-shadow: 0 0 30px var(--cyber-green);
+            width: 100%;
+            height: 100%
         }
 
-        @@keyframes securityScan {
+        .noise {
+            position: fixed;
+            inset: -200px;
+            z-index: 1;
+            pointer-events: none;
+            opacity: .032;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 220px;
+            animation: nn 9s steps(4) infinite
+        }
+        @@keyframes nn {
+            to {
+                transform: translate(-4%,3%)
+            }
+        }
+
+        .vig {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(ellipse 80% 80% at 50% 50%,transparent 20%,rgba(4,4,10,.82) 100%)
+        }
+
+        .gridL {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background-image: linear-gradient(rgba(201,169,110,.012) 1px,transparent 1px),linear-gradient(90deg,rgba(201,169,110,.012) 1px,transparent 1px);
+            background-size: 76px 76px
+        }
+
+        .scanB {
+            position: fixed;
+            left: 0;
+            top: -2px;
+            width: 100%;
+            height: 1px;
+            z-index: 2;
+            pointer-events: none;
+            background: linear-gradient(90deg,transparent,var(--g2),transparent);
+            box-shadow: 0 0 30px var(--g2);
+            animation: SB 12s linear infinite
+        }
+        @@keyframes SB {
             0% {
-                transform: translateY(-100vh);
-                opacity: 0;
+                top: -2px;
+                opacity: 0
             }
 
-            10%, 90% {
-                opacity: 1;
+            5% {
+                opacity: 1
+            }
+
+            95% {
+                opacity: .5
             }
 
             100% {
-                transform: translateY(100vh);
-                opacity: 0;
+                top: 100vh;
+                opacity: 0
             }
         }
 
-        /* === OTP CONTAINER === */
-        .otp-container {
+        /* ── Page wrapper ── */
+        .page {
+            position: relative;
+            z-index: 10;
             width: 100%;
-            max-width: 450px;
-            margin: 0 auto;
+            max-width: 980px;
+            margin: auto
         }
 
-        /* === OTP CARD === */
-        .otp-card {
-            background: rgba(15, 23, 42, 0.85);
-            border-radius: 25px;
-            border: 2px solid rgba(56, 189, 248, 0.3);
-            padding: 3rem;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(25px);
-            box-shadow: 0 25px 75px rgba(0, 0, 0, 0.7), 0 0 100px rgba(56, 189, 248, 0.3), inset 0 0 50px rgba(56, 189, 248, 0.1);
-            transform: translateZ(0);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-            .otp-card:hover {
-                transform: translateY(-10px);
-                box-shadow: 0 35px 100px rgba(0, 0, 0, 0.8), 0 0 150px rgba(56, 189, 248, 0.5), inset 0 0 80px rgba(56, 189, 248, 0.2);
-            }
-
-        /* === HEADER === */
-        .otp-header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-
-        .otp-title {
-            font-family: 'Audiowide', cursive;
-            font-size: 2.2rem;
-            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-cyan));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .otp-subtitle {
-            color: rgba(229, 231, 235, 0.7);
-            font-size: 1.1rem;
-        }
-
-        /* === SECURITY BADGE === */
-        .security-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.8rem;
-            padding: 0.8rem 1.5rem;
-            background: rgba(56, 189, 248, 0.1);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            border-radius: 30px;
-            margin: 1.5rem auto;
-            animation: securityPulse 2s infinite ease-in-out;
-        }
-
-        @@keyframes securityPulse {
-            0%, 100% {
-                box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
-                transform: scale(1);
-            }
-
-            50% {
-                box-shadow: 0 0 30px rgba(56, 189, 248, 0.5);
-                transform: scale(1.02);
-            }
-        }
-
-        .security-text {
-            font-family: 'Orbitron', monospace;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--cyber-blue);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* === OTP FORM === */
-        .cyber-form-group {
-            margin-bottom: 2rem;
-            position: relative;
-        }
-
-        .cyber-form-label {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            font-family: 'Orbitron', monospace;
-            font-weight: 600;
-            color: var(--cyber-blue);
-            margin-bottom: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9rem;
-        }
-
-        .cyber-form-control {
-            background: rgba(15, 23, 42, 0.9);
-            border: 2px solid rgba(56, 189, 248, 0.3);
-            border-radius: 15px;
-            color: #e5e7eb;
-            padding: 1.2rem 1.5rem;
-            font-family: 'Exo 2', sans-serif;
-            font-size: 1rem;
-            width: 100%;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
-            .cyber-form-control:focus {
-                outline: none;
-                border-color: var(--cyber-blue);
-                background: rgba(15, 23, 42, 0.95);
-                box-shadow: 0 0 30px rgba(56, 189, 248, 0.4), inset 0 0 20px rgba(56, 189, 248, 0.1);
-                transform: translateY(-2px);
-            }
-
-            .cyber-form-control::placeholder {
-                color: rgba(229, 231, 235, 0.4);
-            }
-
-        /* === VERIFY BUTTON === */
-        .cyber-verify-btn {
-            width: 100%;
-            padding: 1.2rem;
-            font-family: 'Orbitron', monospace;
-            font-weight: 700;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, var(--cyber-green), var(--cyber-cyan));
-            color: white;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+        /* ── Logo row ── */
+        .logo-row {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            gap: 14px;
+            margin-bottom: 44px
         }
 
-            .cyber-verify-btn::before {
+        .logo-mark {
+            width: 44px;
+            height: 44px;
+            border: 1px solid var(--g2);
+            display: grid;
+            place-items: center;
+            color: var(--g);
+            font-size: 16px;
+            position: relative;
+            transition: all .5s var(--ease)
+        }
+
+            .logo-mark::before {
+                content: '';
+                position: absolute;
+                inset: -5px;
+                border: 1px solid rgba(201,169,110,.07);
+                transition: inset .5s var(--ease)
+            }
+
+        .logo-row:hover .logo-mark {
+            border-color: var(--g);
+            background: var(--g3);
+            box-shadow: 0 0 30px var(--g3)
+        }
+
+            .logo-row:hover .logo-mark::before {
+                inset: -11px
+            }
+
+        .logo-txt {
+            font-family: 'Syne',sans-serif;
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: .32em;
+            text-transform: uppercase;
+            color: var(--g)
+        }
+
+        .logo-sub {
+            font-family: 'DM Mono',monospace;
+            font-size: 8.5px;
+            letter-spacing: .16em;
+            color: var(--c4);
+            margin-top: 3px
+        }
+
+        /* ── Two column layout ── */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start
+        }
+
+        /* ── Card ── */
+        .card {
+            border: 1px solid var(--s);
+            background: rgba(4,4,10,.82);
+            backdrop-filter: blur(32px);
+            position: relative;
+            overflow: hidden
+        }
+
+            .card::before {
                 content: '';
                 position: absolute;
                 top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-                transition: 0.8s ease;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg,transparent,var(--g),transparent)
             }
 
-            .cyber-verify-btn:hover::before {
-                left: 100%;
+            .card::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg,transparent,var(--g2),transparent)
             }
 
-            .cyber-verify-btn:hover {
-                transform: translateY(-5px) scale(1.02);
-                box-shadow: 0 20px 60px rgba(0, 255, 157, 0.5), 0 0 100px rgba(0, 255, 157, 0.3);
-                letter-spacing: 3px;
+        .hud {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-color: var(--g2);
+            border-style: solid
+        }
+
+            .hud.tl {
+                top: 10px;
+                left: 10px;
+                border-width: 1px 0 0 1px
             }
 
-        /* === ERROR MESSAGE === */
-        .cyber-error {
-            background: rgba(255, 0, 60, 0.1);
-            border: 2px solid rgba(255, 0, 60, 0.3);
-            border-radius: 12px;
-            padding: 1.2rem;
-            margin-top: 1.5rem;
+            .hud.tr {
+                top: 10px;
+                right: 10px;
+                border-width: 1px 1px 0 0
+            }
+
+            .hud.bl {
+                bottom: 10px;
+                left: 10px;
+                border-width: 0 0 1px 1px
+            }
+
+            .hud.br {
+                bottom: 10px;
+                right: 10px;
+                border-width: 0 1px 1px 0
+            }
+
+        .card-inner {
+            padding: 40px 40px 44px
+        }
+
+        /* ── Header ── */
+        .hdr {
             text-align: center;
-            animation: slideIn 0.3s ease-out;
+            margin-bottom: 36px
         }
 
-        .error-icon {
-            font-size: 1.5rem;
-            color: var(--cyber-red);
-            margin-bottom: 0.5rem;
+        .hdr-eye {
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: var(--g);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 14px
         }
 
-        .error-text {
-            color: var(--cyber-red);
-            font-family: 'Orbitron', monospace;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-        }
-
-        @@keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
+            .hdr-eye::before, .hdr-eye::after {
+                content: '';
+                width: 18px;
+                height: 1px;
+                background: var(--g2)
             }
 
-            to {
+        .h-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--warn);
+            box-shadow: 0 0 10px rgba(245,158,11,.8);
+            animation: lp 1.8s infinite;
+            display: inline-block
+        }
+        @@keyframes lp {
+            0%, 100% {
                 opacity: 1;
-                transform: translateY(0);
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .3;
+                transform: scale(.6)
             }
         }
 
-        /* === BACK LINK === */
-        .back-link {
+        .hdr-h {
+            font-family: 'Instrument Serif',serif;
+            font-size: clamp(28px,4vw,42px);
+            font-weight: 400;
+            letter-spacing: -.03em;
+            line-height: 1.05
+        }
+
+            .hdr-h em {
+                font-style: italic;
+                color: var(--g)
+            }
+
+        .hdr-p {
+            font-family: 'DM Mono',monospace;
+            font-size: 9.5px;
+            letter-spacing: .13em;
+            color: var(--c3);
+            margin-top: 10px;
+            text-transform: uppercase
+        }
+
+        /* ── OTP Digits ── */
+        .otp-digits {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 22px
+        }
+
+        .otp-digit {
+            width: 52px;
+            height: 64px;
+            background: rgba(0,0,0,.35);
+            border: 1px solid var(--s);
+            color: var(--c);
+            font-family: 'DM Mono',monospace;
+            font-size: 22px;
+            font-weight: 400;
+            letter-spacing: 0;
             text-align: center;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(56, 189, 248, 0.2);
+            outline: none;
+            transition: all .35s var(--ease);
+            caret-color: var(--g);
+            -webkit-appearance: none;
+            -moz-appearance: textfield
         }
 
-        .back-text {
-            color: rgba(229, 231, 235, 0.7);
-            font-size: 0.95rem;
-            margin-bottom: 0.5rem;
+            .otp-digit::-webkit-outer-spin-button,
+            .otp-digit::-webkit-inner-spin-button {
+                -webkit-appearance: none
+            }
+
+            .otp-digit:focus {
+                border-color: var(--g2);
+                background: rgba(0,0,0,.5);
+                box-shadow: 0 0 0 1px var(--g3), 0 0 30px var(--g3)
+            }
+
+            .otp-digit.filled {
+                border-color: var(--g2);
+                color: var(--g)
+            }
+
+        /* Hidden real input for form submission */
+        #OTP_REAL {
+            display: none
         }
 
-        .back-cta {
-            color: var(--cyber-cyan);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+        /* ── Timer ── */
+        .timer-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px
+        }
+
+        .timer-lbl {
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--c4);
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+            .timer-lbl i {
+                font-size: 10px;
+                color: var(--warn)
+            }
+
+        #TIMER {
+            font-family: 'DM Mono',monospace;
+            font-size: 13px;
+            letter-spacing: .1em;
+            color: var(--warn);
+            font-weight: 400
+        }
+
+            #TIMER.expired {
+                color: var(--red)
+            }
+
+        .resend-btn {
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--c4);
+            background: none;
+            border: none;
+            border-bottom: 1px solid transparent;
+            cursor: none;
+            transition: all .3s;
+            padding-bottom: 1px
+        }
+
+            .resend-btn:not(:disabled):hover {
+                color: var(--g);
+                border-color: var(--g2)
+            }
+
+            .resend-btn:disabled {
+                opacity: .35;
+                cursor: not-allowed
+            }
+
+        /* ── Progress bar ── */
+        .timer-bar {
+            height: 2px;
+            background: rgba(237,233,224,.06);
+            margin-bottom: 28px;
+            overflow: hidden
+        }
+
+        .timer-bar-fill {
+            height: 100%;
+            width: 100%;
+            background: var(--warn);
+            transition: width 1s linear, background .4s
+        }
+
+        /* ── Submit button ── */
+        .sbtn {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid var(--g2);
+            background: transparent;
+            color: var(--g);
+            font-family: 'DM Mono',monospace;
+            font-size: 10px;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            cursor: none;
+            position: relative;
+            overflow: hidden;
+            transition: all .4s var(--ease);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px
+        }
+
+            .sbtn::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: var(--g);
+                transform: translateY(101%);
+                transition: transform .45s var(--ease)
+            }
+
+            .sbtn:hover:not(:disabled) {
+                color: var(--ink);
+                border-color: var(--g)
+            }
+
+                .sbtn:hover:not(:disabled)::before {
+                    transform: translateY(0)
+                }
+
+            .sbtn:disabled {
+                opacity: .35;
+                cursor: not-allowed
+            }
+
+            .sbtn span, .sbtn i {
+                position: relative;
+                z-index: 1
+            }
+
+            .sbtn:active:not(:disabled) {
+                transform: scale(.98)
+            }
+
+            .sbtn:not(:disabled) {
+                animation: btnPulse 2.8s ease-in-out infinite
+            }
+        @@keyframes btnPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(201,169,110,0)
+            }
+
+            50% {
+                box-shadow: 0 0 28px 2px rgba(201,169,110,.22)
+            }
+        }
+
+        /* ── Error block ── */
+        .err-block {
+            border: 1px solid rgba(255,68,102,.3);
+            background: rgba(255,68,102,.06);
+            padding: 14px 18px;
+            margin-bottom: 22px;
+            font-family: 'DM Mono',monospace;
+            font-size: 9.5px;
+            letter-spacing: .06em;
+            color: var(--red);
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+            .err-block i {
+                flex-shrink: 0
+            }
+
+        /* ── Divider ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 30px 0 26px;
+            color: var(--c4);
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .18em;
+            text-transform: uppercase
+        }
+
+            .divider::before, .divider::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: var(--s)
+            }
+
+        /* ── Back link row ── */
+        .back-row {
+            text-align: center
+        }
+
+            .back-row p {
+                font-family: 'DM Mono',monospace;
+                font-size: 9px;
+                letter-spacing: .14em;
+                text-transform: uppercase;
+                color: var(--c4);
+                margin-bottom: 12px
+            }
+
+        .back-btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 10px;
+            padding: 10px 24px;
+            border: 1px solid var(--s);
+            color: var(--c3);
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            transition: all .35s var(--ease);
+            text-decoration: none
         }
 
-            .back-cta:hover {
-                color: white;
-                transform: translateX(-5px);
-                text-shadow: 0 0 15px var(--cyber-cyan);
+            .back-btn::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: var(--g4);
+                transform: translateX(-101%);
+                transition: transform .4s var(--ease)
             }
 
-        /* === RESPONSIVE DESIGN === */
-        @@media (max-width: 768px) {
+            .back-btn:hover {
+                color: var(--c);
+                border-color: var(--g2)
+            }
+
+                .back-btn:hover::before {
+                    transform: translateX(0)
+                }
+
+            .back-btn span, .back-btn i {
+                position: relative;
+                z-index: 1
+            }
+
+            .back-btn i {
+                font-size: 10px;
+                color: var(--g)
+            }
+
+        /* ── RIGHT COLUMN: Terminal card ── */
+        .term-card {
+            border: 1px solid var(--s);
+            background: rgba(4,4,10,.82);
+            backdrop-filter: blur(32px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column
+        }
+
+            .term-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg,transparent,var(--teal),transparent)
+            }
+
+            .term-card::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg,transparent,rgba(78,205,196,.3),transparent)
+            }
+
+        .term-hdr {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--s);
+            flex-shrink: 0
+        }
+
+        .term-title {
+            font-family: 'DM Mono',monospace;
+            font-size: 9px;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--teal);
+            display: flex;
+            align-items: center;
+            gap: 9px
+        }
+
+            .term-title::before {
+                content: '';
+                width: 12px;
+                height: 1px;
+                background: rgba(78,205,196,.5)
+            }
+
+        .term-dots {
+            display: flex;
+            gap: 7px
+        }
+
+        .t-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%
+        }
+
+            .t-dot.r {
+                background: var(--red);
+                box-shadow: 0 0 8px rgba(255,68,102,.6)
+            }
+
+            .t-dot.y {
+                background: var(--warn);
+                box-shadow: 0 0 8px rgba(245,158,11,.6)
+            }
+
+            .t-dot.g {
+                background: var(--ok);
+                box-shadow: 0 0 8px rgba(34,197,94,.6)
+            }
+
+        .term-body {
+            padding: 18px 20px;
+            flex: 1;
+            overflow-y: auto;
+            min-height: 200px;
+            max-height: 340px
+        }
+
+        .t-line {
+            font-family: 'DM Mono',monospace;
+            font-size: 10px;
+            letter-spacing: .05em;
+            line-height: 2.1;
+            color: var(--c3);
+            opacity: 0;
+            animation: tfi .35s forwards
+        }
+        @@keyframes tfi {
+            to {
+                opacity: 1
+            }
+        }
+
+        .t-line.ok {
+            color: var(--ok)
+        }
+
+        .t-line.warn {
+            color: var(--warn)
+        }
+
+        .t-line.err {
+            color: var(--red)
+        }
+
+        .t-line.tc {
+            color: var(--teal)
+        }
+
+        .t-cur {
+            display: inline-block;
+            width: 6px;
+            height: 10px;
+            background: var(--teal);
+            vertical-align: middle;
+            margin-left: 3px;
+            animation: bl 1s infinite
+        }
+        @@keyframes bl {
+            0%, 100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0
+            }
+        }
+
+        /* Status grid */
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--s);
+            border-top: 1px solid var(--s);
+            flex-shrink: 0
+        }
+
+        .sg-cell {
+            background: var(--ink);
+            padding: 14px 16px;
+            transition: background .3s
+        }
+
+            .sg-cell:hover {
+                background: #0a0814
+            }
+
+        .sg-lbl {
+            font-family: 'DM Mono',monospace;
+            font-size: 8px;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: var(--c4);
+            margin-bottom: 5px
+        }
+
+        .sg-val {
+            font-family: 'Syne',sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 7px
+        }
+
+            .sg-val.ok {
+                color: var(--ok)
+            }
+
+            .sg-val.tc {
+                color: var(--teal)
+            }
+
+            .sg-val.wa {
+                color: var(--warn)
+            }
+
+        .sg-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 0 0 8px currentColor;
+            animation: lp 1.8s infinite
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(4,4,10,.8)
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--g2);
+            border-radius: 99px
+        }
+
+        ::selection {
+            background: rgba(201,169,110,.2);
+            color: var(--c)
+        }
+
+        @@media(max - width:800px) {
+            .two-col {
+                grid-template-columns: 1fr
+            }
+
+            .card-inner {
+                padding: 28px 22px 32px
+            }
+
             body {
-                padding: 1rem;
+                padding: 24px 14px
             }
 
-            .otp-card {
-                padding: 2rem;
-            }
-
-            .otp-title {
-                font-size: 1.8rem;
-            }
-
-            .cyber-verify-btn {
-                padding: 1rem;
-                font-size: 1rem;
-            }
-        }
-
-        @@media (max-width: 480px) {
-            .otp-card {
-                padding: 1.5rem;
-            }
-
-            .otp-title {
-                font-size: 1.5rem;
-            }
-
-            .cyber-form-control {
-                padding: 1rem;
+            .otp-digit {
+                width: 40px;
+                height: 52px;
+                font-size: 18px
             }
         }
     </style>
 </head>
 <body>
-    <!-- BACKGROUND EFFECTS -->
-    <div class="cyber-bg-overlay"></div>
-    <div class="cyber-grid-lines"></div>
-    <div class="cyber-scan-line"></div>
 
-    <!-- OTP CONTAINER -->
-    <div class="otp-container">
-        <div class="otp-card">
-            <!-- HEADER -->
-            <div class="otp-header">
-                <h1 class="otp-title">
-                    <i class="fas fa-user-shield me-2"></i>
-                    QUANTUM OTP VERIFICATION
-                </h1>
-                <p class="otp-subtitle">Enter the one-time code sent to your quantum email</p>
+    <!-- Cursor -->
+    <div id="CUR"></div>
+    <div id="CUR2"></div>
 
-                <!-- SECURITY BADGE -->
-                <div class="security-badge">
-                    <i class="fas fa-shield-alt"></i>
-                    <span class="security-text">Time-Sensitive Encryption</span>
-                </div>
+    <!-- BG — identical to login -->
+    <canvas id="BG3D"></canvas>
+    <div class="noise"></div>
+    <div class="vig"></div>
+    <div class="gridL"></div>
+    <div class="scanB"></div>
+
+    <div class="page">
+
+        <!-- Logo -->
+        <a class="logo-row" href="/" style="text-decoration:none;display:flex;align-items:center;gap:14px;justify-content:center">
+            <span class="logo-mark"><i class="fa-solid fa-shield-halved"></i></span>
+            <div>
+                <div class="logo-txt">Deepfake Nexus</div>
+                <div class="logo-sub">Quantum Security Platform</div>
             </div>
+        </a>
 
-            <!-- OTP FORM -->
-            <form method="post" action="/Account/VerifyOtp">
-                <input type="hidden" name="email" value="@TempData["Email"]" />
+        <div class="two-col">
 
-                <!-- OTP FIELD -->
-                <div class="cyber-form-group">
-                    <label class="cyber-form-label">
-                        <i class="fas fa-key"></i>
-                        VERIFICATION CODE
-                    </label>
-                    <input type="text"
-                           name="otp"
-                           class="cyber-form-control"
-                           placeholder="Enter your 6-digit OTP"
-                           required
-                           autocomplete="one-time-code"
-                           pattern="\d{6}"
-                           maxlength="6" />
-                </div>
+            <!-- ═══ LEFT: OTP Form ═══ -->
+            <div class="card">
+                <div class="hud tl"></div><div class="hud tr"></div>
+                <div class="hud bl"></div><div class="hud br"></div>
+                <div class="card-inner">
 
-                <!-- VERIFY BUTTON -->
-                <button type="submit" class="cyber-verify-btn">
-                    <i class="fas fa-fingerprint"></i>
-                    VERIFY QUANTUM CODE
-                </button>
-
-                <!-- ERROR MESSAGE -->
-                @if (ViewBag.Error != null)
-                {
-                    <div class="cyber-error">
-                        <div class="error-icon">
-                            <i class="fas fa-exclamation-circle"></i>
-                        </div>
-                        <div class="error-text">@ViewBag.Error</div>
+                    <div class="hdr">
+                        <div class="hdr-eye"><span class="h-dot"></span>Time-Sensitive · OTP</div>
+                        <h1 class="hdr-h">Verify<br><em>Identity</em></h1>
+                        <p class="hdr-p">Enter the 6-digit code sent to your email</p>
                     </div>
-                }
-            </form>
 
-            <!-- BACK LINK -->
-            <div class="back-link">
-                <p class="back-text">Need to change email?</p>
-                <a href="/Account/Login" class="back-cta">
-                    <i class="fas fa-arrow-left"></i>
-                    BACK TO LOGIN
-                </a>
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="err-block"><i class="fa-solid fa-triangle-exclamation"></i>@ViewBag.Error</div>
+                    }
+
+                    <form id="OF" method="post" action="/Account/VerifyOtp">
+                        <input type="hidden" name="email" value="@TempData["Email"]" />
+                        <input type="hidden" name="otp" id="OTP_REAL" />
+
+                        <!-- OTP digit inputs -->
+                        <div class="otp-digits" id="DIGITS">
+                            <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" data-idx="0" />
+                            <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" data-idx="1" />
+                            <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" data-idx="2" />
+                            <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" data-idx="3" />
+                            <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" data-idx="4" />
+                            <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" data-idx="5" />
+                        </div>
+
+                        <!-- Timer bar -->
+                        <div class="timer-bar"><div class="timer-bar-fill" id="TBAR"></div></div>
+
+                        <!-- Timer row -->
+                        <div class="timer-row">
+                            <div class="timer-lbl"><i class="fa-regular fa-clock"></i><span>Code expires in</span> <span id="TIMER">05:00</span></div>
+                            <button type="button" class="resend-btn" id="RESEND" disabled>Resend Code</button>
+                        </div>
+
+                        <button class="sbtn" type="submit" id="SBTN" disabled>
+                            <i class="fa-solid fa-fingerprint"></i>
+                            <span id="STXT">Verify Code</span>
+                        </button>
+
+                    </form>
+
+                    <div class="divider">or</div>
+
+                    <div class="back-row">
+                        <p>Need to change your email?</p>
+                        <a class="back-btn" href="/Account/Login">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            <span>Back to Login</span>
+                        </a>
+                    </div>
+
+                </div>
             </div>
+
+            <!-- ═══ RIGHT: Terminal ═══ -->
+            <div class="term-card">
+                <div class="hud tl"></div><div class="hud tr"></div>
+                <div class="hud bl"></div><div class="hud br"></div>
+
+                <div class="term-hdr">
+                    <span class="term-title">OTP Security Console</span>
+                    <div class="term-dots">
+                        <div class="t-dot r"></div>
+                        <div class="t-dot y"></div>
+                        <div class="t-dot g"></div>
+                    </div>
+                </div>
+
+                <div class="term-body" id="TB"></div>
+
+                <div class="status-grid">
+                    <div class="sg-cell"><div class="sg-lbl">OTP Status</div><div class="sg-val wa" id="SG_OTP"><span class="sg-dot"></span>Awaiting Input</div></div>
+                    <div class="sg-cell"><div class="sg-lbl">Expiry</div><div class="sg-val wa" id="SG_EXP"><span class="sg-dot"></span><span id="SG_EXP_VAL">5:00</span></div></div>
+                    <div class="sg-cell"><div class="sg-lbl">Auth Module</div><div class="sg-val ok"><span class="sg-dot"></span>Online</div></div>
+                    <div class="sg-cell"><div class="sg-lbl">Neural Mesh</div><div class="sg-val tc"><span class="sg-dot"></span>Synced</div></div>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- SCRIPTS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Auto-focus OTP input
-            const otpInput = document.querySelector('input[name="otp"]');
-            if (otpInput) {
-                otpInput.focus();
-            }
+        (function(){
+        'use strict';
 
-            // Add input validation for numbers only
-            otpInput.addEventListener('input', function(e) {
-                this.value = this.value.replace(/[^0-9]/g, '');
-            });
-
-            // Add shake animation on error
-            if (@ViewBag.Error != null) {
-                otpInput.style.animation = 'shake 0.5s';
-                setTimeout(() => {
-                    otpInput.style.animation = '';
-                }, 500);
-            }
-
-            // Add shake animation
-            const style = document.createElement('style');
-            style.textContent = `
-                @@keyframes shake {
-                    0%, 100% { transform: translateX(0); }
-                    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-                    20%, 40%, 60%, 80% { transform: translateX(5px); }
-                }
-            `;
-            document.head.appendChild(style);
+        /* ── Cursor ── */
+        var CUR=document.getElementById('CUR'),CUR2=document.getElementById('CUR2'),mx=0,my=0,rx=0,ry=0;
+        document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;CUR.style.left=mx+'px';CUR.style.top=my+'px';});
+        (function L(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;CUR2.style.left=rx+'px';CUR2.style.top=ry+'px';requestAnimationFrame(L);})();
+        document.querySelectorAll('a,button,.sg-cell,.otp-digit,.term-card').forEach(function(el){
+          el.addEventListener('mouseenter',function(){CUR2.style.width='52px';CUR2.style.height='52px';CUR2.style.borderColor='rgba(201,169,110,.9)';CUR2.style.background='rgba(201,169,110,.05)';});
+          el.addEventListener('mouseleave',function(){CUR2.style.width='32px';CUR2.style.height='32px';CUR2.style.borderColor='rgba(201,169,110,.4)';CUR2.style.background='transparent';});
         });
+
+        /* ── OTP Digit inputs ── */
+        var digits=Array.from(document.querySelectorAll('.otp-digit'));
+        var realInp=document.getElementById('OTP_REAL');
+        var sbtn=document.getElementById('SBTN');
+
+        function syncReal(){
+          var val=digits.map(function(d){return d.value||''}).join('');
+          realInp.value=val;
+          sbtn.disabled=val.length<6;
+          // update terminal status
+          if(val.length>0){
+            document.getElementById('SG_OTP').innerHTML='<span class="sg-dot"></span>'+val.length+'/6 Entered';
+            document.getElementById('SG_OTP').className='sg-val tc';
+          }
+          if(val.length===6){
+            document.getElementById('SG_OTP').innerHTML='<span class="sg-dot"></span>Code Ready';
+            document.getElementById('SG_OTP').className='sg-val ok';
+            addLine('ok','✓ 6-digit code received — ready to verify');
+          }
+        }
+
+        digits.forEach(function(inp,i){
+          inp.addEventListener('focus',function(){this.select();});
+          inp.addEventListener('keydown',function(e){
+            if(e.key==='Backspace'){
+              if(!this.value && i>0){digits[i-1].value='';digits[i-1].classList.remove('filled');digits[i-1].focus();}
+              else{this.value='';this.classList.remove('filled');}
+              syncReal();e.preventDefault();
+            } else if(e.key==='ArrowLeft'&&i>0){digits[i-1].focus();}
+            else if(e.key==='ArrowRight'&&i<5){digits[i+1].focus();}
+            else if(e.key==='Enter'&&realInp.value.length===6){document.getElementById('OF').submit();}
+          });
+          inp.addEventListener('input',function(){
+            var v=this.value.replace(/[^0-9]/g,'');
+            if(!v){this.value='';this.classList.remove('filled');syncReal();return;}
+            // handle paste of multiple digits
+            if(v.length>1){
+              for(var j=0;j<v.length&&(i+j)<6;j++){digits[i+j].value=v[j];digits[i+j].classList.add('filled');}
+              var next=Math.min(i+v.length,5);digits[next].focus();
+              syncReal();return;
+            }
+            this.value=v;this.classList.add('filled');
+            if(i<5)digits[i+1].focus();
+            syncReal();
+          });
+          inp.addEventListener('paste',function(e){
+            var txt=(e.clipboardData||window.clipboardData).getData('text').replace(/[^0-9]/g,'');
+            if(txt.length>0){
+              for(var j=0;j<txt.length&&j<6;j++){digits[j].value=txt[j];digits[j].classList.add('filled');}
+              digits[Math.min(txt.length,5)].focus();
+              syncReal();
+            }
+            e.preventDefault();
+          });
+        });
+
+        // Focus first digit on load
+        setTimeout(function(){digits[0].focus();},400);
+
+        /* ── Countdown timer — 5 min ── */
+        var total=300,left=300;
+        var timerEl=document.getElementById('TIMER');
+        var barEl=document.getElementById('TBAR');
+        var resendBtn=document.getElementById('RESEND');
+        var sgExpVal=document.getElementById('SG_EXP_VAL');
+        var sgExp=document.getElementById('SG_EXP');
+
+        function fmtTime(s){var m=Math.floor(s/60),sec=s%60;return (m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;}
+
+        var tick=setInterval(function(){
+          left--;
+          var pct=(left/total)*100;
+          barEl.style.width=pct+'%';
+          if(pct<=33)barEl.style.background='var(--red)';
+          else if(pct<=60)barEl.style.background='var(--warn)';
+          timerEl.textContent=fmtTime(left);
+          sgExpVal.textContent=fmtTime(left);
+          if(left<=60){
+            timerEl.classList.add('expired');
+            sgExp.className='sg-val err';
+            sgExp.innerHTML='<span class="sg-dot" style="background:var(--red);box-shadow:0 0 8px var(--red)"></span><span id="SG_EXP_VAL">'+fmtTime(left)+'</span>';
+          }
+          if(left<=0){
+            clearInterval(tick);
+            timerEl.textContent='00:00';
+            sbtn.disabled=true;
+            resendBtn.disabled=false;
+            addLine('err','✗ OTP expired — request a new code');
+            addLine('warn','Click "Resend Code" to continue');
+          }
+        },1000);
+
+        resendBtn.addEventListener('click',function(){
+          if(!this.disabled){
+            left=300;total=300;
+            barEl.style.width='100%';barEl.style.background='var(--warn)';
+            timerEl.textContent=fmtTime(left);timerEl.classList.remove('expired');
+            this.disabled=true;sbtn.disabled=digits.map(function(d){return d.value}).join('').length<6;
+            digits.forEach(function(d){d.value='';d.classList.remove('filled');});
+            realInp.value='';digits[0].focus();
+            addLine('tc','New OTP dispatched to registered email…');
+            addLine('ok','✓ Fresh code valid for 5 minutes');
+            document.getElementById('SG_OTP').innerHTML='<span class="sg-dot"></span>Awaiting Input';
+            document.getElementById('SG_OTP').className='sg-val wa';
+          }
+        });
+
+        /* ── Form submit ── */
+        document.getElementById('OF').addEventListener('submit',function(e){
+          if(realInp.value.length<6){e.preventDefault();return;}
+          sbtn.disabled=true;
+          document.getElementById('STXT').textContent='Verifying…';
+          sbtn.querySelector('i').className='fa-solid fa-spinner fa-spin';
+          addLine('warn','Submitting OTP for verification…');
+          addLine('','Querying neural authentication layer…');
+          addLine('','Cross-referencing quantum token…');
+        });
+
+        /* ── Terminal ── */
+        var TB=document.getElementById('TB');
+        var LOG=[
+          ['tc','Initializing OTP verification module…'],
+          ['','Loading one-time-password handler…'],
+          ['ok','✓ TLS 1.3 Encryption: ACTIVE'],
+          ['','Verifying session integrity…'],
+          ['ok','✓ Session token validated'],
+          ['','Preparing neural authentication…'],
+          ['ok','✓ OTP dispatcher: ONLINE'],
+          ['','Establishing secure channel…'],
+          ['ok','✓ End-to-end encryption: ENABLED'],
+          ['warn','OTP dispatched · Valid for 5 minutes'],
+          ['tc','Awaiting 6-digit verification code…'],
+          ['ok','SYSTEM READY · Enter code to proceed']
+        ];
+        var qi=0;
+        function addLine(cls,txt){
+          var el=document.createElement('div');el.className='t-line '+(cls||'');
+          el.innerHTML='<span style="color:var(--g);margin-right:8px">›</span>'+txt+'<span class="t-cur"></span>';
+          var prev=TB.querySelectorAll('.t-cur');
+          for(var i=0;i<prev.length;i++)prev[i].remove();
+          TB.appendChild(el);TB.scrollTop=TB.scrollHeight;
+          if(TB.children.length>30)TB.firstChild.remove();
+        }
+        function boot(){if(qi<LOG.length){addLine(LOG[qi][0],LOG[qi][1]);qi++;setTimeout(boot,300);}}
+        boot();
+        var extras=[['tc','Scanning OTP entropy…'],['ok','✓ Token hash verified'],['','Monitoring auth endpoint…'],['ok','✓ Zero replay attacks detected'],['warn','Rate limiter: active (5 attempts max)'],['tc','Neural mesh heartbeat: OK'],['','Running OTP expiry check…'],['ok','✓ Session secure']];
+        setInterval(function(){var m=extras[Math.floor(Math.random()*extras.length)];addLine(m[0],m[1]);},3200);
+
+        /* ══════════════════════════════════════════════════
+           THREE.JS — IDENTICAL TO LOGIN PAGE
+        ══════════════════════════════════════════════════ */
+        var canvas=document.getElementById('BG3D');
+        var W=function(){return window.innerWidth;},H=function(){return window.innerHeight;};
+        var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.8));
+        renderer.setSize(W(),H());
+        renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+        var scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x04040a,.018);
+        var camera=new THREE.PerspectiveCamera(54,W()/H(),.1,500);camera.position.set(0,0,22);
+
+        /* Lights */
+        scene.add(new THREE.AmbientLight(0x04040e,2.5));
+        var kL=new THREE.SpotLight(0xc9a96e,24,110,Math.PI/6,.35,1.2);kL.position.set(20,24,18);scene.add(kL);
+        var fL=new THREE.SpotLight(0x4ecdc4,13,85,Math.PI/5,.4,1.5);fL.position.set(-22,12,14);scene.add(fL);
+        var bL=new THREE.SpotLight(0x8b5cf6,9,65,Math.PI/4,.5,2);bL.position.set(-14,-14,10);scene.add(bL);
+        var p1=new THREE.PointLight(0xc9a96e,8,45);scene.add(p1);
+        var p2=new THREE.PointLight(0x4ecdc4,5,35);scene.add(p2);
+        var p3=new THREE.PointLight(0x8b5cf6,4,28);scene.add(p3);
+
+        function eL(c,op){return new THREE.LineBasicMaterial({color:c,transparent:true,opacity:op});}
+        function mPP(c,op,r){return new THREE.MeshPhysicalMaterial({color:c,metalness:.95,roughness:r||.04,transparent:true,opacity:op||.08,side:THREE.DoubleSide,transmission:.88,thickness:.6,ior:1.5});}
+        function mBB(c,op){return new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:op});}
+
+        var objs=[];
+        function addCube(x,y,z,s,mat){
+          var g=new THREE.BoxGeometry(1,1,1,2,2,2),m=new THREE.Mesh(g,mat);
+          m.scale.setScalar(s);m.position.set(x,y,z);
+          m.rotation.set(Math.random()*6.28,Math.random()*6.28,Math.random()*6.28);
+          m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(0xc9a96e,.22)));
+          scene.add(m);
+          objs.push({m:m,ox:x,oy:y,oz:z,fp:Math.random()*6.28,fs:.2+Math.random()*.25,rs:{x:(Math.random()-.5)*.005,y:(Math.random()-.5)*.005,z:(Math.random()-.5)*.003},ly:Math.floor(Math.random()*3)});
+        }
+
+        addCube(10,4,-2,5,mPP(0xc9a96e,.08,.04));
+        addCube(-9,-3,-1,4.5,mPP(0x8ed4d0,.07,.05));
+        addCube(2,8,-6,6.5,mPP(0x0c0a14,.14,.08));
+        addCube(-3,-7,-4,4,mPP(0xd4b87e,.07));
+        addCube(12,-5,-8,3.5,new THREE.MeshStandardMaterial({color:0x1a1428,metalness:1,roughness:.05}));
+        addCube(-11,7,-9,4,mPP(0xc9a96e,.06));
+        addCube(6,-9,-5,3,mPP(0x4ecdc4,.06,.06));
+        addCube(-6,10,-7,3.5,mPP(0x8b5cf6,.06,.07));
+
+        for(var i=0;i<26;i++){addCube((Math.random()-.5)*36,(Math.random()-.5)*22,-10-Math.random()*14,.6+Math.random()*2.4,i%3===0?new THREE.MeshBasicMaterial({color:0xc9a96e,wireframe:true,transparent:true,opacity:.07}):mPP(0xc9a96e,.04));}
+        for(var j=0;j<60;j++){addCube((Math.random()-.5)*58,(Math.random()-.5)*34,-20-Math.random()*30,.08+Math.random()*.55,new THREE.MeshBasicMaterial({color:0xc9a96e,wireframe:true,transparent:true,opacity:.04+Math.random()*.03}));}
+
+        var nested=[];
+        [[5.5,.065,.04,0xc9a96e],[3.5,.08,.05,0x4ecdc4],[2,.1,.04,0xd4b87e],[1,.13,.03,0xc9a96e]].forEach(function(d,i){
+          var g=new THREE.BoxGeometry(d[0],d[0],d[0],3,3,3);
+          var m=new THREE.Mesh(g,mPP(d[3],d[1],d[2]));
+          m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),eL(d[3],i===0?.42:.6)));
+          m.position.set(1,0,-8);scene.add(m);
+          nested.push({m:m,rx:(.003+i*.002)*(i%2===0?1:-1),ry:.004+i*.003,rz:.002+i*.001});
+        });
+
+        var orbs=[];
+        for(var oi=0;oi<16;oi++){
+          var sz=.22+Math.random()*.62;
+          var g2=new THREE.BoxGeometry(sz,sz,sz,2,2,2);
+          var col=oi%3===0?0xc9a96e:oi%3===1?0x4ecdc4:0x8b5cf6;
+          var om=new THREE.Mesh(g2,mPP(col,.1,.05));
+          om.add(new THREE.LineSegments(new THREE.EdgesGeometry(g2),eL(col,.55)));
+          om.position.set(1,0,-8);scene.add(om);
+          orbs.push({m:om,r:3+Math.random()*5,sp:.22+Math.random()*.52,ph:oi*.393,ti:.35+Math.random()*.55});
+        }
+
+        var tori=[];
+        [{r:2.5,tb:.008,c:0xc9a96e,op:.26,x:6,y:4,z:-2,rx:1.05,rz:.2,rs:.004},
+         {r:4.5,tb:.005,c:0x4ecdc4,op:.18,x:-8,y:-2,z:-5,rx:.78,rz:0,rs:.003},
+         {r:3,tb:.006,c:0xc9a96e,op:.16,x:11,y:8,z:-10,rx:.62,rz:.3,rs:.0035},
+         {r:7,tb:.004,c:0x8b5cf6,op:.11,x:-10,y:9,z:-9,rx:.52,rz:.2,rs:.0025},
+         {r:2.2,tb:.009,c:0x8b5cf6,op:.2,x:0,y:-8,z:-5,rx:1.57,rz:.6,rs:.006},
+         {r:9,tb:.003,c:0xc9a96e,op:.07,x:18,y:0,z:-16,rx:.2,rz:1.05,rs:.002},
+         {r:3.8,tb:.005,c:0x4ecdc4,op:.14,x:-13,y:-10,z:-11,rx:1.05,rz:.78,rs:.004},
+         {r:5,tb:.004,c:0xd4b87e,op:.12,x:-5,y:13,z:-12,rx:.5,rz:.2,rs:.003},
+         {r:2.8,tb:.007,c:0xc9a96e,op:.2,x:13,y:-7,z:-7,rx:.4,rz:.6,rs:.005},
+         {r:6,tb:.003,c:0x8b5cf6,op:.1,x:-15,y:5,z:-14,rx:.3,rz:.4,rs:.0028}
+        ].forEach(function(d){
+          var g=new THREE.TorusGeometry(d.r,d.tb,2,90),m=new THREE.Mesh(g,mBB(d.c,d.op));
+          m.rotation.set(d.rx,0,d.rz);m.position.set(d.x,d.y,d.z);scene.add(m);
+          tori.push({m:m,rs:d.rs,ox:d.x,oy:d.y,oz:d.z,fp:Math.random()*6.28,fs:.2+Math.random()*.25,ly:Math.floor(Math.random()*3)});
+        });
+
+        var wires=[];
+        for(var k=0;k<22;k++){
+          var wg=new THREE.IcosahedronGeometry(.4+Math.random()*1.1,0);
+          var wm=new THREE.LineSegments(new THREE.EdgesGeometry(wg),eL(k%3===0?0x8b5cf6:k%2===0?0xc9a96e:0x4ecdc4,.14));
+          wm.position.set((Math.random()-.5)*36,(Math.random()-.5)*22,-8-Math.random()*20);scene.add(wm);
+          wires.push({m:wm,rs:{x:.005+Math.random()*.006,y:.006+Math.random()*.005,z:.003},oy:wm.position.y,fp:Math.random()*6.28,fs:.18+Math.random()*.3,ly:Math.floor(Math.random()*3)});
+        }
+
+        var ring=[];
+        for(var r2=0;r2<22;r2++){
+          var ang=r2/22*6.28,rad=14+Math.random()*3;
+          var cs=.1+Math.random()*.55;
+          var cg=new THREE.BoxGeometry(cs,cs,cs);
+          var cm=new THREE.LineSegments(new THREE.EdgesGeometry(cg),eL(r2%3===0?0x8b5cf6:r2%2===0?0xc9a96e:0x4ecdc4,.16));
+          cm.position.set(Math.cos(ang)*rad,Math.sin(ang)*rad*.38,-17-Math.random()*6);scene.add(cm);
+          ring.push({m:cm,ang:ang,rad:rad,rs:{x:.007,y:.009},fp:Math.random()*6.28,fs:.24+Math.random()*.22});
+        }
+
+        function mkP(n,spr,zMin,zSpr,col,sz,op){
+          var g=new THREE.BufferGeometry(),pos=new Float32Array(n*3);
+          for(var ii=0;ii<n;ii++){pos[ii*3]=(Math.random()-.5)*spr;pos[ii*3+1]=(Math.random()-.5)*spr*.5;pos[ii*3+2]=zMin-Math.random()*zSpr;}
+          g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+          return new THREE.Points(g,new THREE.PointsMaterial({color:col,size:sz,transparent:true,opacity:op,sizeAttenuation:true}));
+        }
+        var pA=mkP(1400,80,4,35,0xc9a96e,.034,.28);scene.add(pA);
+        var pB=mkP(220,35,2,16,0xd4b87e,.08,.42);scene.add(pB);
+        var pC=mkP(160,30,2,13,0x4ecdc4,.06,.36);scene.add(pC);
+        var pD=mkP(110,26,2,10,0x8b5cf6,.05,.3);scene.add(pD);
+
+        var tmx=0,tmy=0,cmx=0,cmy=0;
+        document.addEventListener('mousemove',function(e){tmx=(e.clientX/W()-.5)*2;tmy=-(e.clientY/H()-.5)*2;});
+        window.addEventListener('resize',function(){renderer.setSize(W(),H());camera.aspect=W()/H();camera.updateProjectionMatrix();});
+
+        function lerp(a,b,t){return a+(b-a)*t;}
+        var clock=new THREE.Clock();
+
+        function animate(){
+          requestAnimationFrame(animate);var t=clock.getElapsedTime();
+          cmx+=(tmx-cmx)*.016;cmy+=(tmy-cmy)*.016;
+          camera.position.x=lerp(camera.position.x,cmx*3.2,.055);
+          camera.position.y=lerp(camera.position.y,cmy*2,.055);
+          camera.lookAt(cmx*.6,cmy*.4,0);
+          p1.position.set(9+Math.sin(t*.38)*5,9+Math.cos(t*.28)*4,8);
+          p2.position.set(-10+Math.cos(t*.32)*3.5,-7+Math.sin(t*.26)*3,9);
+          p3.position.set(-6+Math.cos(t*.26)*4.5,5+Math.sin(t*.18)*4,-3);
+          nested.forEach(function(o){o.m.rotation.x+=o.rx;o.m.rotation.y+=o.ry;o.m.rotation.z+=o.rz;});
+          orbs.forEach(function(o){o.m.rotation.x+=.007;o.m.rotation.y+=.01;var a=t*o.sp+o.ph;var cx=1,cy=0,cz=-8;o.m.position.set(cx+Math.cos(a)*o.r,cy+Math.sin(a*o.ti)*o.r*.42,cz+Math.sin(a)*o.r*.68);});
+          objs.forEach(function(o){var lm=[1,1.6,2.8][o.ly];o.m.rotation.x+=o.rs.x*(1+.01*lm);o.m.rotation.y+=o.rs.y*(1+.01*lm);o.m.rotation.z+=o.rs.z;o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.44;o.m.position.x=o.ox+Math.cos(t*o.fs*.7+o.fp)*.22+cmx*(.3*lm);});
+          tori.forEach(function(o){o.m.rotation.z+=o.rs*(1+.005);o.m.rotation.y+=o.rs*.7;o.m.rotation.x+=o.rs*.3;o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.3;});
+          wires.forEach(function(o){o.m.rotation.x+=o.rs.x;o.m.rotation.y+=o.rs.y;o.m.rotation.z+=o.rs.z;o.m.position.y=o.oy+Math.sin(t*o.fs+o.fp)*.22;});
+          ring.forEach(function(o){o.ang+=.0017;o.m.position.x=Math.cos(o.ang)*o.rad;o.m.position.y=Math.sin(o.ang)*o.rad*.38;o.m.rotation.x+=o.rs.x;o.m.rotation.y+=o.rs.y;});
+          pA.rotation.y=t*.007;pA.rotation.x=cmx*.04;
+          pB.rotation.y=-t*.011;pB.rotation.z=cmy*.04;
+          pC.rotation.y=t*.014;pD.rotation.z=-t*.009;
+          kL.intensity=24+Math.sin(t*.28)*7;
+          renderer.render(scene,camera);
+        }
+        animate();
+
+        })();
     </script>
 </body>
 </html>

@@ -10,7 +10,7 @@ namespace DEEPFAKE.Controllers
     {
         private readonly HttpClient _httpClient;
 
-        private const string BaseUrl = "https://sobersided-frank-restrainedly.ngrok-free.dev";
+    private const string BaseUrl = "https://sobersided-frank-restrainedly.ngrok-free.dev";
 
         public ImageController(IHttpClientFactory factory)
         {
@@ -29,7 +29,7 @@ namespace DEEPFAKE.Controllers
 
             try
             {
-                var workflow = BuildWorkflow(request.Prompt);
+                var workflow = BuildWorkflow(request);
 
                 var content = new StringContent(
                     JsonSerializer.Serialize(workflow),
@@ -53,7 +53,7 @@ namespace DEEPFAKE.Controllers
                 if (filename == null)
                     return StatusCode(500, "Image generation timeout");
 
-                string imageUrl = $"{BaseUrl}/view?filename={filename}";
+                string imageUrl = $"{BaseUrl}/view?filename={filename}&subfolder=&type=output";
 
                 return Ok(new { imageUrl });
             }
@@ -64,12 +64,12 @@ namespace DEEPFAKE.Controllers
             }
         }
 
-        // ==============================================
-        // POLLING
-        // ==============================================
+        // ===============================
+        // POLLING FOR RESULT
+        // ===============================
         private async Task<string?> WaitForImage(string promptId)
         {
-            for (int i = 0; i < 25; i++) // ~50 seconds max
+            for (int i = 0; i < 60; i++) // up to ~2 minutes
             {
                 await Task.Delay(2000);
 
@@ -93,19 +93,48 @@ namespace DEEPFAKE.Controllers
                     continue;
 
                 if (images.GetArrayLength() > 0)
-                {
                     return images[0].GetProperty("filename").GetString();
-                }
             }
 
             return null;
         }
 
-        // ==============================================
-        // MAX QUALITY WORKFLOW (12GB OPTIMIZED)
-        // ==============================================
-        private object BuildWorkflow(string prompt)
+        // ===============================
+        // BUILD WORKFLOW
+        // ===============================
+        private object BuildWorkflow(PromptRequest request)
         {
+            int steps = 40;
+            double cfg = 7;
+            string sampler = "dpmpp_2m_sde";
+            string scheduler = "karras";
+
+            string model = request.Model.ToLower();
+
+            // Lightning models
+            if (model.Contains("lightning"))
+            {
+                steps = 8;
+                cfg = 2;
+                sampler = "dpmpp_sde";
+                scheduler = "normal";
+            }
+
+            // FLUX models
+            if (model.Contains("flux"))
+            {
+                steps = 28;
+                cfg = 3.5;
+                sampler = "dpmpp_2m_sde";
+                scheduler = "karras";
+            }
+
+            string positivePrompt =
+                $"{request.Prompt}, masterpiece, best quality, ultra detailed, cinematic lighting, volumetric lighting, depth of field, professional photography, sharp focus";
+
+            string negativePrompt =
+                "bad anatomy, bad hands, extra fingers, extra limbs, deformed face, ugly, blurry, low quality, watermark, text, cropped, worst quality";
+
             return new
             {
                 prompt = new Dictionary<string, object>
@@ -113,7 +142,10 @@ namespace DEEPFAKE.Controllers
                     ["2"] = new
                     {
                         class_type = "CheckpointLoaderSimple",
-                        inputs = new { ckpt_name = "sd_xl_base_1.0.safetensors" }
+                        inputs = new
+                        {
+                            ckpt_name = request.Model
+                        }
                     },
 
                     ["3"] = new
@@ -121,7 +153,7 @@ namespace DEEPFAKE.Controllers
                         class_type = "CLIPTextEncode",
                         inputs = new
                         {
-                            text = prompt + ", ultra detailed, realistic, sharp focus, cinematic lighting, 85mm lens, depth of field, high resolution, highly detailed",
+                            text = positivePrompt,
                             clip = new object[] { "2", 1 }
                         }
                     },
@@ -131,7 +163,7 @@ namespace DEEPFAKE.Controllers
                         class_type = "CLIPTextEncode",
                         inputs = new
                         {
-                            text = "bad anatomy, bad hands, extra fingers, extra limbs, deformed face, ugly, mutated, low quality, blurry, distorted eyes, poorly drawn face, bad proportions, cross eyes, weird mouth",
+                            text = negativePrompt,
                             clip = new object[] { "2", 1 }
                         }
                     },
@@ -141,9 +173,9 @@ namespace DEEPFAKE.Controllers
                         class_type = "EmptyLatentImage",
                         inputs = new
                         {
-                            width = 1024,
-                            height = 1024,
-                            batch_size = 1
+                            width = request.Width,
+                            height = request.Height,
+                            batch_size = request.Batch
                         }
                     },
 
@@ -156,11 +188,11 @@ namespace DEEPFAKE.Controllers
                             positive = new object[] { "3", 0 },
                             negative = new object[] { "4", 0 },
                             latent_image = new object[] { "5", 0 },
-                            seed = new Random().Next(),
-                            steps = 35,
-                            cfg = 8.5,
-                            sampler_name = "dpmpp_2m_sde",
-                            scheduler = "karras",
+                            seed = Random.Shared.Next(),
+                            steps = steps,
+                            cfg = cfg,
+                            sampler_name = sampler,
+                            scheduler = scheduler,
                             denoise = 1
                         }
                     },
@@ -192,5 +224,12 @@ namespace DEEPFAKE.Controllers
     public class PromptRequest
     {
         public string Prompt { get; set; } = string.Empty;
+        public string Model { get; set; } = "sd_xl_base_1.0.safetensors";
+
+        public int Width { get; set; } = 1024;
+        public int Height { get; set; } = 1024;
+
+        public int Batch { get; set; } = 1;
     }
+
 }
