@@ -10,7 +10,7 @@ namespace DEEPFAKE.Controllers
     {
         private readonly HttpClient _httpClient;
 
-    private const string BaseUrl = "https://sobersided-frank-restrainedly.ngrok-free.dev";
+        private const string BaseUrl = "https://sobersided-frank-restrainedly.ngrok-free.dev";
 
         public ImageController(IHttpClientFactory factory)
         {
@@ -118,15 +118,6 @@ namespace DEEPFAKE.Controllers
                 cfg = 2;
                 sampler = "dpmpp_sde";
                 scheduler = "normal";
-            }
-
-            // FLUX models
-            if (model.Contains("flux"))
-            {
-                steps = 28;
-                cfg = 3.5;
-                sampler = "dpmpp_2m_sde";
-                scheduler = "karras";
             }
 
             string positivePrompt =
