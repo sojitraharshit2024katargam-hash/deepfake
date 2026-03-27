@@ -1,5 +1,63 @@
 [
   {
+    "ContainingType": "DEEPFAKE.Controllers.TextAIController",
+    "Method": "Chat",
+    "RelativePath": "api/ai/chat",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "DEEPFAKE.Controllers.AIRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DEEPFAKE.Controllers.TextAIController",
+    "Method": "StreamChat",
+    "RelativePath": "api/ai/chat/stream",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "DEEPFAKE.Controllers.AIRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "DEEPFAKE.Controllers.TextAIController",
+    "Method": "Health",
+    "RelativePath": "api/ai/health",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DEEPFAKE.Controllers.TextAIController",
+    "Method": "GetModels",
+    "RelativePath": "api/ai/models",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "DEEPFAKE.Controllers.EmailAnalysisController",
     "Method": "Analyze",
     "RelativePath": "api/email/analyze",

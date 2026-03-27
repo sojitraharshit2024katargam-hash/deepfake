@@ -6,6 +6,7 @@ namespace DEEPFAKE.Helpers
     {
         public static void Initialize(string connectionString)
         {
+            // ✅ Use connection string directly (no builder)
             using var conn = new NpgsqlConnection(connectionString);
             conn.Open();
 

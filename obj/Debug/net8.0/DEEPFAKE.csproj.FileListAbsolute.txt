@@ -38,7 +38,6 @@ C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\bin\Debug\net8.0\Microso
 C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\bin\Debug\net8.0\Npgsql.dll
 C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\bin\Debug\net8.0\System.ClientModel.dll
 C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
-C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\bin\Debug\net8.0\System.Diagnostics.DiagnosticSource.dll
 C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\bin\Debug\net8.0\System.Diagnostics.EventLog.dll
 C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\Harshit Sojitra\source\repos\DEEPFAKE\DEEPFAKE\bin\Debug\net8.0\System.Memory.Data.dll

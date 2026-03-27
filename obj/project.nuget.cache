@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "71Z3GOl+S/k=",
+  "dgSpecHash": "GhEmB+l8Zpk=",
   "success": true,
   "projectFilePath": "C:\\Users\\Harshit Sojitra\\source\\repos\\DEEPFAKE\\DEEPFAKE\\DEEPFAKE.csproj",
   "expectedPackageFiles": [
@@ -25,15 +25,29 @@
     "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\microsoft.identitymodel.protocols.openidconnect\\8.14.0\\microsoft.identitymodel.protocols.openidconnect.8.14.0.nupkg.sha512",
     "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\microsoft.identitymodel.tokens\\8.14.0\\microsoft.identitymodel.tokens.8.14.0.nupkg.sha512",
     "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\microsoft.sqlserver.server\\1.0.0\\microsoft.sqlserver.server.1.0.0.nupkg.sha512",
-    "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\npgsql\\10.0.1\\npgsql.10.0.1.nupkg.sha512",
+    "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\npgsql\\7.0.0\\npgsql.7.0.0.nupkg.sha512",
     "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\system.clientmodel\\1.7.0\\system.clientmodel.1.7.0.nupkg.sha512",
     "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\system.configuration.configurationmanager\\8.0.1\\system.configuration.configurationmanager.8.0.1.nupkg.sha512",
-    "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\system.diagnostics.diagnosticsource\\9.0.11\\system.diagnostics.diagnosticsource.9.0.11.nupkg.sha512",
+    "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\system.diagnostics.diagnosticsource\\6.0.1\\system.diagnostics.diagnosticsource.6.0.1.nupkg.sha512",
     "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\system.diagnostics.eventlog\\8.0.1\\system.diagnostics.eventlog.8.0.1.nupkg.sha512",
     "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\system.identitymodel.tokens.jwt\\8.14.0\\system.identitymodel.tokens.jwt.8.14.0.nupkg.sha512",
     "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\system.memory.data\\8.0.1\\system.memory.data.8.0.1.nupkg.sha512",
+    "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
     "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\system.security.cryptography.pkcs\\8.0.1\\system.security.cryptography.pkcs.8.0.1.nupkg.sha512",
     "C:\\Users\\Harshit Sojitra\\.nuget\\packages\\system.security.cryptography.protecteddata\\8.0.0\\system.security.cryptography.protecteddata.8.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'Npgsql' 7.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c",
+      "projectPath": "C:\\Users\\Harshit Sojitra\\source\\repos\\DEEPFAKE\\DEEPFAKE\\DEEPFAKE.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Harshit Sojitra\\source\\repos\\DEEPFAKE\\DEEPFAKE\\DEEPFAKE.csproj",
+      "libraryId": "Npgsql",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }
