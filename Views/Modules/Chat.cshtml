@@ -2020,13 +2020,13 @@
                 if(err.name==='AbortError'){
                     addLine('warn','Generation stopped by user');
                     toast('Stopped','Generation cancelled.','fa-stop','var(--warn)');
-                        }else {
-            addLine('warn','API error: '+err.message);
-            toast('Error','Could not reach Ollama. Check your backend.','fa-triangle-exclamation','var(--red)');
-            isGenerating=false;
-            resetBtn();
-            setStatus('MODEL READY');
-        }
+                }else{
+                    // Demo fallback when Ollama is offline
+                    addLine('warn','API error: '+err.message+' — using demo mode');
+                    toast('Demo Mode','Ollama unavailable — showing demo response.','fa-triangle-exclamation','var(--warn)');
+                    finishResp(demoResp(prompt),t0,cv);
+                    return; // finishResp handles unlock
+                }
                 // Only reached on abort
                 isGenerating=false;resetBtn();setStatus('MODEL READY');
             });

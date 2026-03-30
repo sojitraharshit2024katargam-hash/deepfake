@@ -11,14 +11,34 @@ namespace DEEPFAKE.Controllers
         private readonly HttpClient _httpClient;
         private readonly ILogger<TextAIController> _logger;
 
-        private const string BaseUrl = "https://YOUR_NGROK_URL_HERE";
+        // ── Ollama base URL ───────────────────────────────────────
+        // Priority order:
+        //   1. Environment variable  OLLAMA_BASE_URL   (set this on Render)
+        //   2. appsettings.json      OllamaBaseUrl     (set this for local dev)
+        //   3. Hard-coded fallback   http://localhost:11434
+        //
+        // Examples:
+        //   Local ngrok:   https://xxxx-xx-xx-xxx-xx.ngrok-free.app
+        //   Render env:    https://your-ollama-service.onrender.com
+        // ─────────────────────────────────────────────────────────
+        private readonly string _ollamaBaseUrl;
 
         public TextAIController(
             IHttpClientFactory factory,
-            ILogger<TextAIController> logger)
+            ILogger<TextAIController> logger,
+            IConfiguration config)
         {
             _httpClient = factory.CreateClient();
             _logger = logger;
+
+            // Read from env first, then appsettings, then fallback
+            _ollamaBaseUrl =
+                Environment.GetEnvironmentVariable("OLLAMA_BASE_URL")
+                ?? config["OllamaBaseUrl"]
+                ?? "http://localhost:11434";
+
+            // Strip trailing slash to keep URL construction clean
+            _ollamaBaseUrl = _ollamaBaseUrl.TrimEnd('/');
         }
 
         // ── Standard (full response) ──────────────────────────────
@@ -45,7 +65,7 @@ namespace DEEPFAKE.Controllers
             try
             {
                 var httpRequest = new HttpRequestMessage(HttpMethod.Post,
-                    $"{BaseUrl}/api/generate")
+                    $"{_ollamaBaseUrl}/api/generate")
                 {
                     Content = new StringContent(
                         JsonSerializer.Serialize(body),
@@ -53,6 +73,7 @@ namespace DEEPFAKE.Controllers
                         "application/json")
                 };
 
+                // Required by ngrok — stops the "ngrok browser warning" page
                 httpRequest.Headers.Add("ngrok-skip-browser-warning", "true");
 
                 var response = await _httpClient.SendAsync(httpRequest);
@@ -108,7 +129,7 @@ namespace DEEPFAKE.Controllers
             try
             {
                 var reqMsg = new HttpRequestMessage(HttpMethod.Post,
-                    $"{BaseUrl}/api/generate")
+                    $"{_ollamaBaseUrl}/api/generate")
                 {
                     Content = new StringContent(
                         JsonSerializer.Serialize(body),
@@ -116,6 +137,7 @@ namespace DEEPFAKE.Controllers
                         "application/json")
                 };
 
+                // Required by ngrok
                 reqMsg.Headers.Add("ngrok-skip-browser-warning", "true");
 
                 using var resp = await _httpClient.SendAsync(
@@ -166,7 +188,7 @@ namespace DEEPFAKE.Controllers
             try
             {
                 var reqMsg = new HttpRequestMessage(HttpMethod.Get,
-                    $"{BaseUrl}/api/tags");
+                    $"{_ollamaBaseUrl}/api/tags");
                 reqMsg.Headers.Add("ngrok-skip-browser-warning", "true");
 
                 var resp = await _httpClient.SendAsync(reqMsg);
@@ -185,7 +207,7 @@ namespace DEEPFAKE.Controllers
                     })
                     .ToList();
 
-                return Ok(new { models, ollamaUrl = BaseUrl });
+                return Ok(new { models, ollamaUrl = _ollamaBaseUrl });
             }
             catch (Exception ex)
             {
@@ -199,7 +221,7 @@ namespace DEEPFAKE.Controllers
         {
             try
             {
-                var reqMsg = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl}/");
+                var reqMsg = new HttpRequestMessage(HttpMethod.Get, $"{_ollamaBaseUrl}/");
                 reqMsg.Headers.Add("ngrok-skip-browser-warning", "true");
 
                 var resp = await _httpClient.SendAsync(reqMsg);
@@ -207,7 +229,7 @@ namespace DEEPFAKE.Controllers
                 {
                     status = "ok",
                     ollamaReachable = resp.IsSuccessStatusCode,
-                    ollamaUrl = BaseUrl
+                    ollamaUrl = _ollamaBaseUrl    // visible in response so you can verify which URL is active
                 });
             }
             catch (Exception ex)
@@ -216,7 +238,7 @@ namespace DEEPFAKE.Controllers
                 {
                     status = "degraded",
                     ollamaReachable = false,
-                    ollamaUrl = BaseUrl,
+                    ollamaUrl = _ollamaBaseUrl,
                     error = ex.Message
                 });
             }
