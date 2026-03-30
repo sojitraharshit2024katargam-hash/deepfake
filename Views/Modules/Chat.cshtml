@@ -279,574 +279,574 @@
     </style>
 </head>
 <body>
-<div id="CUR"></div>
-<div id="CUR2"></div>
-<div class="noise"></div>
-<div class="vig"></div>
-<div class="gridL"></div>
-<div class="scanB"></div>
-<div class="toast-wrap" id="TW"></div>
+    <div id="CUR"></div>
+    <div id="CUR2"></div>
+    <div class="noise"></div>
+    <div class="vig"></div>
+    <div class="gridL"></div>
+    <div class="scanB"></div>
+    <div class="toast-wrap" id="TW"></div>
 
-<div id="APP">
+    <div id="APP">
 
-    <!-- TOPBAR -->
-    <header class="topbar">
-        <div class="brand-row">
-            <div class="bmark"><i class="fa-solid fa-shield-halved"></i></div>
-            <div>
-                <div class="btxt">Deepfake Nexus</div>
-                <div class="bsub">NexusChat · Neural Language Interface</div>
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="brand-row">
+                <div class="bmark"><i class="fa-solid fa-shield-halved"></i></div>
+                <div>
+                    <div class="btxt">Deepfake Nexus</div>
+                    <div class="bsub">NexusChat · Neural Language Interface</div>
+                </div>
             </div>
+            <nav class="tb-nav">
+                <button class="tnav active"><i class="fa-solid fa-comments"></i> Chat</button>
+                <button class="tnav"><i class="fa-solid fa-image"></i> Image Gen</button>
+                <button class="tnav"><i class="fa-solid fa-code"></i> Code Mode</button>
+            </nav>
+            <div class="tb-right">
+                <div class="status-pill">
+                    <span class="sdot"></span>
+                    <!-- ✅ TOP_STATUS element exists here -->
+                    <span id="TOP_STATUS">MODEL READY</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- CHAT GRID -->
+        <div class="chat-layout">
+
+            <!-- LEFT -->
+            <aside class="sidebar-left">
+                <div class="sl-hdr"><span class="sl-title">Conversations</span></div>
+                <button class="new-btn" id="NEW_BTN"><i class="fa-solid fa-plus"></i> New Conversation</button>
+                <div class="conv-list" id="CONV_LIST"></div>
+                <div class="model-box">
+                    <div class="model-lbl"><i class="fa-solid fa-brain"></i> Active Model</div>
+                    <select class="cyber-sel" id="MODEL_SEL">
+                        <option value="llama3">Llama 3</option>
+                        <option value="mistral">Mistral</option>
+                        <option value="deepseek-coder">DeepSeek Coder</option>
+                        <option value="qwen2.5">Qwen 2.5</option>
+                        <option value="gemma2">Gemma 2</option>
+                        <option value="phi3">Phi-3</option>
+                    </select>
+                </div>
+            </aside>
+
+            <!-- CENTER -->
+            <main class="chat-center">
+                <div class="chat-msgs" id="CHAT_MSGS">
+                    <div class="empty-state" id="EMPTY">
+                        <div class="e-ring"><i class="fa-solid fa-robot"></i></div>
+                        <div class="e-title">NexusChat</div>
+                        <div class="e-sub">Powered by local LLM &nbsp;·&nbsp; Fully private &nbsp;·&nbsp; No cloud</div>
+                        <div class="suggs">
+                            <button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-code"></i><span>Write a Python script to scrape and parse JSON from a REST API</span></button>
+                            <button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-pen-nib"></i><span>Explain quantum entanglement in simple terms with an analogy</span></button>
+                            <button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-bug"></i><span>Debug this error: TypeError: Cannot read properties of undefined</span></button>
+                            <button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-lightbulb"></i><span>Compare microservices vs monolithic architecture with trade-offs</span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-area">
+                    <div class="input-wrap">
+                        <textarea class="chat-inp" id="CHAT_INP" rows="1" placeholder="Ask anything… (Shift+Enter for new line, Enter to send)"></textarea>
+                        <button class="send-btn" id="SEND_BTN"><i class="fa-solid fa-paper-plane" id="SEND_IC"></i></button>
+                    </div>
+                    <div class="inp-meta">
+                        <div class="inp-tools">
+                            <button class="itool" id="BTN_CLEAR"><i class="fa-solid fa-trash-can"></i> Clear</button>
+                            <button class="itool" id="BTN_EXPORT"><i class="fa-solid fa-download"></i> Export</button>
+                            <button class="itool" id="BTN_SYS"><i class="fa-solid fa-gear"></i> System Prompt</button>
+                        </div>
+                        <div class="inp-hint">
+                            <span class="kbd">Enter</span> send &nbsp;
+                            <span class="kbd">Shift+Enter</span> newline &nbsp;
+                            <span class="kbd">↑</span> recall
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- RIGHT -->
+            <aside class="sidebar-right">
+                <div class="tr-hdr">
+                    <span class="tr-title">Neural Console</span>
+                    <div class="tr-dots"><div class="tdd r"></div><div class="tdd y"></div><div class="tdd g"></div></div>
+                </div>
+                <div class="tr-body" id="TERM"></div>
+                <div class="ctx-strip">
+                    <div class="ctx-lbl">Context Window</div>
+                    <div class="ctx-bar"><div class="ctx-fill" id="CTX_FILL" style="width:0%"></div></div>
+                    <div class="ctx-val" id="CTX_VAL">0 / 8192 tokens</div>
+                </div>
+                <div class="tr-stats">
+                    <div class="ts-cell"><div class="ts-lbl">Latency</div><div class="ts-val tc"><span class="ts-dot"></span><span id="TS_LAT">—</span></div></div>
+                    <div class="ts-cell"><div class="ts-lbl">Tokens/s</div><div class="ts-val ok"><span class="ts-dot"></span><span id="TS_TPS">—</span></div></div>
+                    <div class="ts-cell"><div class="ts-lbl">Messages</div><div class="ts-val tc"><span class="ts-dot"></span><span id="TS_MSGS">0</span></div></div>
+                    <div class="ts-cell"><div class="ts-lbl">Engine</div><div class="ts-val ok"><span class="ts-dot"></span><span>Ollama</span></div></div>
+                </div>
+            </aside>
+
         </div>
-        <nav class="tb-nav">
-            <button class="tnav active"><i class="fa-solid fa-comments"></i> Chat</button>
-            <button class="tnav"><i class="fa-solid fa-image"></i> Image Gen</button>
-            <button class="tnav"><i class="fa-solid fa-code"></i> Code Mode</button>
-        </nav>
-        <div class="tb-right">
-            <div class="status-pill">
-                <span class="sdot"></span>
-                <!-- ✅ TOP_STATUS element exists here -->
-                <span id="TOP_STATUS">MODEL READY</span>
-            </div>
-        </div>
-    </header>
-
-    <!-- CHAT GRID -->
-    <div class="chat-layout">
-
-        <!-- LEFT -->
-        <aside class="sidebar-left">
-            <div class="sl-hdr"><span class="sl-title">Conversations</span></div>
-            <button class="new-btn" id="NEW_BTN"><i class="fa-solid fa-plus"></i> New Conversation</button>
-            <div class="conv-list" id="CONV_LIST"></div>
-            <div class="model-box">
-                <div class="model-lbl"><i class="fa-solid fa-brain"></i> Active Model</div>
-                <select class="cyber-sel" id="MODEL_SEL">
-                    <option value="llama3">Llama 3</option>
-                    <option value="mistral">Mistral</option>
-                    <option value="deepseek-coder">DeepSeek Coder</option>
-                    <option value="qwen2.5">Qwen 2.5</option>
-                    <option value="gemma2">Gemma 2</option>
-                    <option value="phi3">Phi-3</option>
-                </select>
-            </div>
-        </aside>
-
-        <!-- CENTER -->
-        <main class="chat-center">
-            <div class="chat-msgs" id="CHAT_MSGS">
-                <div class="empty-state" id="EMPTY">
-                    <div class="e-ring"><i class="fa-solid fa-robot"></i></div>
-                    <div class="e-title">NexusChat</div>
-                    <div class="e-sub">Powered by local LLM &nbsp;·&nbsp; Fully private &nbsp;·&nbsp; No cloud</div>
-                    <div class="suggs">
-                        <button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-code"></i><span>Write a Python script to scrape and parse JSON from a REST API</span></button>
-                        <button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-pen-nib"></i><span>Explain quantum entanglement in simple terms with an analogy</span></button>
-                        <button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-bug"></i><span>Debug this error: TypeError: Cannot read properties of undefined</span></button>
-                        <button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-lightbulb"></i><span>Compare microservices vs monolithic architecture with trade-offs</span></button>
-                    </div>
-                </div>
-            </div>
-            <div class="input-area">
-                <div class="input-wrap">
-                    <textarea class="chat-inp" id="CHAT_INP" rows="1" placeholder="Ask anything… (Shift+Enter for new line, Enter to send)"></textarea>
-                    <button class="send-btn" id="SEND_BTN"><i class="fa-solid fa-paper-plane" id="SEND_IC"></i></button>
-                </div>
-                <div class="inp-meta">
-                    <div class="inp-tools">
-                        <button class="itool" id="BTN_CLEAR"><i class="fa-solid fa-trash-can"></i> Clear</button>
-                        <button class="itool" id="BTN_EXPORT"><i class="fa-solid fa-download"></i> Export</button>
-                        <button class="itool" id="BTN_SYS"><i class="fa-solid fa-gear"></i> System Prompt</button>
-                    </div>
-                    <div class="inp-hint">
-                        <span class="kbd">Enter</span> send &nbsp;
-                        <span class="kbd">Shift+Enter</span> newline &nbsp;
-                        <span class="kbd">↑</span> recall
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- RIGHT -->
-        <aside class="sidebar-right">
-            <div class="tr-hdr">
-                <span class="tr-title">Neural Console</span>
-                <div class="tr-dots"><div class="tdd r"></div><div class="tdd y"></div><div class="tdd g"></div></div>
-            </div>
-            <div class="tr-body" id="TERM"></div>
-            <div class="ctx-strip">
-                <div class="ctx-lbl">Context Window</div>
-                <div class="ctx-bar"><div class="ctx-fill" id="CTX_FILL" style="width:0%"></div></div>
-                <div class="ctx-val" id="CTX_VAL">0 / 8192 tokens</div>
-            </div>
-            <div class="tr-stats">
-                <div class="ts-cell"><div class="ts-lbl">Latency</div><div class="ts-val tc"><span class="ts-dot"></span><span id="TS_LAT">—</span></div></div>
-                <div class="ts-cell"><div class="ts-lbl">Tokens/s</div><div class="ts-val ok"><span class="ts-dot"></span><span id="TS_TPS">—</span></div></div>
-                <div class="ts-cell"><div class="ts-lbl">Messages</div><div class="ts-val tc"><span class="ts-dot"></span><span id="TS_MSGS">0</span></div></div>
-                <div class="ts-cell"><div class="ts-lbl">Engine</div><div class="ts-val ok"><span class="ts-dot"></span><span>Ollama</span></div></div>
-            </div>
-        </aside>
-
     </div>
-</div>
 
-<script>
-(function(){
-'use strict';
+    <script>
+        (function(){
+        'use strict';
 
-/* ── CURSOR ── */
-var C1=document.getElementById('CUR'),C2=document.getElementById('CUR2'),mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;C1.style.left=mx+'px';C1.style.top=my+'px';});
-(function L(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;C2.style.left=rx+'px';C2.style.top=ry+'px';requestAnimationFrame(L);})();
-function ct(el){
-    el.addEventListener('mouseenter',function(){C2.style.width='44px';C2.style.height='44px';C2.style.borderColor='rgba(201,169,110,.9)';C2.style.background='rgba(201,169,110,.05)';});
-    el.addEventListener('mouseleave',function(){C2.style.width='32px';C2.style.height='32px';C2.style.borderColor='rgba(201,169,110,.4)';C2.style.background='transparent';});
-}
-document.querySelectorAll('a,button,select,textarea').forEach(ct);
+        /* ── CURSOR ── */
+        var C1=document.getElementById('CUR'),C2=document.getElementById('CUR2'),mx=0,my=0,rx=0,ry=0;
+        document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;C1.style.left=mx+'px';C1.style.top=my+'px';});
+        (function L(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;C2.style.left=rx+'px';C2.style.top=ry+'px';requestAnimationFrame(L);})();
+        function ct(el){
+            el.addEventListener('mouseenter',function(){C2.style.width='44px';C2.style.height='44px';C2.style.borderColor='rgba(201,169,110,.9)';C2.style.background='rgba(201,169,110,.05)';});
+            el.addEventListener('mouseleave',function(){C2.style.width='32px';C2.style.height='32px';C2.style.borderColor='rgba(201,169,110,.4)';C2.style.background='transparent';});
+        }
+        document.querySelectorAll('a,button,select,textarea').forEach(ct);
 
-/* ── TOAST ── */
-var TW=document.getElementById('TW');
-function toast(h,p,ic,col){
-    var el=document.createElement('div');el.className='toastx';
-    el.innerHTML='<div class="t-ic" style="color:'+(col||'var(--g)')+'"><i class="fa-solid '+(ic||'fa-circle-info')+'"></i></div><div><div class="t-h">'+h+'</div><div class="t-p">'+p+'</div></div><button class="t-x" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>';
-    TW.appendChild(el);setTimeout(function(){if(el.isConnected)el.remove();},4500);
-}
+        /* ── TOAST ── */
+        var TW=document.getElementById('TW');
+        function toast(h,p,ic,col){
+            var el=document.createElement('div');el.className='toastx';
+            el.innerHTML='<div class="t-ic" style="color:'+(col||'var(--g)')+'"><i class="fa-solid '+(ic||'fa-circle-info')+'"></i></div><div><div class="t-h">'+h+'</div><div class="t-p">'+p+'</div></div><button class="t-x" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>';
+            TW.appendChild(el);setTimeout(function(){if(el.isConnected)el.remove();},4500);
+        }
 
-/* ── TERMINAL ── */
-var TERM=document.getElementById('TERM');
-function addLine(cls,txt){
-    var el=document.createElement('div');el.className='tl '+(cls||'');
-    el.innerHTML='<span style="color:var(--g);margin-right:5px">›</span>'+txt+'<span class="tcur"></span>';
-    TERM.querySelectorAll('.tcur').forEach(function(c){c.remove();});
-    TERM.appendChild(el);TERM.scrollTop=TERM.scrollHeight;
-    if(TERM.children.length>60)TERM.firstChild.remove();
-}
-var BOOT=[['tc','Initializing NexusChat…'],['','Loading Ollama runtime…'],['ok','✓ Ollama: CONNECTED'],['','Scanning model registry…'],['ok','✓ Models available'],['ok','✓ Context window: 8192 tokens'],['tc','READY — Awaiting input']];
-var qi=0;
-function bootSeq(){if(qi<BOOT.length){addLine(BOOT[qi][0],BOOT[qi][1]);qi++;setTimeout(bootSeq,280);}}
-bootSeq();
-var IDLE=[['tc','Monitoring model health…'],['ok','✓ Ollama heartbeat: OK'],['','Context cache nominal'],['ok','✓ Token buffer ready'],['warn','Idle: 15 min remaining'],['tc','VRAM allocation: stable'],['ok','✓ Zero queue depth']];
-setInterval(function(){if(!isGenerating){var m=IDLE[Math.floor(Math.random()*IDLE.length)];addLine(m[0],m[1]);}},4500);
+        /* ── TERMINAL ── */
+        var TERM=document.getElementById('TERM');
+        function addLine(cls,txt){
+            var el=document.createElement('div');el.className='tl '+(cls||'');
+            el.innerHTML='<span style="color:var(--g);margin-right:5px">›</span>'+txt+'<span class="tcur"></span>';
+            TERM.querySelectorAll('.tcur').forEach(function(c){c.remove();});
+            TERM.appendChild(el);TERM.scrollTop=TERM.scrollHeight;
+            if(TERM.children.length>60)TERM.firstChild.remove();
+        }
+        var BOOT=[['tc','Initializing NexusChat…'],['','Loading Ollama runtime…'],['ok','✓ Ollama: CONNECTED'],['','Scanning model registry…'],['ok','✓ Models available'],['ok','✓ Context window: 8192 tokens'],['tc','READY — Awaiting input']];
+        var qi=0;
+        function bootSeq(){if(qi<BOOT.length){addLine(BOOT[qi][0],BOOT[qi][1]);qi++;setTimeout(bootSeq,280);}}
+        bootSeq();
+        var IDLE=[['tc','Monitoring model health…'],['ok','✓ Ollama heartbeat: OK'],['','Context cache nominal'],['ok','✓ Token buffer ready'],['warn','Idle: 15 min remaining'],['tc','VRAM allocation: stable'],['ok','✓ Zero queue depth']];
+        setInterval(function(){if(!isGenerating){var m=IDLE[Math.floor(Math.random()*IDLE.length)];addLine(m[0],m[1]);}},4500);
 
-/* ── STATE ── */
-var convs=JSON.parse(localStorage.getItem('nx_convs')||'[]');
-var curId=null,msgCount=0,inputHist=[],histIdx=-1;
-// ✅ isGenerating declared BEFORE any function that uses it
-var isGenerating=false;
-var abortCtrl=null;
+        /* ── STATE ── */
+        var convs=JSON.parse(localStorage.getItem('nx_convs')||'[]');
+        var curId=null,msgCount=0,inputHist=[],histIdx=-1;
+        // ✅ isGenerating declared BEFORE any function that uses it
+        var isGenerating=false;
+        var abortCtrl=null;
 
-function saveConvs(){localStorage.setItem('nx_convs',JSON.stringify(convs));}
-function getConv(id){return convs.find(function(c){return c.id===id;});}
+        function saveConvs(){localStorage.setItem('nx_convs',JSON.stringify(convs));}
+        function getConv(id){return convs.find(function(c){return c.id===id;});}
 
-/* ── CONV LIST ── */
-function renderList(){
-    var list=document.getElementById('CONV_LIST');list.innerHTML='';
-    if(!convs.length){
-        list.innerHTML='<div style="padding:14px 15px;font-family:DM Mono,monospace;font-size:8px;color:var(--c4);letter-spacing:.12em;text-transform:uppercase">No conversations yet</div>';
-        return;
-    }
-    convs.slice().reverse().forEach(function(cv){
-        var d=document.createElement('div');
-        d.className='conv-item'+(cv.id===curId?' active':'');
-        d.innerHTML='<div class="cv-title">'+esc(cv.title||'New conversation')+'</div>'
-            +'<div class="cv-meta"><span class="cv-dot"></span>'+new Date(cv.updatedAt).toLocaleDateString()+' · '+(cv.messages?cv.messages.length:0)+' msgs</div>'
-            +'<button class="cv-del" title="Delete"><i class="fa-solid fa-xmark"></i></button>';
-        d.addEventListener('click',function(e){
-            if(e.target.closest('.cv-del')){delConv(cv.id);return;}
-            loadConv(cv.id);
+        /* ── CONV LIST ── */
+        function renderList(){
+            var list=document.getElementById('CONV_LIST');list.innerHTML='';
+            if(!convs.length){
+                list.innerHTML='<div style="padding:14px 15px;font-family:DM Mono,monospace;font-size:8px;color:var(--c4);letter-spacing:.12em;text-transform:uppercase">No conversations yet</div>';
+                return;
+            }
+            convs.slice().reverse().forEach(function(cv){
+                var d=document.createElement('div');
+                d.className='conv-item'+(cv.id===curId?' active':'');
+                d.innerHTML='<div class="cv-title">'+esc(cv.title||'New conversation')+'</div>'
+                    +'<div class="cv-meta"><span class="cv-dot"></span>'+new Date(cv.updatedAt).toLocaleDateString()+' · '+(cv.messages?cv.messages.length:0)+' msgs</div>'
+                    +'<button class="cv-del" title="Delete"><i class="fa-solid fa-xmark"></i></button>';
+                d.addEventListener('click',function(e){
+                    if(e.target.closest('.cv-del')){delConv(cv.id);return;}
+                    loadConv(cv.id);
+                });
+                ct(d);list.appendChild(d);
+            });
+        }
+
+        function newConv(){
+            var id='c_'+Date.now();
+            convs.push({id:id,title:null,messages:[],createdAt:Date.now(),updatedAt:Date.now()});
+            saveConvs();curId=id;resetMsgs();renderList();
+            addLine('tc','New conversation · #'+id.slice(-6));
+            document.getElementById('CHAT_INP').focus();
+        }
+
+        function loadConv(id){
+            curId=id;var cv=getConv(id);
+            resetMsgs(true);
+            if(cv&&cv.messages&&cv.messages.length){
+                hideEmpty();
+                cv.messages.forEach(function(m){renderMsg(m.role,m.content);});
+                msgCount=cv.messages.length;
+                document.getElementById('TS_MSGS').textContent=msgCount;
+                updateCtx(ctxTokens(cv));
+            }
+            renderList();
+            addLine('','Loaded · '+(cv?cv.messages.length:0)+' messages');
+        }
+
+        function delConv(id){
+            convs=convs.filter(function(c){return c.id!==id;});saveConvs();
+            if(curId===id){curId=null;resetMsgs();}
+            renderList();
+            toast('Deleted','Conversation removed.','fa-trash-can','var(--red)');
+        }
+
+        /* ── EMPTY STATE ── */
+        function hideEmpty(){var e=document.getElementById('EMPTY');if(e)e.classList.add('gone');}
+        function showEmpty(){
+            var m=document.getElementById('CHAT_MSGS');
+            if(!document.getElementById('EMPTY')){
+                m.innerHTML='<div class="empty-state" id="EMPTY">'
+                    +'<div class="e-ring"><i class="fa-solid fa-robot"></i></div>'
+                    +'<div class="e-title">NexusChat</div>'
+                    +'<div class="e-sub">Powered by local LLM &nbsp;·&nbsp; Fully private &nbsp;·&nbsp; No cloud</div>'
+                    +'<div class="suggs">'
+                    +'<button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-code"></i><span>Write a Python script to scrape and parse JSON from a REST API</span></button>'
+                    +'<button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-pen-nib"></i><span>Explain quantum entanglement in simple terms with an analogy</span></button>'
+                    +'<button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-bug"></i><span>Debug this error: TypeError: Cannot read properties of undefined</span></button>'
+                    +'<button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-lightbulb"></i><span>Compare microservices vs monolithic architecture with trade-offs</span></button>'
+                    +'</div></div>';
+                document.querySelectorAll('.sug-btn').forEach(ct);
+            }else{
+                document.getElementById('EMPTY').classList.remove('gone');
+            }
+        }
+
+        function resetMsgs(keepDom){
+            if(!keepDom){document.getElementById('CHAT_MSGS').innerHTML='';showEmpty();}
+            msgCount=0;
+            document.getElementById('TS_MSGS').textContent=0;
+            updateCtx(0);
+        }
+
+        /* ── HELPERS ── */
+        function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+        function scrollBot(){var m=document.getElementById('CHAT_MSGS');m.scrollTop=m.scrollHeight;}
+        function updateCtx(t){
+            var max=8192;
+            document.getElementById('CTX_FILL').style.width=Math.min(100,t/max*100)+'%';
+            document.getElementById('CTX_VAL').textContent=t+' / '+max+' tokens';
+        }
+        function ctxTokens(cv){return Math.round(cv.messages.reduce(function(a,m){return a+m.content.split(/\s+/).length*1.3;},0));}
+        function setStatus(txt){
+            var el=document.getElementById('TOP_STATUS');
+            if(el)el.textContent=txt;
+        }
+
+        /* ── MARKDOWN / CODE RENDER ── */
+        function renderMD(text){
+            marked.setOptions({breaks:true,gfm:true});
+            var r=new marked.Renderer();
+            r.code=function(code,lang){
+                var language=lang||'plaintext';
+                var hi='';
+                try{
+                    hi=lang&&hljs.getLanguage(lang)
+                        ?hljs.highlight(code,{language:lang}).value
+                        :hljs.highlightAuto(code).value;
+                }catch(e){hi=esc(code);}
+                var lines=code.split('\n');
+                var nums=lines.map(function(_,i){return '<span>'+(i+1)+'</span>';}).join('');
+                var uid='cb'+Math.random().toString(36).slice(2,9);
+                return '<div class="cb-wrap">'
+                    +'<div class="cb-head">'
+                    +'<span class="cb-lang">'+language.toUpperCase()+'</span>'
+                    +'<div class="cb-acts">'
+                    +'<div class="win-d"><div class="wd r"></div><div class="wd y"></div><div class="wd g"></div></div>'
+                    +'<button class="cp-btn" onclick="copyCode(\''+uid+'\',this)"><i class="fa-solid fa-copy"></i> Copy</button>'
+                    +'</div></div>'
+                    +'<div class="cb-body">'
+                    +'<div class="lnums">'+nums+'</div>'
+                    +'<pre><code id="'+uid+'" class="hljs language-'+language+'">'+hi+'</code></pre>'
+                    +'<div class="cb-scan"></div>'
+                    +'</div></div>';
+            };
+            r.codespan=function(c){return '<code>'+c+'</code>';};
+            return marked.parse(text,{renderer:r});
+        }
+
+        window.copyCode=function(id,btn){
+            var el=document.getElementById(id);if(!el)return;
+            var text=el.innerText;
+            var doIt=function(){
+                btn.innerHTML='<i class="fa-solid fa-check"></i> Copied!';
+                btn.classList.add('copied');
+                setTimeout(function(){btn.innerHTML='<i class="fa-solid fa-copy"></i> Copy';btn.classList.remove('copied');},2000);
+            };
+            if(navigator.clipboard){navigator.clipboard.writeText(text).then(doIt).catch(function(){fallbackCopy(text);doIt();});}
+            else{fallbackCopy(text);doIt();}
+        };
+        function fallbackCopy(text){
+            var t=document.createElement('textarea');t.value=text;
+            t.style.position='fixed';t.style.opacity='0';
+            document.body.appendChild(t);t.focus();t.select();
+            document.execCommand('copy');document.body.removeChild(t);
+        }
+
+        /* ── RENDER MESSAGE ── */
+        function renderMsg(role,content){
+            hideEmpty();
+            var msgs=document.getElementById('CHAT_MSGS');
+            var group=document.createElement('div');group.className='msg-group';
+            var rd=document.createElement('div');
+            rd.className='msg-role '+(role==='user'?'ur':'ar');
+            rd.textContent=role==='user'?'You':'Neural AI';
+            var bub=document.createElement('div');
+            bub.className='bubble '+(role==='user'?'u-bub':'a-bub');
+            if(role==='user'){
+                bub.textContent=content;
+            }else{
+                bub.innerHTML=renderMD(content);
+                bub.querySelectorAll('pre code').forEach(function(b){hljs.highlightElement(b);});
+            }
+            var acts=document.createElement('div');acts.className='msg-acts';
+            if(role==='assistant'){
+                acts.innerHTML='<button class="mact" onclick="copyBub(this)"><i class="fa-solid fa-copy"></i> Copy</button>'
+                    +'<button class="mact" onclick="regenMsg(this)"><i class="fa-solid fa-rotate-right"></i> Regen</button>'
+                    +'<button class="mact" onclick="speakMsg(this)"><i class="fa-solid fa-volume-high"></i> Speak</button>';
+            }else{
+                acts.innerHTML='<button class="mact" onclick="editMsg(this)"><i class="fa-solid fa-pen"></i> Edit</button>';
+            }
+            group.appendChild(rd);group.appendChild(bub);group.appendChild(acts);
+            msgs.appendChild(group);
+            group.querySelectorAll('button').forEach(ct);
+            scrollBot();
+            return bub;
+        }
+
+        /* ── TYPEWRITER ── */
+        function typeStream(bub,fullText,onDone){
+            bub.innerHTML='<span class="tcur2"></span>';
+            var idx=0,total=fullText.length,chunk=3;
+            function step(){
+                if(idx>=total){
+                    // Final: render full markdown cleanly
+                    bub.innerHTML=renderMD(fullText);
+                    bub.querySelectorAll('pre code').forEach(function(b){hljs.highlightElement(b);});
+                    if(onDone)onDone();
+                    return;
+                }
+                idx=Math.min(idx+chunk,total);
+                // Render partial text + cursor
+                bub.innerHTML=renderMD(fullText.slice(0,idx))+'<span class="tcur2"></span>';
+                chunk=idx>total*.4?6:3;
+                scrollBot();
+                setTimeout(step, idx<total*.1?16 : idx<total*.5?9 : 5);
+            }
+            step();
+        }
+
+        /* ── SEND MESSAGE ──
+           ✅ All fixes:
+           - TOP_STATUS element exists in topbar above
+           - isGenerating declared before use
+           - resetBtn uses named function reference, not inline
+           - finishResp called after catch so isGenerating resets correctly
+           - Proper error handling that removes thinking indicator
+        ── */
+        function sendMessage(){
+            var inp=document.getElementById('CHAT_INP');
+            var prompt=inp.value.trim();
+            if(!prompt||isGenerating)return;
+
+            if(!curId)newConv();
+            var cv=getConv(curId);
+
+            // Save input history for ↑ recall
+            inputHist.unshift(prompt);
+            if(inputHist.length>50)inputHist.pop();
+            histIdx=-1;
+
+            inp.value='';inp.style.height='auto';
+
+            // Save user message
+            cv.messages.push({role:'user',content:prompt});
+            if(!cv.title){
+                cv.title=prompt.slice(0,44)+(prompt.length>44?'…':'');
+                renderList();
+            }
+            cv.updatedAt=Date.now();saveConvs();
+
+            renderMsg('user',prompt);
+            msgCount++;document.getElementById('TS_MSGS').textContent=msgCount;
+
+            // Show thinking indicator
+            var th=document.createElement('div');th.className='thinking';th.id='THINKING';
+            th.innerHTML='<div class="th-dots"><div class="th-d"></div><div class="th-d"></div><div class="th-d"></div></div>'
+                +'<div class="th-txt" id="TH_TXT">Thinking…</div>';
+            document.getElementById('CHAT_MSGS').appendChild(th);scrollBot();
+
+            // Lock UI
+            isGenerating=true;
+            var sb=document.getElementById('SEND_BTN'),si=document.getElementById('SEND_IC');
+            sb.removeEventListener('click',sendMessage);
+            sb.addEventListener('click',stopGen);
+            si.className='fa-solid fa-stop';
+            setStatus('GENERATING…');
+            addLine('tc','› '+prompt.slice(0,40)+(prompt.length>40?'…':''));
+
+            var model=document.getElementById('MODEL_SEL').value;
+            var t0=Date.now();
+            var phrases=['Thinking…','Analyzing context…','Reasoning…','Composing response…'];
+            var phT=setInterval(function(){
+                var el=document.getElementById('TH_TXT');
+                if(el)el.textContent=phrases[Math.floor(Math.random()*phrases.length)];
+            },900);
+
+            abortCtrl=new AbortController();
+
+            fetch('/api/ai/chat',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({prompt:prompt,model:model}),
+                signal:abortCtrl.signal
+            })
+            .then(function(res){
+                if(!res.ok)throw new Error('HTTP '+res.status);
+                return res.json();
+            })
+            .then(function(data){
+                clearInterval(phT);rmThinker();
+                finishResp(data.text||'',t0,cv);
+            })
+            .catch(function(err){
+                clearInterval(phT);rmThinker();
+                if(err.name==='AbortError'){
+                    addLine('warn','Generation stopped by user');
+                    toast('Stopped','Generation cancelled.','fa-stop','var(--warn)');
+                }else{
+                    // Demo fallback when Ollama is offline
+                    addLine('warn','API error: '+err.message+' — using demo mode');
+                    toast('Demo Mode','Ollama unavailable — showing demo response.','fa-triangle-exclamation','var(--warn)');
+                    finishResp(demoResp(prompt),t0,cv);
+                    return; // finishResp handles unlock
+                }
+                // Only reached on abort
+                isGenerating=false;resetBtn();setStatus('MODEL READY');
+            });
+        }
+
+        function rmThinker(){var t=document.getElementById('THINKING');if(t)t.remove();}
+
+        function resetBtn(){
+            var sb=document.getElementById('SEND_BTN'),si=document.getElementById('SEND_IC');
+            sb.removeEventListener('click',stopGen);
+            sb.addEventListener('click',sendMessage);
+            si.className='fa-solid fa-paper-plane';
+        }
+
+        function stopGen(){
+            if(abortCtrl)abortCtrl.abort();
+        }
+
+        function finishResp(text,t0,cv){
+            var elapsed=((Date.now()-t0)/1000).toFixed(2);
+            document.getElementById('TS_LAT').textContent=elapsed+'s';
+            var tok=Math.round(text.split(/\s+/).length*1.3);
+            var tps=Math.round(tok/Math.max(0.1,parseFloat(elapsed)));
+            document.getElementById('TS_TPS').textContent=tps+'/s';
+
+            var bub=renderMsg('assistant','');
+            typeStream(bub,text,function(){
+                cv.messages.push({role:'assistant',content:text});
+                cv.updatedAt=Date.now();saveConvs();
+                msgCount++;document.getElementById('TS_MSGS').textContent=msgCount;
+                updateCtx(ctxTokens(cv));
+                addLine('ok','✓ Done · '+elapsed+'s · ~'+tok+' tokens');
+            });
+
+            // ✅ Unlock immediately after starting typewriter (don't wait for it to finish)
+            isGenerating=false;
+            resetBtn();
+            setStatus('MODEL READY');
+        }
+
+        /* ── DEMO RESPONSES ── */
+        function demoResp(p){
+            var pl=p.toLowerCase();
+            if(pl.includes('python')||pl.includes('code')||pl.includes('script'))return demoCode();
+            if(pl.includes('debug')||pl.includes('error')||pl.includes('fix'))return demoDebug();
+            if(pl.includes('explain')||pl.includes('what')||pl.includes('how'))return demoExplain();
+            return demoGeneral();
+        }
+        function demoCode(){return '## Python REST API Fetcher\n\nHere\'s a production-ready implementation:\n\n```python\nimport requests\nimport json\nfrom typing import Optional, Dict, Any\n\ndef fetch_api_data(\n    url: str,\n    headers: Optional[Dict] = None,\n    params: Optional[Dict] = None\n) -> Dict[str, Any]:\n    """\n    Fetch and parse JSON from a REST API endpoint.\n    Args:\n        url: API endpoint\n        headers: Optional headers dict\n        params: Optional query params\n    """\n    response = requests.get(\n        url,\n        headers=headers or {"Accept": "application/json"},\n        params=params,\n        timeout=10\n    )\n    response.raise_for_status()\n    return response.json()\n\n# Example\ndata = fetch_api_data(\n    "https://api.example.com/users",\n    headers={"Authorization": "Bearer TOKEN"},\n    params={"page": 1}\n)\nprint(json.dumps(data, indent=2))\n```\n\n**Key points:**\n- `raise_for_status()` throws on 4xx/5xx responses automatically\n- 10 second timeout prevents hanging requests\n- Full type hints for IDE autocomplete support\n\nInstall dependency: `pip install requests`';}
+        function demoDebug(){return '## Fixing `TypeError: Cannot read properties of undefined`\n\nThis error means you\'re accessing a property on a value that is `undefined` or `null`.\n\n### Solutions\n\n```javascript\n// ❌ Crashes if user is undefined\nconst name = user.name;\n\n// ✅ Optional chaining (recommended)\nconst name = user?.name;\nconst city = user?.address?.city;\n\n// ✅ With fallback value\nconst name = user?.name ?? "Anonymous";\n\n// ✅ Guard clause\nif (!user) return;\nconst name = user.name; // Safe after guard\n```\n\n> **Debug tip:** Add `console.log(user)` right before the failing line to see exactly what value it holds at runtime.';}
+        function demoExplain(){return '## Quantum Entanglement — Simply Explained\n\nImagine two magic coins. You split them, fly one to Tokyo, keep one in New York. The instant you flip your coin and get **heads**, the Tokyo coin *instantly* becomes **tails** — no matter the distance.\n\n### Classical vs Quantum\n\n| Property | Normal Coins | Quantum Particles |\n|---|---|---|\n| State before measurement | Already fixed | **Genuinely undefined** |\n| Correlation reason | Just bookkeeping | Shared quantum state |\n| Speed of correlation | — | Instantaneous |\n\n> ⚠️ This cannot send information faster than light — the outcomes are still random, just perfectly correlated with each other.';}
+        function demoGeneral(){return '## NexusChat Response\n\nThis is a **demo response** — the Ollama backend appears to be offline.\n\nTo enable real AI responses:\n\n```bash\n# 1. Install Ollama\ncurl https://ollama.ai/install.sh | sh\n\n# 2. Pull a model\nollama pull llama3\n\n# 3. Start the server\nollama serve\n```\n\nOnce Ollama is running at `http://localhost:11434`, your messages will be processed by the real model.\n\n**NexusChat features:**\n- Line-by-line typewriter output\n- Full Markdown with syntax-highlighted code\n- Terminal-style code blocks with copy button\n- Persistent conversation history\n- Export conversations as Markdown';}
+
+        /* ── MESSAGE ACTIONS ── */
+        window.copyBub=function(btn){
+            var b=btn.closest('.msg-group').querySelector('.a-bub');if(!b)return;
+            navigator.clipboard.writeText(b.innerText)
+                .then(function(){toast('Copied','Response copied to clipboard.','fa-copy','var(--teal)');})
+                .catch(function(){fallbackCopy(b.innerText);toast('Copied','Response copied.','fa-copy','var(--teal)');});
+        };
+        window.regenMsg=function(btn){
+            var g=btn.closest('.msg-group'),prev=g.previousElementSibling;
+            while(prev&&!prev.querySelector('.u-bub'))prev=prev.previousElementSibling;
+            if(!prev)return;
+            document.getElementById('CHAT_INP').value=prev.querySelector('.u-bub').textContent;
+            g.remove();
+            sendMessage();
+        };
+        window.speakMsg=function(btn){
+            var b=btn.closest('.msg-group').querySelector('.a-bub');if(!b)return;
+            if(!('speechSynthesis' in window)){toast('Unavailable','TTS not supported in this browser.','fa-triangle-exclamation','var(--warn)');return;}
+            window.speechSynthesis.cancel();
+            var u=new SpeechSynthesisUtterance(b.innerText);
+            window.speechSynthesis.speak(u);
+            toast('Speaking','Text-to-speech active.','fa-volume-high','var(--g)');
+        };
+        window.editMsg=function(btn){
+            var b=btn.closest('.msg-group').querySelector('.u-bub');if(!b)return;
+            document.getElementById('CHAT_INP').value=b.textContent;
+            document.getElementById('CHAT_INP').focus();
+        };
+        window.injectSug=function(btn){
+            document.getElementById('CHAT_INP').value=btn.querySelector('span').textContent;
+            document.getElementById('CHAT_INP').focus();
+        };
+
+        /* ── INPUT EVENTS ── */
+        var inp=document.getElementById('CHAT_INP');
+        inp.addEventListener('keydown',function(e){
+            if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();return;}
+            if(e.key==='ArrowUp'&&!this.value){if(histIdx<inputHist.length-1){histIdx++;this.value=inputHist[histIdx];}}
+            if(e.key==='ArrowDown'&&histIdx>=0){histIdx--;this.value=histIdx>=0?inputHist[histIdx]:'';}
         });
-        ct(d);list.appendChild(d);
-    });
-}
+        inp.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,180)+'px';});
 
-function newConv(){
-    var id='c_'+Date.now();
-    convs.push({id:id,title:null,messages:[],createdAt:Date.now(),updatedAt:Date.now()});
-    saveConvs();curId=id;resetMsgs();renderList();
-    addLine('tc','New conversation · #'+id.slice(-6));
-    document.getElementById('CHAT_INP').focus();
-}
+        // ✅ Use addEventListener not onclick attribute so resetBtn works correctly
+        document.getElementById('SEND_BTN').addEventListener('click',sendMessage);
 
-function loadConv(id){
-    curId=id;var cv=getConv(id);
-    resetMsgs(true);
-    if(cv&&cv.messages&&cv.messages.length){
-        hideEmpty();
-        cv.messages.forEach(function(m){renderMsg(m.role,m.content);});
-        msgCount=cv.messages.length;
-        document.getElementById('TS_MSGS').textContent=msgCount;
-        updateCtx(ctxTokens(cv));
-    }
-    renderList();
-    addLine('','Loaded · '+(cv?cv.messages.length:0)+' messages');
-}
+        /* ── TOOLBAR ── */
+        document.getElementById('NEW_BTN').addEventListener('click',newConv);
+        document.getElementById('BTN_CLEAR').addEventListener('click',function(){
+            if(!curId)return;
+            var cv=getConv(curId);
+            if(cv){cv.messages=[];cv.title=null;cv.updatedAt=Date.now();saveConvs();}
+            resetMsgs();renderList();
+            addLine('warn','Chat history cleared');
+            toast('Cleared','Conversation reset.','fa-trash-can','var(--warn)');
+        });
+        document.getElementById('BTN_EXPORT').addEventListener('click',function(){
+            if(!curId){toast('No chat','Start a conversation first.','fa-triangle-exclamation','var(--warn)');return;}
+            var cv=getConv(curId);if(!cv||!cv.messages.length)return;
+            var md='# '+(cv.title||'NexusChat Conversation')+'\n\n'
+                +cv.messages.map(function(m){return '**'+(m.role==='user'?'You':'Neural AI')+':**\n\n'+m.content;}).join('\n\n---\n\n');
+            var a=document.createElement('a');
+            a.href=URL.createObjectURL(new Blob([md],{type:'text/markdown'}));
+            a.download='nexuschat-'+Date.now()+'.md';
+            a.click();
+            toast('Exported','Saved as Markdown file.','fa-download','var(--ok)');
+        });
+        document.getElementById('BTN_SYS').addEventListener('click',function(){
+            toast('Coming Soon','System prompt editor — next update.','fa-gear','var(--teal)');
+        });
 
-function delConv(id){
-    convs=convs.filter(function(c){return c.id!==id;});saveConvs();
-    if(curId===id){curId=null;resetMsgs();}
-    renderList();
-    toast('Deleted','Conversation removed.','fa-trash-can','var(--red)');
-}
-
-/* ── EMPTY STATE ── */
-function hideEmpty(){var e=document.getElementById('EMPTY');if(e)e.classList.add('gone');}
-function showEmpty(){
-    var m=document.getElementById('CHAT_MSGS');
-    if(!document.getElementById('EMPTY')){
-        m.innerHTML='<div class="empty-state" id="EMPTY">'
-            +'<div class="e-ring"><i class="fa-solid fa-robot"></i></div>'
-            +'<div class="e-title">NexusChat</div>'
-            +'<div class="e-sub">Powered by local LLM &nbsp;·&nbsp; Fully private &nbsp;·&nbsp; No cloud</div>'
-            +'<div class="suggs">'
-            +'<button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-code"></i><span>Write a Python script to scrape and parse JSON from a REST API</span></button>'
-            +'<button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-pen-nib"></i><span>Explain quantum entanglement in simple terms with an analogy</span></button>'
-            +'<button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-bug"></i><span>Debug this error: TypeError: Cannot read properties of undefined</span></button>'
-            +'<button class="sug-btn" onclick="injectSug(this)"><i class="fa-solid fa-lightbulb"></i><span>Compare microservices vs monolithic architecture with trade-offs</span></button>'
-            +'</div></div>';
-        document.querySelectorAll('.sug-btn').forEach(ct);
-    }else{
-        document.getElementById('EMPTY').classList.remove('gone');
-    }
-}
-
-function resetMsgs(keepDom){
-    if(!keepDom){document.getElementById('CHAT_MSGS').innerHTML='';showEmpty();}
-    msgCount=0;
-    document.getElementById('TS_MSGS').textContent=0;
-    updateCtx(0);
-}
-
-/* ── HELPERS ── */
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function scrollBot(){var m=document.getElementById('CHAT_MSGS');m.scrollTop=m.scrollHeight;}
-function updateCtx(t){
-    var max=8192;
-    document.getElementById('CTX_FILL').style.width=Math.min(100,t/max*100)+'%';
-    document.getElementById('CTX_VAL').textContent=t+' / '+max+' tokens';
-}
-function ctxTokens(cv){return Math.round(cv.messages.reduce(function(a,m){return a+m.content.split(/\s+/).length*1.3;},0));}
-function setStatus(txt){
-    var el=document.getElementById('TOP_STATUS');
-    if(el)el.textContent=txt;
-}
-
-/* ── MARKDOWN / CODE RENDER ── */
-function renderMD(text){
-    marked.setOptions({breaks:true,gfm:true});
-    var r=new marked.Renderer();
-    r.code=function(code,lang){
-        var language=lang||'plaintext';
-        var hi='';
-        try{
-            hi=lang&&hljs.getLanguage(lang)
-                ?hljs.highlight(code,{language:lang}).value
-                :hljs.highlightAuto(code).value;
-        }catch(e){hi=esc(code);}
-        var lines=code.split('\n');
-        var nums=lines.map(function(_,i){return '<span>'+(i+1)+'</span>';}).join('');
-        var uid='cb'+Math.random().toString(36).slice(2,9);
-        return '<div class="cb-wrap">'
-            +'<div class="cb-head">'
-            +'<span class="cb-lang">'+language.toUpperCase()+'</span>'
-            +'<div class="cb-acts">'
-            +'<div class="win-d"><div class="wd r"></div><div class="wd y"></div><div class="wd g"></div></div>'
-            +'<button class="cp-btn" onclick="copyCode(\''+uid+'\',this)"><i class="fa-solid fa-copy"></i> Copy</button>'
-            +'</div></div>'
-            +'<div class="cb-body">'
-            +'<div class="lnums">'+nums+'</div>'
-            +'<pre><code id="'+uid+'" class="hljs language-'+language+'">'+hi+'</code></pre>'
-            +'<div class="cb-scan"></div>'
-            +'</div></div>';
-    };
-    r.codespan=function(c){return '<code>'+c+'</code>';};
-    return marked.parse(text,{renderer:r});
-}
-
-window.copyCode=function(id,btn){
-    var el=document.getElementById(id);if(!el)return;
-    var text=el.innerText;
-    var doIt=function(){
-        btn.innerHTML='<i class="fa-solid fa-check"></i> Copied!';
-        btn.classList.add('copied');
-        setTimeout(function(){btn.innerHTML='<i class="fa-solid fa-copy"></i> Copy';btn.classList.remove('copied');},2000);
-    };
-    if(navigator.clipboard){navigator.clipboard.writeText(text).then(doIt).catch(function(){fallbackCopy(text);doIt();});}
-    else{fallbackCopy(text);doIt();}
-};
-function fallbackCopy(text){
-    var t=document.createElement('textarea');t.value=text;
-    t.style.position='fixed';t.style.opacity='0';
-    document.body.appendChild(t);t.focus();t.select();
-    document.execCommand('copy');document.body.removeChild(t);
-}
-
-/* ── RENDER MESSAGE ── */
-function renderMsg(role,content){
-    hideEmpty();
-    var msgs=document.getElementById('CHAT_MSGS');
-    var group=document.createElement('div');group.className='msg-group';
-    var rd=document.createElement('div');
-    rd.className='msg-role '+(role==='user'?'ur':'ar');
-    rd.textContent=role==='user'?'You':'Neural AI';
-    var bub=document.createElement('div');
-    bub.className='bubble '+(role==='user'?'u-bub':'a-bub');
-    if(role==='user'){
-        bub.textContent=content;
-    }else{
-        bub.innerHTML=renderMD(content);
-        bub.querySelectorAll('pre code').forEach(function(b){hljs.highlightElement(b);});
-    }
-    var acts=document.createElement('div');acts.className='msg-acts';
-    if(role==='assistant'){
-        acts.innerHTML='<button class="mact" onclick="copyBub(this)"><i class="fa-solid fa-copy"></i> Copy</button>'
-            +'<button class="mact" onclick="regenMsg(this)"><i class="fa-solid fa-rotate-right"></i> Regen</button>'
-            +'<button class="mact" onclick="speakMsg(this)"><i class="fa-solid fa-volume-high"></i> Speak</button>';
-    }else{
-        acts.innerHTML='<button class="mact" onclick="editMsg(this)"><i class="fa-solid fa-pen"></i> Edit</button>';
-    }
-    group.appendChild(rd);group.appendChild(bub);group.appendChild(acts);
-    msgs.appendChild(group);
-    group.querySelectorAll('button').forEach(ct);
-    scrollBot();
-    return bub;
-}
-
-/* ── TYPEWRITER ── */
-function typeStream(bub,fullText,onDone){
-    bub.innerHTML='<span class="tcur2"></span>';
-    var idx=0,total=fullText.length,chunk=3;
-    function step(){
-        if(idx>=total){
-            // Final: render full markdown cleanly
-            bub.innerHTML=renderMD(fullText);
-            bub.querySelectorAll('pre code').forEach(function(b){hljs.highlightElement(b);});
-            if(onDone)onDone();
-            return;
-        }
-        idx=Math.min(idx+chunk,total);
-        // Render partial text + cursor
-        bub.innerHTML=renderMD(fullText.slice(0,idx))+'<span class="tcur2"></span>';
-        chunk=idx>total*.4?6:3;
-        scrollBot();
-        setTimeout(step, idx<total*.1?16 : idx<total*.5?9 : 5);
-    }
-    step();
-}
-
-/* ── SEND MESSAGE ──
-   ✅ All fixes:
-   - TOP_STATUS element exists in topbar above
-   - isGenerating declared before use
-   - resetBtn uses named function reference, not inline
-   - finishResp called after catch so isGenerating resets correctly
-   - Proper error handling that removes thinking indicator
-── */
-function sendMessage(){
-    var inp=document.getElementById('CHAT_INP');
-    var prompt=inp.value.trim();
-    if(!prompt||isGenerating)return;
-
-    if(!curId)newConv();
-    var cv=getConv(curId);
-
-    // Save input history for ↑ recall
-    inputHist.unshift(prompt);
-    if(inputHist.length>50)inputHist.pop();
-    histIdx=-1;
-
-    inp.value='';inp.style.height='auto';
-
-    // Save user message
-    cv.messages.push({role:'user',content:prompt});
-    if(!cv.title){
-        cv.title=prompt.slice(0,44)+(prompt.length>44?'…':'');
+        /* ── INIT ── */
         renderList();
-    }
-    cv.updatedAt=Date.now();saveConvs();
+        if(convs.length>0){loadConv(convs[convs.length-1].id);}else{newConv();}
 
-    renderMsg('user',prompt);
-    msgCount++;document.getElementById('TS_MSGS').textContent=msgCount;
-
-    // Show thinking indicator
-    var th=document.createElement('div');th.className='thinking';th.id='THINKING';
-    th.innerHTML='<div class="th-dots"><div class="th-d"></div><div class="th-d"></div><div class="th-d"></div></div>'
-        +'<div class="th-txt" id="TH_TXT">Thinking…</div>';
-    document.getElementById('CHAT_MSGS').appendChild(th);scrollBot();
-
-    // Lock UI
-    isGenerating=true;
-    var sb=document.getElementById('SEND_BTN'),si=document.getElementById('SEND_IC');
-    sb.removeEventListener('click',sendMessage);
-    sb.addEventListener('click',stopGen);
-    si.className='fa-solid fa-stop';
-    setStatus('GENERATING…');
-    addLine('tc','› '+prompt.slice(0,40)+(prompt.length>40?'…':''));
-
-    var model=document.getElementById('MODEL_SEL').value;
-    var t0=Date.now();
-    var phrases=['Thinking…','Analyzing context…','Reasoning…','Composing response…'];
-    var phT=setInterval(function(){
-        var el=document.getElementById('TH_TXT');
-        if(el)el.textContent=phrases[Math.floor(Math.random()*phrases.length)];
-    },900);
-
-    abortCtrl=new AbortController();
-
-    fetch('/api/ai/chat',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({prompt:prompt,model:model}),
-        signal:abortCtrl.signal
-    })
-    .then(function(res){
-        if(!res.ok)throw new Error('HTTP '+res.status);
-        return res.json();
-    })
-    .then(function(data){
-        clearInterval(phT);rmThinker();
-        finishResp(data.text||'',t0,cv);
-    })
-    .catch(function(err){
-        clearInterval(phT);rmThinker();
-        if(err.name==='AbortError'){
-            addLine('warn','Generation stopped by user');
-            toast('Stopped','Generation cancelled.','fa-stop','var(--warn)');
-        }else{
-            // Demo fallback when Ollama is offline
-            addLine('warn','API error: '+err.message+' — using demo mode');
-            toast('Demo Mode','Ollama unavailable — showing demo response.','fa-triangle-exclamation','var(--warn)');
-            finishResp(demoResp(prompt),t0,cv);
-            return; // finishResp handles unlock
-        }
-        // Only reached on abort
-        isGenerating=false;resetBtn();setStatus('MODEL READY');
-    });
-}
-
-function rmThinker(){var t=document.getElementById('THINKING');if(t)t.remove();}
-
-function resetBtn(){
-    var sb=document.getElementById('SEND_BTN'),si=document.getElementById('SEND_IC');
-    sb.removeEventListener('click',stopGen);
-    sb.addEventListener('click',sendMessage);
-    si.className='fa-solid fa-paper-plane';
-}
-
-function stopGen(){
-    if(abortCtrl)abortCtrl.abort();
-}
-
-function finishResp(text,t0,cv){
-    var elapsed=((Date.now()-t0)/1000).toFixed(2);
-    document.getElementById('TS_LAT').textContent=elapsed+'s';
-    var tok=Math.round(text.split(/\s+/).length*1.3);
-    var tps=Math.round(tok/Math.max(0.1,parseFloat(elapsed)));
-    document.getElementById('TS_TPS').textContent=tps+'/s';
-
-    var bub=renderMsg('assistant','');
-    typeStream(bub,text,function(){
-        cv.messages.push({role:'assistant',content:text});
-        cv.updatedAt=Date.now();saveConvs();
-        msgCount++;document.getElementById('TS_MSGS').textContent=msgCount;
-        updateCtx(ctxTokens(cv));
-        addLine('ok','✓ Done · '+elapsed+'s · ~'+tok+' tokens');
-    });
-
-    // ✅ Unlock immediately after starting typewriter (don't wait for it to finish)
-    isGenerating=false;
-    resetBtn();
-    setStatus('MODEL READY');
-}
-
-/* ── DEMO RESPONSES ── */
-function demoResp(p){
-    var pl=p.toLowerCase();
-    if(pl.includes('python')||pl.includes('code')||pl.includes('script'))return demoCode();
-    if(pl.includes('debug')||pl.includes('error')||pl.includes('fix'))return demoDebug();
-    if(pl.includes('explain')||pl.includes('what')||pl.includes('how'))return demoExplain();
-    return demoGeneral();
-}
-function demoCode(){return '## Python REST API Fetcher\n\nHere\'s a production-ready implementation:\n\n```python\nimport requests\nimport json\nfrom typing import Optional, Dict, Any\n\ndef fetch_api_data(\n    url: str,\n    headers: Optional[Dict] = None,\n    params: Optional[Dict] = None\n) -> Dict[str, Any]:\n    """\n    Fetch and parse JSON from a REST API endpoint.\n    Args:\n        url: API endpoint\n        headers: Optional headers dict\n        params: Optional query params\n    """\n    response = requests.get(\n        url,\n        headers=headers or {"Accept": "application/json"},\n        params=params,\n        timeout=10\n    )\n    response.raise_for_status()\n    return response.json()\n\n# Example\ndata = fetch_api_data(\n    "https://api.example.com/users",\n    headers={"Authorization": "Bearer TOKEN"},\n    params={"page": 1}\n)\nprint(json.dumps(data, indent=2))\n```\n\n**Key points:**\n- `raise_for_status()` throws on 4xx/5xx responses automatically\n- 10 second timeout prevents hanging requests\n- Full type hints for IDE autocomplete support\n\nInstall dependency: `pip install requests`';}
-function demoDebug(){return '## Fixing `TypeError: Cannot read properties of undefined`\n\nThis error means you\'re accessing a property on a value that is `undefined` or `null`.\n\n### Solutions\n\n```javascript\n// ❌ Crashes if user is undefined\nconst name = user.name;\n\n// ✅ Optional chaining (recommended)\nconst name = user?.name;\nconst city = user?.address?.city;\n\n// ✅ With fallback value\nconst name = user?.name ?? "Anonymous";\n\n// ✅ Guard clause\nif (!user) return;\nconst name = user.name; // Safe after guard\n```\n\n> **Debug tip:** Add `console.log(user)` right before the failing line to see exactly what value it holds at runtime.';}
-function demoExplain(){return '## Quantum Entanglement — Simply Explained\n\nImagine two magic coins. You split them, fly one to Tokyo, keep one in New York. The instant you flip your coin and get **heads**, the Tokyo coin *instantly* becomes **tails** — no matter the distance.\n\n### Classical vs Quantum\n\n| Property | Normal Coins | Quantum Particles |\n|---|---|---|\n| State before measurement | Already fixed | **Genuinely undefined** |\n| Correlation reason | Just bookkeeping | Shared quantum state |\n| Speed of correlation | — | Instantaneous |\n\n> ⚠️ This cannot send information faster than light — the outcomes are still random, just perfectly correlated with each other.';}
-function demoGeneral(){return '## NexusChat Response\n\nThis is a **demo response** — the Ollama backend appears to be offline.\n\nTo enable real AI responses:\n\n```bash\n# 1. Install Ollama\ncurl https://ollama.ai/install.sh | sh\n\n# 2. Pull a model\nollama pull llama3\n\n# 3. Start the server\nollama serve\n```\n\nOnce Ollama is running at `http://localhost:11434`, your messages will be processed by the real model.\n\n**NexusChat features:**\n- Line-by-line typewriter output\n- Full Markdown with syntax-highlighted code\n- Terminal-style code blocks with copy button\n- Persistent conversation history\n- Export conversations as Markdown';}
-
-/* ── MESSAGE ACTIONS ── */
-window.copyBub=function(btn){
-    var b=btn.closest('.msg-group').querySelector('.a-bub');if(!b)return;
-    navigator.clipboard.writeText(b.innerText)
-        .then(function(){toast('Copied','Response copied to clipboard.','fa-copy','var(--teal)');})
-        .catch(function(){fallbackCopy(b.innerText);toast('Copied','Response copied.','fa-copy','var(--teal)');});
-};
-window.regenMsg=function(btn){
-    var g=btn.closest('.msg-group'),prev=g.previousElementSibling;
-    while(prev&&!prev.querySelector('.u-bub'))prev=prev.previousElementSibling;
-    if(!prev)return;
-    document.getElementById('CHAT_INP').value=prev.querySelector('.u-bub').textContent;
-    g.remove();
-    sendMessage();
-};
-window.speakMsg=function(btn){
-    var b=btn.closest('.msg-group').querySelector('.a-bub');if(!b)return;
-    if(!('speechSynthesis' in window)){toast('Unavailable','TTS not supported in this browser.','fa-triangle-exclamation','var(--warn)');return;}
-    window.speechSynthesis.cancel();
-    var u=new SpeechSynthesisUtterance(b.innerText);
-    window.speechSynthesis.speak(u);
-    toast('Speaking','Text-to-speech active.','fa-volume-high','var(--g)');
-};
-window.editMsg=function(btn){
-    var b=btn.closest('.msg-group').querySelector('.u-bub');if(!b)return;
-    document.getElementById('CHAT_INP').value=b.textContent;
-    document.getElementById('CHAT_INP').focus();
-};
-window.injectSug=function(btn){
-    document.getElementById('CHAT_INP').value=btn.querySelector('span').textContent;
-    document.getElementById('CHAT_INP').focus();
-};
-
-/* ── INPUT EVENTS ── */
-var inp=document.getElementById('CHAT_INP');
-inp.addEventListener('keydown',function(e){
-    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();return;}
-    if(e.key==='ArrowUp'&&!this.value){if(histIdx<inputHist.length-1){histIdx++;this.value=inputHist[histIdx];}}
-    if(e.key==='ArrowDown'&&histIdx>=0){histIdx--;this.value=histIdx>=0?inputHist[histIdx]:'';}
-});
-inp.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,180)+'px';});
-
-// ✅ Use addEventListener not onclick attribute so resetBtn works correctly
-document.getElementById('SEND_BTN').addEventListener('click',sendMessage);
-
-/* ── TOOLBAR ── */
-document.getElementById('NEW_BTN').addEventListener('click',newConv);
-document.getElementById('BTN_CLEAR').addEventListener('click',function(){
-    if(!curId)return;
-    var cv=getConv(curId);
-    if(cv){cv.messages=[];cv.title=null;cv.updatedAt=Date.now();saveConvs();}
-    resetMsgs();renderList();
-    addLine('warn','Chat history cleared');
-    toast('Cleared','Conversation reset.','fa-trash-can','var(--warn)');
-});
-document.getElementById('BTN_EXPORT').addEventListener('click',function(){
-    if(!curId){toast('No chat','Start a conversation first.','fa-triangle-exclamation','var(--warn)');return;}
-    var cv=getConv(curId);if(!cv||!cv.messages.length)return;
-    var md='# '+(cv.title||'NexusChat Conversation')+'\n\n'
-        +cv.messages.map(function(m){return '**'+(m.role==='user'?'You':'Neural AI')+':**\n\n'+m.content;}).join('\n\n---\n\n');
-    var a=document.createElement('a');
-    a.href=URL.createObjectURL(new Blob([md],{type:'text/markdown'}));
-    a.download='nexuschat-'+Date.now()+'.md';
-    a.click();
-    toast('Exported','Saved as Markdown file.','fa-download','var(--ok)');
-});
-document.getElementById('BTN_SYS').addEventListener('click',function(){
-    toast('Coming Soon','System prompt editor — next update.','fa-gear','var(--teal)');
-});
-
-/* ── INIT ── */
-renderList();
-if(convs.length>0){loadConv(convs[convs.length-1].id);}else{newConv();}
-
-})();
-</script>
+        })();
+    </script>
 </body>
 </html>
