@@ -1,5 +1,9 @@
 wwwroot\css\site.css
 wwwroot\favicon.ico
+wwwroot\frames\frame_000.png
+wwwroot\frames\frame_001.png
+wwwroot\frames\frame_002.png
+wwwroot\frames\frame_003.png
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
@@ -61,8 +65,4 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
-wwwroot\frames\frame_000.png
-wwwroot\frames\frame_001.png
-wwwroot\frames\frame_002.png
-wwwroot\frames\frame_003.png
 wwwroot\videos\video_59740264-1087-4154-9be0-0654fe708913.mp4
