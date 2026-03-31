@@ -2007,7 +2007,7 @@
             body:JSON.stringify({
                 prompt:prompt,
                 model:model,
-                history:cv.messages.slice(-10).map(function(m){
+                history:cv.messages.slice(-4).map(function(m){
                     return {role:m.role,content:m.content};
                 })
             }),
