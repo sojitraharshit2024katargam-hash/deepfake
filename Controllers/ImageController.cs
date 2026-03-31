@@ -10,7 +10,7 @@ namespace DEEPFAKE.Controllers
     {
         private readonly HttpClient _httpClient;
 
-        private const string BaseUrl = "https://sobersided-frank-restrainedly.ngrok-free.dev";
+        private const string BaseUrl = "https://2558389301f1b4.lhr.life";
 
         public ImageController(IHttpClientFactory factory)
         {
