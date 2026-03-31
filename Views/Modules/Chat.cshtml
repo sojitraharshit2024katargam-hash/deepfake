@@ -2001,12 +2001,18 @@
 
             abortCtrl=new AbortController();
 
-            fetch('/api/ai/chat',{
-                method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body:JSON.stringify({prompt:prompt,model:model}),
-                signal:abortCtrl.signal
-            })
+              fetch('/api/ai/chat',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                prompt:prompt,
+                model:model,
+                history:cv.messages.slice(-10).map(function(m){
+                    return {role:m.role,content:m.content};
+                })
+            }),
+            signal:abortCtrl.signal
+        })
             .then(function(res){
                 if(!res.ok)throw new Error('HTTP '+res.status);
                 return res.json();
