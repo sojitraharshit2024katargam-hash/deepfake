@@ -11,7 +11,7 @@ namespace DEEPFAKE.Controllers
         private readonly HttpClient _httpClient;
         private readonly ILogger<TextAIController> _logger;
 
-        private const string BaseUrl = "https://ddc79eb05e7e79.lhr.life";
+        private const string BaseUrl = "https://2842152bfba181.lhr.life";
 
         public TextAIController(
             IHttpClientFactory factory,
