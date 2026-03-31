@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DEEPFAKE")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+817e0dc4e047b6237793a621258a85dc72a92bb9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+81f3a3d54c80b872717e953282489e17028f0adf")]
 [assembly: System.Reflection.AssemblyProductAttribute("DEEPFAKE")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DEEPFAKE")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
