@@ -10,7 +10,7 @@ namespace DEEPFAKE.Controllers
     {
         private readonly HttpClient _httpClient;
 
-        private const string BaseUrl = "https://2558389301f1b4.lhr.life";
+        private const string BaseUrl = "https://ddc79eb05e7e79.lhr.life";
 
         public ImageController(IHttpClientFactory factory)
         {
